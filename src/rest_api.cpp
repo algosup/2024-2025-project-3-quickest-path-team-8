@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// INCLUDES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "httplib.h"
 #include <iostream>
 #include <fstream>
@@ -8,168 +12,203 @@
 #include <queue>
 #include <limits>
 
-////////////////////////////////////////////////////////////////
-// DATA STRUCTURES
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// STRUCTURES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Structure to hold road data
+/// Define a structure to represent a road connecting two landmarks
 struct Road {
     int landmarkA;
     int landmarkB;
     int time;
 };
 
-////////////////////////////////////////////////////////////////
-// FUNCTIONS
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Function to load roads from the CSV file
+/// Function to load road data from a CSV file
 std::vector<Road> loadRoads(const std::string &filename) {
 
-    // Open the CSV file and put it in a vector of roads
+    // Create a container to store all the roads
     std::vector<Road> roads;
+
+    // Open input file for reading
     std::ifstream file(filename);
+
+    // Temporary string to hold each line in the file
     std::string line;
 
-    // Skip the header
+    // Read and discard the header line of the CSV file
     std::getline(file, line);
 
-    // Read the data line by line
+    // Read the remaining lines in the file
     while (std::getline(file, line)) {
+
+        // Create a string stream to parse the line
         std::istringstream ss(line);
+
+        // Temporary variables to hold parsed values
         std::string landmarkA, landmarkB, time;
 
+        // Extract first value (landmarkA) from the string stream
         std::getline(ss, landmarkA, ',');
+
+        // Extract second value (landmarkB) from the string stream
         std::getline(ss, landmarkB, ',');
+
+        // Extract third value (time) from the string stream
         std::getline(ss, time, ',');
 
+        // Convert parsed values to integers and add a Road object to vector
         roads.push_back({std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)});
     }
 
+    // Return the vector containing all roads
     return roads;
 }
 
-
-// Build an adjency list representation of the graph for easy traversal
+/// Function to build a graph from the list of roads
 std::unordered_map<int, std::vector<std::pair<int, int>>> buildGraph(const std::vector<Road> &roads) {
+
+    // Create an adjacency list representation of the graph
     std::unordered_map<int, std::vector<std::pair<int, int>>> graph;
 
-    // Add the roads to the graph
+    // Iterates through all roads to populate the graph
     for (const auto &road : roads) {
+
+        // Adds an edge from landmarkA to landmarkB with travel time
         graph[road.landmarkA].emplace_back(road.landmarkB, road.time);
+
+        // Adds an edge from landmarkB to landmarkA with the same travel time
         graph[road.landmarkB].emplace_back(road.landmarkA, road.time);
     }
 
+    // Returns the graph as an adjacency list
     return graph;
 }
 
-// Simple implementation of Dijkstra's algorithm
+// Function to find the shortest path between two landmarks using Dijkstra's algorithm
 std::pair<int, std::vector<int>> dijkstra(
-
-    // Graph representation
     const std::unordered_map<int, std::vector<std::pair<int, int>>> &graph, int start, int end) {
 
-        // Initialize the distance and previous maps
-        std::unordered_map<int, int> distances;
-        std::unordered_map<int, int> previous;
-        std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
+    // Map to store shortest distances from start node
+    std::unordered_map<int, int> distances;
 
-        // Initialize the distances
-        for (const auto &node : graph) {
-            distances[node.first] = std::numeric_limits<int>::max();
-        }
-        distances[start] = 0;
-        pq.push({0, start});
+    // Map to store previous node in shortest path for each node
+    std::unordered_map<int, int> previous;
 
-        // Main Algorithm. While the priority queue is not empty
-        while (!pq.empty()) {
+    // Min-heap priority queue to process nodes with smallest distance
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
 
-            // Get the node with the smallest distance
-            int currentDistance = pq.top().first;
-            int currentNode = pq.top().second;
-            // And remove it from the priority queue
-            pq.pop();
+    // Initialize all distances to infinity for nodes in graph
+    for (const auto &node : graph) {
+        distances[node.first] = std::numeric_limits<int>::max();
+    }
 
-            // If we reached the end node, we can stop
-            if (currentNode == end) break;
+    // Set distance to the start node as zero
+    distances[start] = 0;
 
-            // Otherwise, check the neighbors of the current node
-            for (const auto &neighbor : graph.at(currentNode)) {
+    // Add start node to priority queue with a distance of zero
+    pq.push({0, start});
 
-                // Calculate the new distance
-                int neighborNode = neighbor.first;
+    // Process nodes in priority queue until it becomes empty
+    while (!pq.empty()) {
 
-                // And update the distance if it's smaller than the current one
-                int weight = neighbor.second;
+        // Retrieve node with the smallest distance from queue
+        int currentDistance = pq.top().first;
+        int currentNode = pq.top().second;
 
-                // If the new distance is smaller, update the distance and the previous node
-                int newDistance = currentDistance + weight;
+        // Remove processed node from queue
+        pq.pop();
 
-                // If the new distance is smaller, update the distance and the previous node
-                if (newDistance < distances[neighborNode]) {
-                    distances[neighborNode] = newDistance;
-                    previous[neighborNode] = currentNode;
-                    pq.push({newDistance, neighborNode});
-                }
+        // Stop processing if destination node is reached
+        if (currentNode == end) break;
+
+        // Iterate through all neighbors of current node
+        for (const auto &neighbor : graph.at(currentNode)) {
+
+            // Retrieve neighbor node
+            int neighborNode = neighbor.first;
+
+            // Retrieve  weight (travel time) of the edge to neighbor
+            int weight = neighbor.second;
+
+            // Calculate new distance to neighbor
+            int newDistance = currentDistance + weight;
+
+            // Update distance if a shorter path is found
+            if (newDistance < distances[neighborNode]) {
+                distances[neighborNode] = newDistance;
+
+                // Update previous node in path for neighbor
+                previous[neighborNode] = currentNode;
+
+                // Add neighbor to priority queue with updated distance
+                pq.push({newDistance, neighborNode});
             }
         }
+    }
 
-        /// Reconstruct the path
-        std::vector<int> path;
-        // If we didn't reach the end node, return an empty path
-        int current = end;
-        // Otherwise, reconstruct the path from the previous map
-        while (current != start) {
-            path.push_back(current);
-            current = previous[current];
-        }
-        // Add the start node
-        path.push_back(start);
-        // Reverse the path
-        std::reverse(path.begin(), path.end());
+    // Construct shortest path by backtracking from end node
+    std::vector<int> path;
+    int current = end;
+    while (current != start) {
+        path.push_back(current);
+        current = previous[current];
+    }
 
-        // Return the distance and the path
-        return {distances[end], path};
+    // Add start node to path
+    path.push_back(start);
+
+    // Reverse path to get correct order from start to end
+    std::reverse(path.begin(), path.end());
+
+    // Return total distance and shortest path as a pair
+    return {distances[end], path};
 }
 
-////////////////////////////////////////////////////////////////
-// MAIN FUNCTION
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// MAIN
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
 
-    // Load the roads from the CSV file
+    // Specify the name of CSV file containing road data
     const std::string filename = "val_de_loire_roads.csv";
 
-    // Build the graph
+    // Load roads from CSV file
     std::vector<Road> roads = loadRoads(filename);
+
+    // Build the graph from loaded roads
     auto graph = buildGraph(roads);
 
-    // Create the server
+    // Create an HTTP server instance
     httplib::Server svr;
 
-    // Define the endpoint to get the quickest path
+    // Define an endpoint to calculate the quickest path
     svr.Get("/quickest_path", [&](const httplib::Request &req, httplib::Response &res) {
 
-        // Parse query parameters
+        // Validate that all required query parameters are provided
         if (!req.has_param("format") || !req.has_param("landmark_1") || !req.has_param("landmark_2")) {
             
-            // Bad request
+            // Set the HTTP status to 400 (Bad Request)
             res.status = 400;
-            res.set_content("Missing query parameters", "text/plain");
+
+            // Send an error message
+            res.set_content("Missing query parameters", "text/plain"); 
             return;
         }
 
-        // Get the query parameters
+        // Retrieve query parameters for request
         std::string format = req.get_param_value("format");
         int landmark_1 = std::stoi(req.get_param_value("landmark_1"));
         int landmark_2 = std::stoi(req.get_param_value("landmark_2"));
 
-        // Find the shortest path by calling Dijkstra's algorithm
+        // Run Dijkstra's algorithm to find shortest path
         auto [distance, path] = dijkstra(graph, landmark_1, landmark_2);
 
-        // Format the response
-        // JSON format
+        // Respond in JSON format if requested
         if (format == "json") {
             std::ostringstream response;
             response << "{ \"distance\": " << distance << ", \"path\": [";
@@ -180,7 +219,7 @@ int main() {
             response << "] }";
             res.set_content(response.str(), "application/json");
 
-        // XML format
+        // Respond in XML format if requested
         } else if (format == "xml") {
             std::ostringstream response;
             response << "<response><distance>" << distance << "</distance><path>";
@@ -190,18 +229,23 @@ int main() {
             response << "</path></response>";
             res.set_content(response.str(), "application/xml");
 
-        // Otherwise, it is a bad request
+        // Handle unsupported formats
         } else {
+
+            // Set the HTTP status to 400 (Bad Request)
             res.status = 400;
+
+            // Send an error message.
             res.set_content("Unsupported format", "text/plain");
         }
     });
 
-    // Display a message to the user
+    // Output a message indicating server is running
     std::cout << "Server running on http://localhost:8080/quickest_path" << std::endl;
 
-    // Run the server
+    // Start the HTTP server, listening on localhost:8080
     svr.listen("localhost", 8080);
 
+    // Return 0 to indicate successful execution
     return 0;
 }
