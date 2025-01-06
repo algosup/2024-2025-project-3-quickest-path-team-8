@@ -33,13 +33,28 @@
 
 ## 1. Audience
 
+This document is primarily intended for:
+
+- Software developer - to understand the user and technical requirements, and to guide decision-making and planning. Help them understand risks and challenges, customer requirements, and additional technical requirements and choices made
+
+Secondary audiences
+
+- Program manager - to validate against the functional specification, and the client expectations
+- QA - to aid in preparing the test plan and to use it for validating issues.
+- Project manager - to help identify risks and dependencies
+
 ## 2. Project Overview
+
+This project involves developing a high-performance C++ software solution to calculate the quickest path between two landmarks in the United States. The solution will be accessible via a REST API, supporting both XML and JSON responses. It will use a dataset with 24 million connections between landmarks, with travel times. The software must handle large-scale data efficiently, return results within 1 second, and ensure the path is within 10% of the shortest possible duration. Data integrity checks are also required for the dataset to ensure correctness and connectivity. 
 
 ## 3. Glossary
 
 | Term | Definition |
 | ---- | ---------- |
-|      |            |
+| Landmark | A point in the graph representing a location in the U.S. |
+| Graph | A network of nodes (landmarks) connected by edges (paths) with associated travel times. |
+| DAG (Directed Acyclic Graph) | A graph that doesn’t contain cycles, used to model the landmark connections. |
+| REST API | A web service that exposes functionality via HTTP endpoints, in this case, to query the shortest path. |
 
 ## 4. Requirements
 
