@@ -1,0 +1,125 @@
+name: Bug Report Form
+description: Submit a report to enhance the hybrid game solution for calculating the quickest paths.
+title: "[BUG] INSERT_BUG_NAME"
+labels: [bug]
+assignees: maxbernard3
+projects: [algosup/47]
+body:
+
+  - type: dropdown
+    id: bug-category
+    attributes:
+      label: Bug Category
+      description: Select the category that best describes the issue.
+      options:
+        - REST API Functionality
+        - Algorithm Performance
+        - Data Integrity
+        - Response Formatting (XML/JSON)
+        - Testing and Validation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      placeholder: A clear and concise description of what you expected to happen based on project requirements.
+    validations:
+      required: true
+      
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      placeholder: A detailed description of the current behavior, including discrepancies from expected outcomes.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      description: How often does the bug occur?
+      options:
+        - Always
+        - Often
+        - Rarely
+        - Unable to Reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      placeholder: "Provide steps to reproduce the issue:\n1. Provide source and destination landmark IDs\n2. Call the API endpoint\n3. Review the output\n4. Identify the error"
+    validations:
+      required: true
+      
+  - type: markdown
+    attributes:
+      value: |
+        <details><summary><ins><em>Click to view example table format</em></ins></summary><br>
+        
+        \| Step ID \| Step Description \|
+        \|--------\|--------\|
+        \| 1 \| Specify source and destination IDs \|
+        \| 2 \| Send API request \|
+        \| 3 \| Review response for errors or deviations \|
+        
+        </details>
+      
+  - type: textarea
+    id: data-details
+    attributes:
+      label: Relevant Data Details (if applicable)
+      placeholder: Include any specifics about the dataset (e.g., node IDs or file integrity issues) related to the bug.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 (Critical)
+        - P1 (High)
+        - P2 (Medium)
+        - P3 (Low)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+        - Trivial
+    validations:
+      required: true
+      
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Logs
+      placeholder: Include screenshots or logs to help explain the problem, if applicable.
+      
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context or Description
+      placeholder: Add any other context or additional information about the issue.
+    validations:
+      required: false
+      
+  - type: textarea
+    id: possible-implementation
+    attributes:
+      label: Suggested Fix or Implementation
+      placeholder: Provide any suggestions for solving this issue, if available.
+    validations:
+      required: false

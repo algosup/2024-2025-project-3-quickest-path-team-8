@@ -1,0 +1,143 @@
+name: Test Case Form
+description: Test case declaration for the "Quickest Path Calculator" project.
+title: "[TESTING] TEST_NAME"
+labels: [test]
+assignees: [maxbernard3]
+projects: [algosup/47]
+body:
+
+  - type: input
+    id: testcase-title
+    attributes:
+      label: Test Case Title
+      description: A brief title of what the test is for.
+      placeholder: e.g., Validate REST API Response Time
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-status
+    attributes:
+      label: Test Status
+      options:
+        - Pending
+        - Failed
+        - Blocked
+        - Passed
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-description
+    attributes:
+      label: Test Description
+      description: Describe the purpose of the test case.
+      placeholder: This test ensures the API responds within 1 second for valid inputs using heuristic approximations.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-execution
+    attributes:
+      label: Test Execution
+      description: Specify if it is to be run automatically or manually.
+      options:
+        - Automatic
+        - Manual
+        - Both
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: Describe the purpose of the test and its relevance.
+      placeholder: Ensure compliance with performance goals (sub-1 second response) and accuracy constraints (within 10% deviation).
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test-environment
+    attributes:
+      label: Test Environment
+      description: Select the target environment for the test.
+      options:
+        - Localhost (C++ REST API server)
+        - Windows 11 Laptop
+        - MacOS System
+        - Other
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List the dependencies for the test case.
+      placeholder: USA-roads.csv dataset, compiled C++ server executable, JSON/XML parsers...
+    validations:
+      required: true
+
+  - type: textarea
+    id: preconditions
+    attributes:
+      label: Preconditions
+      description: Any setup or conditions required before executing the test.
+      placeholder: REST API server must be running; USA-roads.csv has been validated for integrity...
+    validations:
+      required: true
+
+  - type: textarea
+    id: post-conditions
+    attributes:
+      label: Post-conditions
+      description: Expected system state after test execution.
+      placeholder: API server remains functional; response time and path accuracy are logged...
+    validations:
+      required: true
+
+  - type: textarea
+    id: test-data
+    attributes:
+      label: Test Data
+      description: Data required for the test.
+      placeholder: Sample inputs like Source_Landmark_ID=123, Destination_Landmark_ID=456...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: "Provide detailed test execution steps."
+      placeholder: |
+        1. Start the REST API server.
+        2. Use a test client to send a GET request with valid landmark IDs.
+        3. Verify the response format (JSON/XML).
+        4. Measure response time.
+        5. Validate path and duration accuracy (within 10% deviation).
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        <details><summary><ins><em>Click to show template</em></ins></summary><br>
+        
+        \| Step ID \| Step Description \| Expected Results \| Actual Results \| Pass / Fail \| Additional Notes \|
+        \|--------\|--------\|--------\|--------\|--------\|--------\|
+        \| 1 \| Start server \| Server is running \| - \| - \| - \|
+        \| 2 \| Send GET request \| Response received \| - \| - \| - \|
+        \| 3 \| Validate JSON \| Correct structure \| - \| - \| - \|
+        
+        </details>
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Additional observations or insights from the test.
+      placeholder: Observations during testing, performance bottlenecks, or recommendations for improvement...
+    validations:
+      required: false
