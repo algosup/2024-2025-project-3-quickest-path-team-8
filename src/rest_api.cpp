@@ -169,6 +169,7 @@ int main() {
         auto [distance, path] = dijkstra(graph, landmark_1, landmark_2);
 
         // Format the response
+        // JSON format
         if (format == "json") {
             std::ostringstream response;
             response << "{ \"distance\": " << distance << ", \"path\": [";
@@ -178,8 +179,20 @@ int main() {
             }
             response << "] }";
             res.set_content(response.str(), "application/json");
+
+        // XML format
+        } else if (format == "xml") {
+            std::ostringstream response;
+            response << "<response><distance>" << distance << "</distance><path>";
+            for (const auto &node : path) {
+                response << "<landmark>" << node << "</landmark>";
+            }
+            response << "</path></response>";
+            res.set_content(response.str(), "application/xml");
+
+        // Otherwise, it is a bad request
         } else {
-            res.status = 400; // Bad request
+            res.status = 400;
             res.set_content("Unsupported format", "text/plain");
         }
     });
