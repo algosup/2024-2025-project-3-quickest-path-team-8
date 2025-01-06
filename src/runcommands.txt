@@ -1,0 +1,1 @@
+g++ -o rest_api rest_api.cpp -std=c++17 && ./rest_api

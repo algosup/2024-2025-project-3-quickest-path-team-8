@@ -1,4 +1,6 @@
-#include <httplib.h>
+
+// Import httlib from the same directory
+#include "httplib.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -37,7 +39,7 @@ std::vector<Road> loadRoads(const std::string &filename) {
 
 int main() {
     // Load the dataset
-    const std::string filename = "../bin/mock_usa_roads.csv";
+    const std::string filename = "val_de_loire_roads.csv";
     std::vector<Road> roads = loadRoads(filename);
 
     // Create the HTTP server
