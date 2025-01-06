@@ -23,8 +23,25 @@
     - [2.1. Personas](#21-personas)
     - [2.2. Use Cases](#22-use-cases)
   - [3. Functional Requirements](#3-functional-requirements)
-    - [3.X. User Workflow](#3x-user-workflow)
+    - [3.1. REST API Implementation](#31-rest-api-implementation)
+      - [3.1.1. Route Description](#311-route-description)
+      - [3.1.2. Reponse codes](#312-reponse-codes)
+      - [3.1.3. Request Examples](#313-request-examples)
+    - [3.2. Data Verification Tool](#32-data-verification-tool)
+      - [3.2.1. Features:](#321-features)
+      - [3.2.3. Error Reporting:](#323-error-reporting)
+      - [3.2.4. Output:](#324-output)
+    - [3.3. User Workflow](#33-user-workflow)
   - [4. Non-functional Requirements](#4-non-functional-requirements)
+    - [4.1. Performance](#41-performance)
+    - [4.2. Scalability](#42-scalability)
+    - [4.3. Usability](#43-usability)
+    - [4.4. Data Integrity](#44-data-integrity)
+    - [4.5. Reliability](#45-reliability)
+    - [4.6. Security](#46-security)
+    - [4.7. Maintainability](#47-maintainability)
+    - [4.8. Compliance](#48-compliance)
+    - [4.9. Energy Efficiency](#49-energy-efficiency)
 
 </details>
 
@@ -60,16 +77,22 @@ This software will be developed using C++, a high-performance language that allo
 
 #### 1.3.4. Target Audience
 
+The target audience includes:
+- Logistics companies seeking efficient routing solutions.
+- Developers of navigation applications.
+- Researchers in transportation optimization.
+
 #### 1.3.5. Deliverables
 
-| Deliverable               | Purpose                                                                                                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Functional Specifications | Detailed documentation of the features used and their non-technical aspects.                                                                                                |
-| Technical Specifications  | Detailed documentation of the features used and their non-technical aspects.                                                                                                |
-| Data Validation Tool      | A utility to verify the integrity of the provided CSV file                                                                                                                  |
-| C++ Source Code           | The source code of the software program, including the shortest path algorithm and the HTTP server.                                                                         |
-| Test Suite                | Tests to validate correctness, performance, and compliance with the 10%                                                                                 approximation rule. |
-| Test Plan & Test Cases    | A set of scenarios validating the algorithm's performance and accuracy with a strategy to run test suite tests in the most accurate and efficient way.                      |
+| Deliverable               | Purpose                                                                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Functional Specifications | Detailed documentation of the features used and their non-technical aspects.                                                                           |
+| Technical Specifications  | Detailed documentation of the features used and their non-technical aspects.                                                                           |
+| Data Validation Tool      | A utility to verify the integrity of the provided CSV file.                                                                                            |
+| C++ Source Code           | The source code of the software program, including the shortest path algorithm and the HTTP server.                                                    |
+| Test Suite                | Tests to validate correctness, performance, and compliance with the 10% approximation rule.                                                            |
+| Test Plan & Test Cases    | A set of scenarios validating the algorithm's performance and accuracy with a strategy to run test suite tests in the most accurate and efficient way. |
+| User Manual               | The end-user documentation for the software.                                                                                                           |
 
 ### 1.4. Project Plan
 
@@ -79,12 +102,12 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.4.2. Milestones
 
-<!-- | Date       | Milestone                                        |
+| Date       | Milestone                                        |
 | ---------- | ------------------------------------------------ |
 | YYYY-MM-DD | Complete data validation.                        |
 | YYYY-MM-DD | Develop REST API and connect with the algorithm. |
 | YYYY-MM-DD | Conduct performance testing.                     |
-| YYYY-MM-DD | Launch MVP.                                      | -->
+| YYYY-MM-DD | Launch MVP.                                      |
 
 #### 1.4.3. Dependencies
 
@@ -96,9 +119,9 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 **Assumptions:**
 
-<!-- | Assumption           | Description                                        |
+| Assumption           | Description                                        |
 | -------------------- | -------------------------------------------------- |
-| Dataset availability | The required datasets are accessible and accurate. | -->
+| Dataset availability | The required datasets are accessible and accurate. |
 
 **Constraints:**
 
@@ -118,41 +141,133 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 ### 2.1. Personas
 
-- **Logistics Manager:** Needs to find efficient routes to reduce delivery times and costs.
+<!-- - **Logistics Manager:** Needs to find efficient routes to reduce delivery times and costs.
 - **Navigation App Developer:** Requires reliable algorithms to integrate into an existing app.
-- **Researcher:** Analyzes transportation networks for academic or policy-making purposes.
+- **Researcher:** Analyzes transportation networks for academic or policy-making purposes. -->
 
 ### 2.2. Use Cases
 
-<!-- | Use Case                  | Description                                                             |
+| Use Case                  | Description                                                             |
 | ------------------------- | ----------------------------------------------------------------------- |
 | UC01: Route Calculation   | User submits two landmarks, and the API returns the quickest path.      |
 | UC02: API Integration     | Developer integrates the API into an application for real-time routing. |
-| UC03: Performance Testing | System validates response times under heavy load conditions.            | -->
+| UC03: Performance Testing | System validates response times under heavy load conditions.            |
 
 ## 3. Functional Requirements
 
-### 3.X. User Workflow
+### 3.1. REST API Implementation
 
-<!-- 1. User submits a GET request to the API with two landmarks as parameters.
-2. The system calculates the quickest path based on the provided dataset.
-3. The API returns the result within 1 second, including the path duration and waypoints. -->
+#### 3.1.1. Route Description
+
+- **URL:** `http://127.0.0.1:8080/quickest_path`
+- **Method:** `GET`
+- **Headers:**
+  - `Content-Type`: `application/json`
+  - `Accept`: `application/json` or `application/xml`
+
+- **Query Parameters:**
+
+| Parameter Name | Type    | Expected value               |
+| -------------- | ------- | ---------------------------- |
+| format         | string  | "xml" or "json"              |
+| landmark_1     | integer | Value between 1 and 23947347 |
+| landmark_2     | integer | Value between 1 and 23947347 |
+
+#### 3.1.2. Reponse codes
+
+| Case                      | HTTP Code | Description                                                                        | Example Response                                                                                                                  |
+| ------------------------- | --------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Valid request             | 200       | Successfully returns the quickest path.                                            | `{ "time": 66, "steps": [ { "landmark": 322, "distance": 33 }, { "landmark": 323, "distance": 33 } ] }`                           |
+| Identical landmarks       | 200       | Returns response with `time` as `0` and empty steps.                               | `{ "time": 0, "steps": [] }`                                                                                                      |
+| Non-existent landmarks    | 404       | One or both landmarks are not found in the dataset.                                | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
+| Disconnected graph        | 404       | No path exists between the specified landmarks.                                    | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
+| Missing or invalid inputs | 400       | Request does not include valid `format`, `landmark_1` and `landmark_2` parameters. | `{ "error": { "code": 400, "message": "Missing or invalid parameters: 'format', 'landmark_1' and 'landmark_2' are required." } }` |
+| Unsupported output format | 406       | Client requests a format other than `application/json` or `application/xml`.       | `{ "error": { "code": 406, "message": "Requested format not supported. Use 'application/json' or 'application/xml'." } }`         |
+
+#### 3.1.3. Request Examples
+
+```http
+GET /quickest_path?format="json"&landmark_1=322&landmark_2=333 HTTP/1.1
+Host: 127.0.0.1:8080
+Accept: application/json
+```
+
+```http
+GET /quickest_path?format="xml"&landmark_1=3455&landmark_2=745647 HTTP/1.1
+Host: 127.0.0.1:8080
+Accept: application/xml
+```
+
+### 3.2. Data Verification Tool
+
+The data verification tool ensures the integrity and usability of the `USA-roads.csv` dataset. It performs the following checks and validations:
+
+#### 3.2.1. Features:
+
+| Feature                    | Description                                                                                               | Example error                                                                                    |
+| -------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Duplicate Connection Check | Identifies and flags any duplicate entries in the dataset to ensure unique connections between landmarks. | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                              |
+| Graph Validation           | Ensures the dataset forms a valid graph structure without any cycles (Directed Acyclic Graph - DAG).      | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`                   |
+| Connectivity Check         | Verifies that the graph is fully connected, ensuring there are paths between all pairs of landmarks.      | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                       |
+| Data format Validation     | Checks for malformed or invalid rows in the dataset.                                                      | `Invalid row format: Expected format 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322,invalid,33'.` |
+
+#### 3.2.3. Error Reporting:
+- Generates a detailed log file summarizing all detected issues for developer review.
+- Categorizes errors by type (e.g., duplicate connections, graph validation errors) for quick identification.
+
+#### 3.2.4. Output:
+- A summary report indicating whether the dataset passed or failed validation.
+- Suggestions for corrective actions, such as removing duplicates or fixing disconnected subgraphs.
+
+### 3.3. User Workflow
+
+```mermaid
+graph TD
+A[User submits GET request] --> B[API validates parameters]
+B --> C[System calculates quickest path]
+C --> D[Returns result in JSON/XML]
+```
 
 ## 4. Non-functional Requirements
 
-<!-- ### 4.X. Performance
+### 4.1. Performance
 
-- The API must handle up to 100 concurrent requests while maintaining response times under 1 second.
+   - The API must handle all queries within **1 second** on a typical laptop.
+   - The solution should support concurrent requests, ensuring scalability to handle at least 100 queries simultaneously without degraded performance.
 
-### 4.X. Scalability
+### 4.2. Scalability
 
-- The system should support future integration with additional datasets and geographic regions.
+   - The system must be designed to accommodate future expansion to larger datasets or additional geographic regions.
+   - Modular architecture to allow integration with third-party systems or additional functionality (e.g., live traffic data).
 
-### 4.X. Security
+### 4.3. Usability
 
-- The API must implement rate limiting and authentication to prevent misuse.
+   - API responses must support both **JSON** and **XML** formats to meet diverse client requirements.
+   - Clear API documentation to facilitate easy integration by developers.
 
-### 4.X. Usability
+### 4.4. Data Integrity
 
-- API documentation must be clear and easy to follow for developers. -->
+   - Include utilities for **graph validation** and **connectivity checks** to ensure dataset consistency before use.
 
+### 4.5. Reliability
+
+   - High availability of the service with proper error handling for invalid input or unexpected conditions.
+   - Ensure fault tolerance in the presence of incomplete or incorrect dataset entries.
+
+### 4.6. Security
+
+   - Implement basic security measures like **rate limiting**, **input validation**, and **HTTPS support** to prevent misuse and ensure data safety.
+   - Avoid exposing sensitive internal errors in the API response.
+
+### 4.7. Maintainability
+
+   - The codebase must follow best practices for readability and maintainability, with sufficient inline comments and comprehensive documentation.
+   - Support for future updates to algorithms or dataset formats.
+
+### 4.8. Compliance
+
+   - Adherence to RESTful API standards for consistency in design and implementation.
+
+### 4.9. Energy Efficiency
+
+   - Optimized computational resources to reduce power consumption during large-scale calculations, especially on personal devices like laptops.
