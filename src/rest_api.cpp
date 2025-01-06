@@ -14,6 +14,7 @@ struct Road {
     int time;
 };
 
+
 // Function to load roads from the CSV file
 std::vector<Road> loadRoads(const std::string &filename) {
     std::vector<Road> roads;
