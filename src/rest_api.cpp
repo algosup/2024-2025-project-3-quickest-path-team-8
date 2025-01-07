@@ -7,7 +7,7 @@ Usage: Compile the program, run it locally and query it as follows from a client
 
 GET http://localhost:8080/quickest_path?format=XXX&landmark_YYY=2&landmark_2=ZZZ
 
-where XXX is the format (json/xml), YYY the id of the first landmark and zzz the id of the second landmark.
+where XXX is the format (json/xml), YYY the ID of the first landmark and zzz the id of the second landmark.
 
 Output: The output consists of the time of the proposed path, followed by the path itself, which is serquence (list) of landmarks.
 
@@ -32,7 +32,8 @@ Output: The output consists of the time of the proposed path, followed by the pa
 /// Definition Section
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define DATA_CHOICE 1 // 1 for mock data, 2 for real data
+#define DATA_CHOICE 2 // 1 for mock data, 2 for real data
+#define DEBUG 1
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Global Declaration
@@ -144,6 +145,11 @@ std::pair<int, std::vector<int>> dijkstra(
         // Remove processed node from queue
         pq.pop();
 
+        // +++++ DEBUG: Print current node being processed +++++
+        #if DEBUG == 1
+            std::cout << "Processing node: " << currentNode << " with current distance: " << currentDistance << std::endl;
+        #endif
+
         // Stop processing if destination node is reached
         if (currentNode == end) break;
 
@@ -153,7 +159,7 @@ std::pair<int, std::vector<int>> dijkstra(
             // Retrieve neighbor node
             int neighborNode = neighbor.first;
 
-            // Retrieve  weight (travel time) of the edge to neighbor
+            // Retrieve weight (travel time) of the edge to neighbor
             int weight = neighbor.second;
 
             // Calculate new distance to neighbor
@@ -168,6 +174,11 @@ std::pair<int, std::vector<int>> dijkstra(
 
                 // Add neighbor to priority queue with updated distance
                 pq.push({newDistance, neighborNode});
+
+                // ++++++ DEBUG: Print updated distance for neighbor +++++
+                #if DEBUG == 1
+                    std::cout << "Updated distance for node: " << neighborNode << " to: " << newDistance << std::endl;
+                #endif
             }
         }
     }
@@ -205,7 +216,7 @@ int main() {
     #elif DATA_CHOICE == 2
 
         // Specify the name of CSV file containing road data
-        const std::string filename = "USA-roads.csv";
+        const std::string filename = "../USA-roads.csv";
 
     #endif
 
@@ -269,7 +280,7 @@ int main() {
 
             // Send an error message.
             res.set_content("Unsupported format", "text/plain");
-        }
+        } 
     });
 
     // Output a message indicating server is running
