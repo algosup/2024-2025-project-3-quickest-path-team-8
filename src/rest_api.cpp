@@ -33,7 +33,7 @@ Output: The output consists of the time of the proposed path, followed by the pa
 /// Definition Section
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define DATA_CHOICE 3 // 1 for mock data, 2 for real data // 3 for real data (sorted by landmark1)
+#define DATA_CHOICE 3 // 1 for Customer Mock Data, 2 for Unprocessed Customer dataset, 3 for Sorted Unprocessed Customer dataset
 #define DEBUG 1
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,17 +211,17 @@ int main() {
     // Define the filename based on the data choice
     #if DATA_CHOICE == 1
 
-        // Specify the name of CSV file containing road data
+        // Customer Mock Data
         const std::string filename = "val_de_loire_roads.csv";
 
     #elif DATA_CHOICE == 2
 
-        // Specify the name of CSV file containing road data
+        // Unprocessed Customer dataset
         const std::string filename = "../USA-roads.csv";
 
     #elif DATA_CHOICE == 3
     
-        // Specify the name of CSV file containing road data
+        // Sorted Unprocessed Customer dataset
         const std::string filename = "../USA-roads-sorted.csv";
 
     #endif
