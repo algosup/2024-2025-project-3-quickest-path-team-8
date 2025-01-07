@@ -32,6 +32,8 @@ Output: The output consists of the time of the proposed path, followed by the pa
 /// Definition Section
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define DATA_CHOICE 1 // 1 for mock data, 2 for real data
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Global Declaration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,8 +196,18 @@ std::pair<int, std::vector<int>> dijkstra(
 
 int main() {
 
-    // Specify the name of CSV file containing road data
-    const std::string filename = "val_de_loire_roads.csv";
+    // Define the filename based on the data choice
+    #if DATA_CHOICE == 1
+
+        // Specify the name of CSV file containing road data
+        const std::string filename = "val_de_loire_roads.csv";
+
+    #elif DATA_CHOICE == 2
+
+        // Specify the name of CSV file containing road data
+        const std::string filename = "USA-roads.csv";
+
+    #endif
 
     // Load roads from CSV file
     std::vector<Road> roads = loadRoads(filename);
