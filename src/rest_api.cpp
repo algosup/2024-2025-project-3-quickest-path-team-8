@@ -27,6 +27,7 @@ Output: The output consists of the time of the proposed path, followed by the pa
 #include <unordered_map>
 #include <queue>
 #include <limits>
+#include <chrono>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Definition Section
@@ -225,8 +226,18 @@ int main() {
 
     #endif
 
+    // Start timing the dataset loading
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Load roads from CSV file
     std::vector<Road> roads = loadRoads(filename);
+
+    // End timing the dataset loading
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+
+    // Print the time taken to load the dataset
+    std::cout << "Time taken to load dataset: " << duration.count() << " seconds" << std::endl;
 
     // Build the graph from loaded roads
     auto graph = buildGraph(roads);
