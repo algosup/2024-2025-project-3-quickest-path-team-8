@@ -1,7 +1,16 @@
 /*
 
-The goal of this program is to expose a REST API for calculating the shortest path between two given nodes
+The goal of this program is to expose a REST API for calculating the shortest path between two given landmarks
 on a Directed Acyclic Graph database of nodes representing a map of USA landmarks.
+
+Usage: Compile the program, run it locally and query it as follows from a client:
+
+GET http://localhost:8080/quickest_path?format=XXX&landmark_YYY=2&landmark_2=ZZZ
+
+where XXX is the format (json/xml), YYY the id of the first landmark and zzz the id of the second landmark.
+
+Output: The output consists of the time of the proposed path, followed by the path itself, which is serquence (list) of landmarks.
+
 
 */
 
