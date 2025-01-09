@@ -51,3 +51,5 @@ dist/
 *.class
 *.DS_Store
 Thumbs.db
+quickest_path/data/USA-roads_sorted.csv
+quickest_path/data/USA-roads.csv
