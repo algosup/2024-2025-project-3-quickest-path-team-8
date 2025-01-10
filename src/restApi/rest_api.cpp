@@ -33,7 +33,7 @@ Output: The output consists of the time of the proposed path, followed by the pa
 /// Definition Section
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define DATA_CHOICE 3 // 1 for Customer Mock Data, 2 for Unprocessed Customer dataset, 3 for Sorted Unprocessed Customer dataset
+#define DATA_CHOICE 1
 #define DEBUG 1
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,9 +96,16 @@ std::vector<Road> loadRoads(const std::string &filename) {
 std::vector<Road> loadRoadsFromBinary(const std::string &filename) {
     std::vector<Road> roads;
     std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "Error: Unable to open binary file " << filename << std::endl;
+        return roads;
+    }
     Road road;
     while (file.read(reinterpret_cast<char*>(&road), sizeof(Road))) {
         roads.push_back(road);
+    }
+    if (roads.empty()) {
+        std::cerr << "Error: No data read from binary file " << filename << std::endl;
     }
     return roads;
 }
@@ -126,6 +133,14 @@ std::unordered_map<int, std::vector<std::pair<int, int>>> buildGraph(const std::
 // Function to find the shortest path between two landmarks using Dijkstra's algorithm
 std::pair<int, std::vector<int>> dijkstra(
     const std::unordered_map<int, std::vector<std::pair<int, int>>> &graph, int start, int end) {
+
+    // Add error handling for case when start or end node is not in the graph
+    if (graph.find(start) == graph.end()) {
+        throw std::runtime_error("Start landmark not found in the graph");
+    }
+    if (graph.find(end) == graph.end()) {
+        throw std::runtime_error("End landmark not found in the graph");
+    }
 
     // Map to store shortest distances from start node
     std::unordered_map<int, int> distances;
@@ -221,19 +236,8 @@ int main() {
 
     // Define the filename based on the data choice
     #if DATA_CHOICE == 1
-
-        // Customer Mock Data
-        const std::string binFilename = "val_de_loire_roads.bin";
-
-    #elif DATA_CHOICE == 2
-
-        // Unprocessed Customer dataset
-        const std::string binFilename = "../USA-roads.bin";
-
-    #elif DATA_CHOICE == 3
     
-        // Sorted Unprocessed Customer dataset
-        const std::string binFilename = "extractedDataset.bin";
+        const std::string binFilename = "../../quickest_path/data/extractedDataset.bin";
 
     #endif
 
@@ -250,6 +254,23 @@ int main() {
     // Print the time taken to load the dataset
     std::cout << "Time taken to load dataset: " << duration.count() << " seconds" << std::endl;
 
+    // Validate the loaded data
+    if (roads.empty()) {
+        std::cerr << "Error: No roads loaded from the binary file." << std::endl;
+        return 1;
+    }
+
+    std::cout << "Number of roads loaded: " << roads.size() << std::endl;
+
+    // Print sample data 
+    std::cout << "Sample data:" << std::endl;
+    for (size_t i = 0; i < std::min(roads.size(), size_t(5)); ++i) {
+        std::cout << "Road " << i + 1 << ": "
+                  << "landmarkA = " << roads[i].landmarkA << ", "
+                  << "landmarkB = " << roads[i].landmarkB << ", "
+                  << "time = " << roads[i].time << std::endl;
+    }
+
     // Build the graph from loaded roads
     auto graph = buildGraph(roads);
 
@@ -258,56 +279,52 @@ int main() {
 
     // Define an endpoint to calculate the quickest path
     svr.Get("/quickest_path", [&](const httplib::Request &req, httplib::Response &res) {
+        try {
+            // Validate that all required query parameters are provided
+            if (!req.has_param("format") || !req.has_param("landmark_1") || !req.has_param("landmark_2")) {
+                res.status = 400;
+                res.set_content("Missing query parameters", "text/plain");
+                return;
+            }
 
-        // Validate that all required query parameters are provided
-        if (!req.has_param("format") || !req.has_param("landmark_1") || !req.has_param("landmark_2")) {
-            
-            // Set the HTTP status to 400 (Bad Request)
-            res.status = 400;
+            // Retrieve query parameters for request
+            std::string format = req.get_param_value("format");
+            int landmark_1 = std::stoi(req.get_param_value("landmark_1"));
+            int landmark_2 = std::stoi(req.get_param_value("landmark_2"));
 
-            // Send an error message
-            res.set_content("Missing query parameters", "text/plain"); 
-            return;
+            // Run Dijkstra's algorithm to find shortest path
+            auto [distance, path] = dijkstra(graph, landmark_1, landmark_2);
+
+            // Respond in JSON format if requested
+            if (format == "json") {
+                std::ostringstream response;
+                response << "{ \"distance\": " << distance << ", \"path\": [";
+                for (size_t i = 0; i < path.size(); ++i) {
+                    response << path[i];
+                    if (i < path.size() - 1) response << ", ";
+                }
+                response << "] }";
+                res.set_content(response.str(), "application/json");
+
+            // Respond in XML format if requested
+            } else if (format == "xml") {
+                std::ostringstream response;
+                response << "<response><distance>" << distance << "</distance><path>";
+                for (const auto &node : path) {
+                    response << "<landmark>" << node << "</landmark>";
+                }
+                response << "</path></response>";
+                res.set_content(response.str(), "application/xml");
+
+            // Handle unsupported formats
+            } else {
+                res.status = 400;
+                res.set_content("Unsupported format", "text/plain");
+            }
+        } catch (const std::exception &e) {
+            res.status = 500;
+            res.set_content(std::string("Internal Server Error: ") + e.what(), "text/plain");
         }
-
-        // Retrieve query parameters for request
-        std::string format = req.get_param_value("format");
-        int landmark_1 = std::stoi(req.get_param_value("landmark_1"));
-        int landmark_2 = std::stoi(req.get_param_value("landmark_2"));
-
-        // Run Dijkstra's algorithm to find shortest path
-        auto [distance, path] = dijkstra(graph, landmark_1, landmark_2);
-
-        // Respond in JSON format if requested
-        if (format == "json") {
-            std::ostringstream response;
-            response << "{ \"distance\": " << distance << ", \"path\": [";
-            for (size_t i = 0; i < path.size(); ++i) {
-                response << path[i];
-                if (i < path.size() - 1) response << ", ";
-            }
-            response << "] }";
-            res.set_content(response.str(), "application/json");
-
-        // Respond in XML format if requested
-        } else if (format == "xml") {
-            std::ostringstream response;
-            response << "<response><distance>" << distance << "</distance><path>";
-            for (const auto &node : path) {
-                response << "<landmark>" << node << "</landmark>";
-            }
-            response << "</path></response>";
-            res.set_content(response.str(), "application/xml");
-
-        // Handle unsupported formats
-        } else {
-
-            // Set the HTTP status to 400 (Bad Request)
-            res.status = 400;
-
-            // Send an error message.
-            res.set_content("Unsupported format", "text/plain");
-        } 
     });
 
     // Output a message indicating server is running
