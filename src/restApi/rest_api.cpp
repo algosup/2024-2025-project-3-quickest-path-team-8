@@ -34,7 +34,7 @@ Output: The output consists of the time of the proposed path, followed by the pa
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define DATA_CHOICE 1
-#define DEBUG 1
+#define DEBUG 0
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Global Declaration
@@ -96,17 +96,22 @@ std::vector<Road> loadRoads(const std::string &filename) {
 std::vector<Road> loadRoadsFromBinary(const std::string &filename) {
     std::vector<Road> roads;
     std::ifstream file(filename, std::ios::binary);
+
     if (!file) {
         std::cerr << "Error: Unable to open binary file " << filename << std::endl;
         return roads;
     }
+
     Road road;
+
     while (file.read(reinterpret_cast<char*>(&road), sizeof(Road))) {
         roads.push_back(road);
     }
+
     if (roads.empty()) {
         std::cerr << "Error: No data read from binary file " << filename << std::endl;
     }
+
     return roads;
 }
 
@@ -132,100 +137,109 @@ std::unordered_map<int, std::vector<std::pair<int, int>>> buildGraph(const std::
 
 // Function to find the shortest path between two landmarks using Dijkstra's algorithm
 std::pair<int, std::vector<int>> dijkstra(
+
     const std::unordered_map<int, std::vector<std::pair<int, int>>> &graph, int start, int end) {
 
-    // Add error handling for case when start or end node is not in the graph
-    if (graph.find(start) == graph.end()) {
-        throw std::runtime_error("Start landmark not found in the graph");
-    }
-    if (graph.find(end) == graph.end()) {
-        throw std::runtime_error("End landmark not found in the graph");
-    }
-
-    // Map to store shortest distances from start node
-    std::unordered_map<int, int> distances;
-
-    // Map to store previous node in shortest path for each node
-    std::unordered_map<int, int> previous;
-
-    // Min-heap priority queue to process nodes with smallest distance
-    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
-
-    // Initialize all distances to infinity for nodes in graph
-    for (const auto &node : graph) {
-        distances[node.first] = std::numeric_limits<int>::max();
-    }
-
-    // Set distance to the start node as zero
-    distances[start] = 0;
-
-    // Add start node to priority queue with a distance of zero
-    pq.push({0, start});
-
-    // Process nodes in priority queue until it becomes empty
-    while (!pq.empty()) {
-
-        // Retrieve node with the smallest distance from queue
-        int currentDistance = pq.top().first;
-        int currentNode = pq.top().second;
-
-        // Remove processed node from queue
-        pq.pop();
-
-        // +++++ DEBUG: Print current node being processed +++++
+        // Add error handling for case when start or end node is not in the graph
         #if DEBUG == 1
-            std::cout << "Processing node: " << currentNode << " with current distance: " << currentDistance << std::endl;
+
+            if (graph.find(start) == graph.end()) {
+                throw std::runtime_error("Start landmark not found in the graph");
+            }
+            if (graph.find(end) == graph.end()) {
+                throw std::runtime_error("End landmark not found in the graph");
+            }
+            
         #endif
 
-        // Stop processing if destination node is reached
-        if (currentNode == end) break;
+        // Map to store shortest distances from start node
+        std::unordered_map<int, int> distances;
 
-        // Iterate through all neighbors of current node
-        for (const auto &neighbor : graph.at(currentNode)) {
+        // Map to store previous node in shortest path for each node
+        std::unordered_map<int, int> previous;
 
-            // Retrieve neighbor node
-            int neighborNode = neighbor.first;
+        // Min-heap priority queue to process nodes with smallest distance
+        std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
 
-            // Retrieve weight (travel time) of the edge to neighbor
-            int weight = neighbor.second;
+        // Initialize all distances to infinity for nodes in graph
+        for (const auto &node : graph) {
+            distances[node.first] = std::numeric_limits<int>::max();
+        }
 
-            // Calculate new distance to neighbor
-            int newDistance = currentDistance + weight;
+        // Set distance to the start node as zero
+        distances[start] = 0;
 
-            // Update distance if a shorter path is found
-            if (newDistance < distances[neighborNode]) {
-                distances[neighborNode] = newDistance;
+        // Add start node to priority queue with a distance of zero
+        pq.push({0, start});
 
-                // Update previous node in path for neighbor
-                previous[neighborNode] = currentNode;
+        // Process nodes in priority queue until it becomes empty
+        while (!pq.empty()) {
 
-                // Add neighbor to priority queue with updated distance
-                pq.push({newDistance, neighborNode});
+            // Retrieve node with the smallest distance from queue
+            int currentDistance = pq.top().first;
+            int currentNode = pq.top().second;
 
-                // ++++++ DEBUG: Print updated distance for neighbor +++++
-                #if DEBUG == 1
-                    std::cout << "Updated distance for node: " << neighborNode << " to: " << newDistance << std::endl;
-                #endif
+            // Remove processed node from queue
+            pq.pop();
+
+            // +++++ DEBUG: Print current node being processed +++++
+            #if DEBUG == 1
+
+                std::cout << "Processing node: " << currentNode << " with current distance: " << currentDistance << std::endl;
+
+            #endif
+
+            // Stop processing if destination node is reached
+            if (currentNode == end) break;
+
+            // Iterate through all neighbors of current node
+            for (const auto &neighbor : graph.at(currentNode)) {
+
+                // Retrieve neighbor node
+                int neighborNode = neighbor.first;
+
+                // Retrieve weight (travel time) of the edge to neighbor
+                int weight = neighbor.second;
+
+                // Calculate new distance to neighbor
+                int newDistance = currentDistance + weight;
+
+                // Update distance if a shorter path is found
+                if (newDistance < distances[neighborNode]) {
+                    distances[neighborNode] = newDistance;
+
+                    // Update previous node in path for neighbor
+                    previous[neighborNode] = currentNode;
+
+                    // Add neighbor to priority queue with updated distance
+                    pq.push({newDistance, neighborNode});
+
+                    // ++++++ DEBUG: Print updated distance for neighbor +++++
+                    #if DEBUG == 1
+
+                        std::cout << "Updated distance for node: " << neighborNode << " to: " << newDistance << std::endl;
+
+                    #endif
+                }
             }
         }
-    }
 
-    // Construct shortest path by backtracking from end node
-    std::vector<int> path;
-    int current = end;
-    while (current != start) {
-        path.push_back(current);
-        current = previous[current];
-    }
+        // Construct shortest path by backtracking from end node
+        std::vector<int> path;
+        int current = end;
+        while (current != start) {
+            path.push_back(current);
+            current = previous[current];
+        }
 
-    // Add start node to path
-    path.push_back(start);
+        // Add start node to path
+        path.push_back(start);
 
-    // Reverse path to get correct order from start to end
-    std::reverse(path.begin(), path.end());
+        // Reverse path to get correct order from start to end
+        std::reverse(path.begin(), path.end());
 
-    // Return total distance and shortest path as a pair
-    return {distances[end], path};
+        // Return total distance and shortest path as a pair
+        return {distances[end], path};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -256,20 +270,26 @@ int main() {
 
     // Validate the loaded data
     if (roads.empty()) {
+
         std::cerr << "Error: No roads loaded from the binary file." << std::endl;
         return 1;
+
     }
 
     std::cout << "Number of roads loaded: " << roads.size() << std::endl;
 
-    // Print sample data 
-    std::cout << "Sample data:" << std::endl;
-    for (size_t i = 0; i < std::min(roads.size(), size_t(5)); ++i) {
-        std::cout << "Road " << i + 1 << ": "
-                  << "landmarkA = " << roads[i].landmarkA << ", "
-                  << "landmarkB = " << roads[i].landmarkB << ", "
-                  << "time = " << roads[i].time << std::endl;
-    }
+    // +++++ DEBUG: Print current node being processed +++++
+    #if DEBUG == 1
+
+        std::cout << "Sample data:" << std::endl;
+        for (size_t i = 0; i < std::min(roads.size(), size_t(5)); ++i) {
+            std::cout << "Road " << i + 1 << ": "
+                      << "landmarkA = " << roads[i].landmarkA << ", "
+                      << "landmarkB = " << roads[i].landmarkB << ", "
+                      << "time = " << roads[i].time << std::endl;
+        }
+
+    #endif
 
     // Build the graph from loaded roads
     auto graph = buildGraph(roads);
@@ -279,12 +299,16 @@ int main() {
 
     // Define an endpoint to calculate the quickest path
     svr.Get("/quickest_path", [&](const httplib::Request &req, httplib::Response &res) {
+
         try {
+
             // Validate that all required query parameters are provided
             if (!req.has_param("format") || !req.has_param("landmark_1") || !req.has_param("landmark_2")) {
+
                 res.status = 400;
                 res.set_content("Missing query parameters", "text/plain");
                 return;
+
             }
 
             // Retrieve query parameters for request
