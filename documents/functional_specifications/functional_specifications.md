@@ -13,6 +13,11 @@
       - [1.3.3. Scope](#133-scope)
       - [1.3.4. Target Audience](#134-target-audience)
       - [1.3.5. Deliverables](#135-deliverables)
+    - [1.4. Project Organization](#14-project-organization)
+      - [1.4.1. Project Representatives](#141-project-representatives)
+      - [1.4.2. Stakeholders](#142-stakeholders)
+      - [1.4.3. Project Roles](#143-project-roles)
+      - [1.4.4. Project Reviewers](#144-project-reviewers)
     - [1.4. Project Plan](#14-project-plan)
       - [1.4.1. Planning](#141-planning)
       - [1.4.2. Milestones](#142-milestones)
@@ -27,10 +32,11 @@
       - [3.1.1. Route Description](#311-route-description)
       - [3.1.2. Reponse codes](#312-reponse-codes)
       - [3.1.3. Request Examples](#313-request-examples)
+      - [3.1.4. Response examples](#314-response-examples)
     - [3.2. Data Verification Tool](#32-data-verification-tool)
-      - [3.2.1. Features:](#321-features)
-      - [3.2.3. Error Reporting:](#323-error-reporting)
-      - [3.2.4. Output:](#324-output)
+      - [3.2.1. Features](#321-features)
+      - [3.2.3. Error Reporting](#323-error-reporting)
+      - [3.2.4. Output](#324-output)
     - [3.3. User Workflow](#33-user-workflow)
   - [4. Non-functional Requirements](#4-non-functional-requirements)
     - [4.1. Performance](#41-performance)
@@ -80,19 +86,55 @@ This software will be developed using C++, a high-performance language that allo
 The target audience includes:
 - Logistics companies seeking efficient routing solutions.
 - Developers of navigation applications.
-- Researchers in transportation optimization.
+- Researchers in transportation optimization looking for new algorithms .
 
 #### 1.3.5. Deliverables
 
 | Deliverable               | Purpose                                                                                                                                                |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Functional Specifications | Detailed documentation of the features used and their non-technical aspects.                                                                           |
-| Technical Specifications  | Detailed documentation of the features used and their non-technical aspects.                                                                           |
+| Functional Specifications | Detailled documentation of the features used and their non-technical aspects.                                                                          |
+| Technical Specifications  | Detailled  documentation about the technical implementation of software                                                                                |
 | Data Validation Tool      | A utility to verify the integrity of the provided CSV file.                                                                                            |
 | C++ Source Code           | The source code of the software program, including the shortest path algorithm and the HTTP server.                                                    |
 | Test Suite                | Tests to validate correctness, performance, and compliance with the 10% approximation rule.                                                            |
 | Test Plan & Test Cases    | A set of scenarios validating the algorithm's performance and accuracy with a strategy to run test suite tests in the most accurate and efficient way. |
 | User Manual               | The end-user documentation for the software.                                                                                                           |
+
+### 1.4. Project Organization
+
+#### 1.4.1. Project Representatives
+
+| Full Name             | Occupation        | Links                                                                   |
+| --------------------- | ----------------- | ----------------------------------------------------------------------- |
+| Victor LEROY          | Project manager   | [LinkedIn](https://www.linkedin.com/in/victor-leroy-64baa3229/)         |
+| Antoine PREVOST       | Program manager   | [LinkedIn](https://www.linkedin.com/in/antoine-prevost-dev/)            |
+| David CUAHONTE CUEVAS | Tech lead         | [LinkedIn](https://www.linkedin.com/in/david-cuahonte-527781221/)       |
+| Thomas PLANCHARD      | Software engineer | [LinkedIn](https://www.linkedin.com/in/thomas-planchard-461782221/)     |
+| Mathis KAKAL          | Software engineer | [LinkedIn](https://www.linkedin.com/in/mathis-k-a239ba10a/)             |
+| Max BERNARD           | Quality assurance | [LinkedIn](https://www.linkedin.com/in/max-bernard-b77680210/)          |
+| Quentin CLEMENT       | Technical writer  | [LinkedIn](https://www.linkedin.com/in/quentin-cl%C3%A9ment-939110221/) |
+
+#### 1.4.2. Stakeholders
+
+| Role            | Representative | Expectations                                                           |
+| --------------- | -------------- | ---------------------------------------------------------------------- |
+| Client          | Franck JEANNIN | Finished project meeting requirements                                  |
+| School director | Franck JEANNIN | Clear documentation and management based on the skills learnt in class |
+
+#### 1.4.3. Project Roles
+
+| Role              | Description                                                                                                                                                          | Name                             |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Project Manager   | Responsible for the overall planning, execution, and success of the project.                                                                                         | Victor LEROY                     |
+| Program Manager   | Makes sure the project meets expectation. <br> Is in charge of design. Is responsible for writing the Functional Specifications                                      | Antoine PREVOST                  |
+| Tech Lead         | Makes the technical decision in the project. <br> Translates the Functional Specification into Technical Specifications. <br> Does code review.                      | David CUAHONTE CUEVAS            |
+| Software Engineer | Writes the code. <br> Writes documentation. <br> Participate in the technical design.                                                                                | Thomas PLANCHARD<br>Mathis KAKAL |
+| Quality Assurance | Tests all the functionalities of a product to find bugs and issues. <br> Document bugs and issues. <br> Write the test plan. <br> Check that issues have been fixed. | Max BERNARD                      |
+| Technical Writer  | Responsible for creating and maintaining the project's documentation.                                                                                                | Quentin CLEMENT                  |
+
+#### 1.4.4. Project Reviewers
+
+External project reviewers have been appointed by the project owner to review our specifications and provide us with feedback.
 
 ### 1.4. Project Plan
 
@@ -102,12 +144,9 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.4.2. Milestones
 
-| Date       | Milestone                                        |
-| ---------- | ------------------------------------------------ |
-| YYYY-MM-DD | Complete data validation.                        |
-| YYYY-MM-DD | Develop REST API and connect with the algorithm. |
-| YYYY-MM-DD | Conduct performance testing.                     |
-| YYYY-MM-DD | Launch MVP.                                      |
+| Date | Milestone |
+| ---- | --------- |
+|      |           |
 
 #### 1.4.3. Dependencies
 
@@ -169,7 +208,7 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 | Parameter Name | Type    | Expected value               |
 | -------------- | ------- | ---------------------------- |
-| format         | string  | "xml" or "json"              |
+| format         | string  | 'xml' or 'json'              |
 | landmark_1     | integer | Value between 1 and 23947347 |
 | landmark_2     | integer | Value between 1 and 23947347 |
 
@@ -187,22 +226,54 @@ Planning will follow an iterative approach, with each iteration focused on speci
 #### 3.1.3. Request Examples
 
 ```http
-GET /quickest_path?format="json"&landmark_1=322&landmark_2=333 HTTP/1.1
+GET /quickest_path?format=json&landmark_1=322&landmark_2=333 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/json
 ```
 
 ```http
-GET /quickest_path?format="xml"&landmark_1=3455&landmark_2=745647 HTTP/1.1
+GET /quickest_path?format=xml&landmark_1=3455&landmark_2=745647 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/xml
+```
+
+#### 3.1.4. Response examples
+
+**JSON format:**
+
+```json
+{
+  "time": 66,
+  "steps": [
+    { "landmark": 322, "distance": 33 },
+    { "landmark": 323, "distance": 33 }
+  ]
+}
+```
+
+**XML format:**
+
+```xml
+<response>
+  <time>66</time>
+  <steps>
+    <step>
+      <landmark>322</landmark>
+      <distance>33</distance>
+    </step>
+    <step>
+      <landmark>323</landmark>
+      <distance>33</distance>
+    </step>
+  </steps>
+</response>
 ```
 
 ### 3.2. Data Verification Tool
 
 The data verification tool ensures the integrity and usability of the `USA-roads.csv` dataset. It performs the following checks and validations:
 
-#### 3.2.1. Features:
+#### 3.2.1. Features
 
 | Feature                    | Description                                                                                               | Example error                                                                                    |
 | -------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
@@ -211,11 +282,13 @@ The data verification tool ensures the integrity and usability of the `USA-roads
 | Connectivity Check         | Verifies that the graph is fully connected, ensuring there are paths between all pairs of landmarks.      | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                       |
 | Data format Validation     | Checks for malformed or invalid rows in the dataset.                                                      | `Invalid row format: Expected format 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322,invalid,33'.` |
 
-#### 3.2.3. Error Reporting:
+#### 3.2.3. Error Reporting
+
 - Generates a detailed log file summarizing all detected issues for developer review.
 - Categorizes errors by type (e.g., duplicate connections, graph validation errors) for quick identification.
 
-#### 3.2.4. Output:
+#### 3.2.4. Output
+
 - A summary report indicating whether the dataset passed or failed validation.
 - Suggestions for corrective actions, such as removing duplicates or fixing disconnected subgraphs.
 
@@ -233,7 +306,6 @@ C --> D[Returns result in JSON/XML]
 ### 4.1. Performance
 
    - The API must handle all queries within **1 second** on a typical laptop.
-   - The solution should support concurrent requests, ensuring scalability to handle at least 100 queries simultaneously without degraded performance.
 
 ### 4.2. Scalability
 
