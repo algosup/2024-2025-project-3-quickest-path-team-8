@@ -158,7 +158,7 @@ The core requirements define the fundamental capabilities and components of the 
   - The returned route duration must not exceed the shortest possible duration by more than 10%.
 
 - **Concurrency Support**
-  - Design the algorithm to handle multiple concurrent queries with minimal impact on performance.
+  - The API will handle multiple concurrent queries with minimal impact on performance.
 
 ### Dataset Preprocessing
 
@@ -168,6 +168,7 @@ The core requirements define the fundamental capabilities and components of the 
     - Absence of duplicate connections.
     - Connectivity between all nodes.
     - Validity of the data structure.
+    - Detection of cycles in the graph.
 
 - **Precomputed Data**
   - Optionally, precompute frequently used paths to reduce runtime computation.
@@ -185,8 +186,7 @@ The core requirements define the fundamental capabilities and components of the 
 
 ### Scalability
 
-- The system must handle at least **100 concurrent requests** without performance degradation.
-- If the dataset grows (e.g., expanding from the United States to global coverage), the performance will need to degrade gracefully,  to maintain usability under the increased load.
+- If the dataset grows (e.g., expanding from the United States to global coverage), the performance will need to degrade gracefully, to maintain usability under the increased load.
 
 ### Resource Efficiency
 
@@ -199,7 +199,6 @@ The core requirements define the fundamental capabilities and components of the 
   - Burst traffic scenarios where a high number of requests are received within a short period.
   - Usage of large datasets exceeding typical operational sizes.
 - Detailed metrics, such as average response time, maximum response time, and failure rate, will be collected during testing to ensure compliance with performance benchmarks.
-
 
 ---
 
@@ -227,7 +226,7 @@ The core requirements define the fundamental capabilities and components of the 
 
 ### Error Detection and Reporting
 
-- A data validation tool will log all identified errors, categorized as:
+- A data validation tool will log all identified errors, categorized as specify the format:
 
   - **Format Errors:** Rows that fail to conform to the required format.
   - **Duplicate Entries:** Repeated connections.
