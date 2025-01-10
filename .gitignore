@@ -53,10 +53,7 @@ dist/
 Thumbs.db
 quickest_path/data/USA-roads_sorted.csv
 quickest_path/data/USA-roads.csv
-src/optimisedDataset.bin
-src/rest_api
-src/dts2bin
+src/restAPI/rest_api
+src/extraction/extract
 quickest_path/data/val_de_loire_roads.csv
 quickest_path/data/extractedDataset.bin
-src/extraction/extract
-src/restAPI/rest_api
