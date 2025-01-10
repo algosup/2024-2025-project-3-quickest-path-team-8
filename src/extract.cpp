@@ -93,12 +93,21 @@ void writeBinary(const std::string &filename, const std::vector<Road> &roads) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main() {
+    // Start measuring time
+    auto start = std::chrono::high_resolution_clock::now();
+    
     // Read the CSV file
     std::vector<Road> roads = readCSV("../quickest_path/data/USA-roads.csv");
 
     // Write to a binary file
-    writeBinary("optimisedDataset.bin", roads);
+    writeBinary("extractedDataset.bin", roads);
 
+    // Stop measuring time
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+
+    // Output the time taken
+    std::cout << "Time taken for extraction: " << duration.count() << " seconds" << std::endl;
     std::cout << "CSV data has been converted to binary format." << std::endl;
     return 0;
 }

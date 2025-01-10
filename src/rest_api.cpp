@@ -233,7 +233,7 @@ int main() {
     #elif DATA_CHOICE == 3
     
         // Sorted Unprocessed Customer dataset
-        const std::string binFilename = "optimisedDataset.bin";
+        const std::string binFilename = "extractedDataset.bin";
 
     #endif
 
