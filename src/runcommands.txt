@@ -1,6 +1,0 @@
-Manual start: g++ -o rest_api rest_api.cpp -std=c++17 && ./rest_api
-
-Install C++ extension pack
-Select Clang++ (APPLE CLANG v16.0.0 / clang-1600.0.26.3)
-
-We decided to optimise the algorithm specifically for M3 Macbook airs
