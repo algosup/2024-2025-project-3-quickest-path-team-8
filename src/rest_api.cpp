@@ -92,6 +92,17 @@ std::vector<Road> loadRoads(const std::string &filename) {
     return roads;
 }
 
+/// Function to load road data from a binary file
+std::vector<Road> loadRoadsFromBinary(const std::string &filename) {
+    std::vector<Road> roads;
+    std::ifstream file(filename, std::ios::binary);
+    Road road;
+    while (file.read(reinterpret_cast<char*>(&road), sizeof(Road))) {
+        roads.push_back(road);
+    }
+    return roads;
+}
+
 /// Function to build a graph from the list of roads
 std::unordered_map<int, std::vector<std::pair<int, int>>> buildGraph(const std::vector<Road> &roads) {
 
@@ -212,25 +223,25 @@ int main() {
     #if DATA_CHOICE == 1
 
         // Customer Mock Data
-        const std::string filename = "val_de_loire_roads.csv";
+        const std::string binFilename = "val_de_loire_roads.bin";
 
     #elif DATA_CHOICE == 2
 
         // Unprocessed Customer dataset
-        const std::string filename = "../USA-roads.csv";
+        const std::string binFilename = "../USA-roads.bin";
 
     #elif DATA_CHOICE == 3
     
         // Sorted Unprocessed Customer dataset
-        const std::string filename = "../USA-roads-sorted.csv";
+        const std::string binFilename = "optimisedDataset.bin";
 
     #endif
 
     // Start timing the dataset loading
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Load roads from CSV file
-    std::vector<Road> roads = loadRoads(filename);
+    // Load roads from binary file
+    std::vector<Road> roads = loadRoadsFromBinary(binFilename);
 
     // End timing the dataset loading
     auto end = std::chrono::high_resolution_clock::now();
