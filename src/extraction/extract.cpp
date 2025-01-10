@@ -8,6 +8,8 @@ Place the CSV file in the quickest_path/data directory and run the program.
 
 Output: The program will output "CSV data has been converted to binary format." to the console and create a binary file in the same directory as the CSV file.
 
+TODO: If the size of the dataset is known and fixed, std::array<Road, N> could be considered for further optimization.
+
 */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,12 +30,14 @@ Output: The program will output "CSV data has been converted to binary format." 
 /// Global Declaration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Define a structure to hold road data
+// Ensure the structure is packed tightly without padding
+#pragma pack(push, 1)
 struct Road {
     int landmarkA;
     int landmarkB;
     int time;
 };
+#pragma pack(pop)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Function Declaration
@@ -78,14 +82,8 @@ void writeBinary(const std::string &filename, const std::vector<Road> &roads) {
     // Open output file for writing
     std::ofstream file(filename, std::ios::binary);
 
-    // For each road in the vector
-    for (const auto &road : roads) {
-
-        // Write the road data to the file
-        file.write(reinterpret_cast<const char*>(&road.landmarkA), sizeof(road.landmarkA));
-        file.write(reinterpret_cast<const char*>(&road.landmarkB), sizeof(road.landmarkB));
-        file.write(reinterpret_cast<const char*>(&road.time), sizeof(road.time));
-    }
+    // Write the entire vector to the file
+    file.write(reinterpret_cast<const char*>(roads.data()), roads.size() * sizeof(Road));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +98,7 @@ int main() {
     std::vector<Road> roads = readCSV("../quickest_path/data/USA-roads.csv");
 
     // Write to a binary file
-    writeBinary("extractedDataset.bin", roads);
+    writeBinary("../../quickest_path/data/extractedDataset.bin", roads);
 
     // Stop measuring time
     auto end = std::chrono::high_resolution_clock::now();
