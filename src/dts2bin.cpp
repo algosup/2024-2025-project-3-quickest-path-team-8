@@ -4,7 +4,7 @@ The goal of this program is to experiment optimising loading time of a dataset b
 
 Usage: Compile the program and wait for it to output "CSV data has been converted to binary format.".
 
-Place the CSV file in the quickes_path/data directory and run the program.
+Place the CSV file in the quickest_path/data directory and run the program.
 
 Output: The program will output "CSV data has been converted to binary format." to the console and create a binary file in the same directory as the CSV file.
 

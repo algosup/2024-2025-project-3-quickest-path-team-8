@@ -54,3 +54,4 @@ Thumbs.db
 quickest_path/data/USA-roads_sorted.csv
 quickest_path/data/USA-roads.csv
 src/optimisedDataset.bin
+src/rest_api
