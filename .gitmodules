@@ -1,0 +1,3 @@
+[submodule "quickest_path/googletest"]
+	path = quickest_path/googletest
+	url = https://github.com/google/googletest.git
