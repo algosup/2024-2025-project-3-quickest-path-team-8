@@ -4,9 +4,11 @@
 
 ༺☆༻____________☾✧ ✩ ✧☽____________༺☆༻
 
+    STEP: 2/5 - EXTRACTION
+    The files in the "extraction" directory are responsible for converting the CSV data to binary format for faster processing.
+    
     Input : USA-roads.csv
     Output : extractedDataset.bin
-    The goal of this program is to convert the CSV data to binary format for faster processing.
 
 */
 
