@@ -5,11 +5,12 @@ on:
     branches:
       - main
       - dev
+      - CD/CI
   pull_request:
     branches:
       - main
       - dev
-
+      - CD/CI
 jobs:
   build:
     runs-on: ubuntu-latest
