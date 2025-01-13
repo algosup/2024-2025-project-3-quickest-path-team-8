@@ -26,6 +26,9 @@
       - [1.4.5. Risks/Mitigation](#145-risksmitigation)
   - [2. Personas and Use Cases](#2-personas-and-use-cases)
     - [2.1. Personas](#21-personas)
+      - [2.1.1. Alex](#211-alex)
+      - [2.1.2. Emily](#212-emily)
+      - [2.1.3. Dr. Nair](#213-dr-nair)
     - [2.2. Use Cases](#22-use-cases)
   - [3. Functional Requirements](#3-functional-requirements)
     - [3.1. REST API Implementation](#31-rest-api-implementation)
@@ -86,7 +89,7 @@ This software will be developed using C++, a high-performance language that allo
 The target audience includes:
 - Logistics companies seeking efficient routing solutions.
 - Developers of navigation applications.
-- Researchers in transportation optimization looking for new algorithms .
+- Researchers in transportation optimization looking for new algorithms.
 
 #### 1.3.5. Deliverables
 
@@ -180,17 +183,25 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 ### 2.1. Personas
 
-<!-- - **Logistics Manager:** Needs to find efficient routes to reduce delivery times and costs.
-- **Navigation App Developer:** Requires reliable algorithms to integrate into an existing app.
-- **Researcher:** Analyzes transportation networks for academic or policy-making purposes. -->
+#### 2.1.1. Alex
+
+![Alex](./images/alex.png)
+
+#### 2.1.2. Emily
+
+![Emily](./images/emily.png)
+
+#### 2.1.3. Dr. Nair
+
+![Dr. Nair](./images/doctor_nair.png)
 
 ### 2.2. Use Cases
 
-| Use Case                  | Description                                                             |
-| ------------------------- | ----------------------------------------------------------------------- |
-| UC01: Route Calculation   | User submits two landmarks, and the API returns the quickest path.      |
-| UC02: API Integration     | Developer integrates the API into an application for real-time routing. |
-| UC03: Performance Testing | System validates response times under heavy load conditions.            |
+| Use Case            | Description                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Route Calculation   | User submits two landmarks, and the API returns the quickest path between them in order to transport themselves. |
+| API Integration     | Developer integrates the API into an application for real-time routing between two landmarks via their ID.       |
+| Performance Testing | System validates response times under heavy load conditions.                                                     |
 
 ## 3. Functional Requirements
 
@@ -208,7 +219,6 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 | Parameter Name | Type    | Expected value               |
 | -------------- | ------- | ---------------------------- |
-| format         | string  | 'xml' or 'json'              |
 | landmark_1     | integer | Value between 1 and 23947347 |
 | landmark_2     | integer | Value between 1 and 23947347 |
 
@@ -221,25 +231,24 @@ Planning will follow an iterative approach, with each iteration focused on speci
 | Non-existent landmarks    | 404       | One or both landmarks are not found in the dataset.                                | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
 | Disconnected graph        | 404       | No path exists between the specified landmarks.                                    | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
 | Missing or invalid inputs | 400       | Request does not include valid `format`, `landmark_1` and `landmark_2` parameters. | `{ "error": { "code": 400, "message": "Missing or invalid parameters: 'format', 'landmark_1' and 'landmark_2' are required." } }` |
-| Unsupported output format | 406       | Client requests a format other than `application/json` or `application/xml`.       | `{ "error": { "code": 406, "message": "Requested format not supported. Use 'application/json' or 'application/xml'." } }`         |
 
 #### 3.1.3. Request Examples
 
 ```http
-GET /quickest_path?format=json&landmark_1=322&landmark_2=333 HTTP/1.1
+GET /quickest_path?landmark_1=322&landmark_2=333 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/json
 ```
 
 ```http
-GET /quickest_path?format=xml&landmark_1=3455&landmark_2=745647 HTTP/1.1
+GET /quickest_path?landmark_1=3455&landmark_2=745647 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/xml
 ```
 
 #### 3.1.4. Response examples
 
-**JSON format:**
+**JSON Example Response:**
 
 ```json
 {
@@ -251,7 +260,7 @@ Accept: application/xml
 }
 ```
 
-**XML format:**
+**XML Example Response:**
 
 ```xml
 <response>
