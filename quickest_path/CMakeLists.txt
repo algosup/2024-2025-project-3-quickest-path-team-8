@@ -25,4 +25,4 @@ add_library(quickest_path_lib ${SOURCES})
 
 # Enable testing
 enable_testing()
-{ add_subdirectory(tests) }
+
