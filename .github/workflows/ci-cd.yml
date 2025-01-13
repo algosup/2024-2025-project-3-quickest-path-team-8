@@ -29,6 +29,7 @@ jobs:
     # Step 3: Fetch and install Google Test
     - name: Fetch Google Test
       run: |
+        cd quickest_path
         mkdir -p googletest
         cd googletest
         wget https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
@@ -38,17 +39,9 @@ jobs:
         make
         sudo make install # Installs Google Test globally
 
-    # Step Debug: Debug directory structure
-    - name: Debug Directory
-      run: |
-        pwd
-        ls -la
-
-
     # Step 4: Build the project
     - name: Build the project
       run: |
-        cd quickest_path
         mkdir build
         cd build
         cmake ..
