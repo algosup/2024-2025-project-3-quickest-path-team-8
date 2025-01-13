@@ -24,7 +24,7 @@
     - [Integrity Assurance](#integrity-assurance)
   - [5. System Architecture](#5-system-architecture)
     - [5.1 Technology Stack](#51-technology-stack)
-    - [5.2 REST API Design](#52-rest-api-design)
+  - [5.2 REST API Design](#52-rest-api-design)
     - [5.3 Algorithm Design](#53-algorithm-design)
   - [6. Key Features and Functions](#6-key-features-and-functions)
     - [6.1 Path Calculation](#61-path-calculation)
@@ -95,60 +95,20 @@ The core requirements define the fundamental capabilities and components of the 
 
 ### REST API Implementation
 
-- **Endpoint Description**
+The REST API provides external access to the quickest path calculation functionality. It supports the following key capabilities:
 
-  - **Base URL:** `http://127.0.0.1:8080/quickest_path`
-  - **HTTP Method:** `GET`
-  - **Supported Response Formats:** JSON, XML.
+- **Endpoint**: A single `GET` endpoint at `http://127.0.0.1:8080/quickest_path`.
+- **Inputs**:
+  - IDs of the source and destination landmarks.
+  - Desired output format (`json` or `xml`).
+- **Outputs**:
+  - Travel time and an ordered list of landmarks in the path.
+- **Error Handling**:
+  - Return appropriate HTTP error codes for invalid inputs, unsupported formats, or unreachable nodes.
+- **Performance Requirements**:
+  - Must handle all valid queries within **1 second**.
 
-- **Query Parameters**  
-   The endpoint accepts the following parameters:
-
-  | Parameter Name | Type    | Expected Value      | Description                          |
-  | -------------- | ------- | ------------------- | ------------------------------------ |
-  | `format`       | String  | `"json"` or `"xml"` | Specifies the desired output format. |
-  | `landmark_1`   | Integer | 1 to 24,000,000+    | ID of the starting landmark.         |
-  | `landmark_2`   | Integer | 1 to 24,000,000+    | ID of the destination landmark.      |
-
-- **Output Specification**  
-   The API provides route information with the following structure:
-
-  - **JSON Format Example:**
-    ```json
-    {
-      "time": 66,
-      "steps": [
-        { "landmark": 322, "distance": 33 },
-        { "landmark": 323, "distance": 33 }
-      ]
-    }
-    ```
-  - **XML Format Example:**
-    ```xml
-    <response>
-      <time>66</time>
-      <steps>
-        <step>
-          <landmark>322</landmark>
-          <distance>33</distance>
-        </step>
-        <step>
-          <landmark>323</landmark>
-          <distance>33</distance>
-        </step>
-      </steps>
-    </response>
-    ```
-
-- **Error Handling**  
-   The API must handle invalid or erroneous inputs:
-
-  | Case                      | HTTP Code | Description                                             |
-  | ------------------------- | --------- | ------------------------------------------------------- |
-  | Missing parameters        | 400       | Invalid or incomplete query parameters.                 |
-  | Unsupported output format | 406       | Format not supported (e.g., anything besides JSON/XML). |
-  | Disconnected graph        | 404       | No route exists between the provided landmarks.         |
-  | Nonexistent landmarks     | 404       | One or both landmarks are not present in the dataset.   |
+---
 
 ### Algorithm Implementation
 
@@ -249,14 +209,146 @@ The core requirements define the fundamental capabilities and components of the 
 
 ![diagram](/documents/images/dataValidation.png)
 
-
 ## 5. System Architecture
+
+The system architecture defines the technical blueprint for implementing the software.
+
+---
 
 ### 5.1 Technology Stack
 
-### 5.2 REST API Design
+The following technologies and tools will be used to implement the system:
+
+- **Programming Language**:
+
+  - **C++**: Selected for its high performance and fine-grained control over memory, essential for handling large datasets and optimizing computational tasks.
+
+- **HTTP Server Framework**:
+
+  - Lightweight libraries such as **Crow**, **Pistache**, or **cpp-httplib** will be used to implement the REST API. These libraries support multithreaded request handling, ensuring concurrency for high API throughput.
+
+- **Build System**:
+
+  - **CMake**: Facilitates cross-platform build configuration and dependency management, ensuring compatibility and efficiency.
+
+- **Unit and Performance Testing**:
+
+  - **Google Test (GTest)**: For unit testing of algorithms, API logic, and utility functions.
+  - **Google Benchmark**: For microbenchmarking performance-critical operations, such as shortest path calculations.
+
+- **API Testing Tools**:
+
+  - **Postman**: For manual API testing to validate inputs, outputs, and error handling.
+  - **Apache JMeter**: For simulating concurrent requests and load testing the REST API.
+
+- **Data Preprocessing**:
+  - Custom tools written in C++ or Python to perform dataset validation and preprocessing before integration into the main application.
+
+---
+
+## 5.2 REST API Design
+
+The REST API handles requests for the quickest path between landmarks. Design considerations include:
+
+- **Endpoint Details**:
+
+  - **Base URL**: `http://127.0.0.1:8080/quickest_path`
+  - **Parameters**:
+    - `landmark_1`: Source landmark ID.
+    - `landmark_2`: Destination landmark ID.
+    - `format`: Desired output format (`json` or `xml`).
+
+- **Response Format Examples**:
+
+  - **JSON Format Example**:
+    ```json
+    {
+      "time": 66,
+      "steps": [
+        { "landmark": 322, "distance": 33 },
+        { "landmark": 323, "distance": 33 }
+      ]
+    }
+    ```
+  - **XML Format Example**:
+    ```xml
+    <response>
+      <time>66</time>
+      <steps>
+        <step>
+          <landmark>322</landmark>
+          <distance>33</distance>
+        </step>
+        <step>
+          <landmark>323</landmark>
+          <distance>33</distance>
+        </step>
+      </steps>
+    </response>
+    ```
+
+- **Concurrency**:
+
+  - The HTTP server library ensures scalability by handling concurrent requests using thread pooling or asynchronous processing.
+
+- **Serialization**:
+
+  - JSON and XML responses are serialized using lightweight libraries (e.g., `nlohmann::json`).
+
+- **Error Handling**  
+   The API must handle invalid or erroneous inputs:
+
+  | Case                      | HTTP Code | Description                                             |
+  | ------------------------- | --------- | ------------------------------------------------------- |
+  | Missing parameters        | 400       | Invalid or incomplete query parameters.                 |
+  | Unsupported output format | 406       | Format not supported (e.g., anything besides JSON/XML). |
+  | Disconnected graph        | 404       | No route exists between the provided landmarks.         |
+  | Nonexistent landmarks     | 404       | One or both landmarks are not present in the dataset.   |
+
+- **Performance Considerations**:
+  - Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
 
 ### 5.3 Algorithm Design
+
+The algorithm computes the quickest path between two landmarks. Its design focuses on efficiency, accuracy, and scalability:
+
+- **Core Algorithm**:
+
+  - **A\***: Selected for its heuristic-driven approach, which optimizes performance while maintaining compliance with the 10% approximation rule.
+    - **Heuristic Function**: Travel time between nodes (landmarks) is used as the heuristic to guide the search efficiently.
+
+- **Graph Representation**:
+
+  - The dataset will be represented using an **adjacency list**. This structure is memory-efficient and allows quick traversal of connections between landmarks.
+
+- **Supporting Data Structures**:
+
+  - **Priority Queue**: A min-heap will be used to efficiently manage nodes during traversal, enabling fast extraction of the next optimal node.
+
+- **Preprocessing**:
+
+  - A dataset preprocessing step will validate and clean the data before usage:
+    - Remove duplicate connections.
+    - Verify graph connectivity.
+    - Detect and handle cycles if applicable.
+
+- **Complexity**:
+
+  - **Time Complexity**:  
+    `O((V + E) * log(V))`  
+    where `V` is the number of vertices (landmarks) and `E` is the number of edges (connections).
+  - **Space Complexity**:  
+    `O(V + E)` for storing the graph in an adjacency list.
+
+- **Concurrency**:
+
+  - The algorithm processes one query at a time. However, the REST API ensures multiple queries can be handled concurrently by distributing them across available threads.
+
+- **Edge Cases**:
+  - Identical `landmark_1` and `landmark_2`: Return a time of `0` with an empty path.
+  - Nonexistent landmarks or unreachable nodes: Handled by the REST API with appropriate error responses.
+
+---
 
 ## 6. Key Features and Functions
 
