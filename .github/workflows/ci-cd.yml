@@ -32,8 +32,8 @@ jobs:
         mkdir -p googletest
         cd googletest
         wget https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
-        unzip release-1.15.2.zip
-        cd googletest-release-1.15.2
+        unzip v1.15.2.zip
+        cd googletest-v1.15.2
         cmake .
         make
         sudo make install # Installs Google Test globally
