@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/utils.h"
+#include "../include/utils.h"
 
 // Sample test for a function in utils.h
 TEST(UtilsTest, AddFunctionWorks) {

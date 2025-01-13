@@ -15,26 +15,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Check out the code
+    # Step 1: Check out the code
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Install dependencies
+    # Step 2: Install dependencies
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake make g++ # Add any additional dependencies
+        sudo apt-get install -y cmake make g++ wget unzip
 
-    # Build the project
-    - name: Build
+    # Step 3: Fetch and install Google Test
+    - name: Fetch Google Test
+      run: |
+        mkdir -p googletest
+        cd googletest
+        wget https://github.com/google/googletest/archive/refs/tags/release-1.13.0.zip
+        unzip release-1.13.0.zip
+        cd googletest-release-1.13.0
+        cmake .
+        make
+        sudo make install # Installs Google Test globally
+
+    # Step 4: Build the project
+    - name: Build the project
       run: |
         mkdir build
         cd build
         cmake ..
         make
 
-    # Run tests (if applicable)
+    # Step 5: Run tests
     - name: Run Tests
       run: |
         cd build
-        ctest # Adjust based on your testing framework
+        ctest --output-on-failure
