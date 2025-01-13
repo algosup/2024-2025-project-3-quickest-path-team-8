@@ -104,7 +104,7 @@ int main() {
     std::vector<Road> roads = readCSV("../../quickest_path/data/USA-roads.csv");
 
     // Write to a binary file
-    writeBinary("../../quickest_path/data/extractedDataset.bin", roads);
+    writeBinary("../data/extractedDataset.bin", roads);
 
     // Stop measuring time
     auto end = std::chrono::high_resolution_clock::now();
