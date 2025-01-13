@@ -25,9 +25,4 @@ add_library(quickest_path_lib ${SOURCES})
 
 # Enable testing
 enable_testing()
-
-# Add Google Test as a subdirectory
-add_subdirectory(googletest)
-
-# Add the tests subdirectory
-add_subdirectory(tests)
+{ add_subdirectory(tests) }
