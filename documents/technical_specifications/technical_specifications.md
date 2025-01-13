@@ -24,7 +24,7 @@
     - [Integrity Assurance](#integrity-assurance)
   - [5. System Architecture](#5-system-architecture)
     - [5.1 Technology Stack](#51-technology-stack)
-  - [5.2 REST API Design](#52-rest-api-design)
+    - [5.2 REST API Design](#52-rest-api-design)
     - [5.3 Algorithm Design](#53-algorithm-design)
   - [6. Key Features and Functions](#6-key-features-and-functions)
     - [6.1 Path Calculation](#61-path-calculation)
@@ -141,7 +141,8 @@ The REST API provides external access to the quickest path calculation functiona
 
 ### Response Time
 
-- The API must respond to all valid queries within **1 second** on a typical laptop, even when handling datasets with millions of nodes and connections.
+- The API must respond to all vali
+- d queries within **1 second** on a typical laptop, even when handling datasets with millions of nodes and connections.
 - Queries to landmarks with no valid path should also return responses within the same time frame.
 
 ### Scalability
@@ -225,7 +226,7 @@ The following technologies and tools will be used to implement the system:
 
 - **HTTP Server Framework**:
 
-  - Lightweight libraries such as **Crow**, **Pistache**, or **cpp-httplib** will be used to implement the REST API. These libraries support multithreaded request handling, ensuring concurrency for high API throughput.
+  - The lightweight library **cpp-httplib** will be used to implement the REST API. This library supports multithreaded request handling, ensuring concurrency for high API throughput.
 
 - **Build System**:
 
@@ -244,9 +245,12 @@ The following technologies and tools will be used to implement the system:
 - **Data Preprocessing**:
   - Custom tools written in C++ or Python to perform dataset validation and preprocessing before integration into the main application.
 
+- **Development Machine**:
+  - Development and testing will be performed on a **MacBook Air with an Apple M3 chip**, ensuring compatibility with typical modern hardware.
+
 ---
 
-## 5.2 REST API Design
+### 5.2 REST API Design
 
 The REST API handles requests for the quickest path between landmarks. Design considerations include:
 
@@ -254,9 +258,15 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
   - **Base URL**: `http://127.0.0.1:8080/quickest_path`
   - **Parameters**:
-    - `landmark_1`: Source landmark ID.
-    - `landmark_2`: Destination landmark ID.
+    - `landmark_1`: Source landmark ID (integer).
+    - `landmark_2`: Destination landmark ID (integer).
     - `format`: Desired output format (`json` or `xml`).
+
+  - **Input Structure**:
+    All inputs must be provided as query parameters in the URL. Example request:  
+    ```
+    GET /quickest_path?landmark_1=100&landmark_2=200&format=json
+    ```
 
 - **Response Format Examples**:
 
@@ -308,6 +318,8 @@ The REST API handles requests for the quickest path between landmarks. Design co
 - **Performance Considerations**:
   - Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
 
+---
+
 ### 5.3 Algorithm Design
 
 The algorithm computes the quickest path between two landmarks. Its design focuses on efficiency, accuracy, and scalability:
@@ -334,11 +346,17 @@ The algorithm computes the quickest path between two landmarks. Its design focus
 
 - **Complexity**:
 
-  - **Time Complexity**:  
-    `O((V + E) * log(V))`  
-    where `V` is the number of vertices (landmarks) and `E` is the number of edges (connections).
-  - **Space Complexity**:  
-    `O(V + E)` for storing the graph in an adjacency list.
+  - **Time Complexity**:
+    \[
+    O((V + E) \cdot \log(V))
+    \]
+    Where \(V\) is the number of vertices (landmarks) and \(E\) is the number of edges (connections).
+
+  - **Space Complexity**:
+    \[
+    O(V + E)
+    \]
+    For storing the graph in an adjacency list.
 
 - **Concurrency**:
 
@@ -349,6 +367,7 @@ The algorithm computes the quickest path between two landmarks. Its design focus
   - Nonexistent landmarks or unreachable nodes: Handled by the REST API with appropriate error responses.
 
 ---
+
 
 ## 6. Key Features and Functions
 
