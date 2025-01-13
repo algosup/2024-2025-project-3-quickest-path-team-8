@@ -38,6 +38,13 @@ jobs:
         make
         sudo make install # Installs Google Test globally
 
+    # Step Debug: Debug directory structure
+    - name: Debug Directory
+      run: |
+        pwd
+        ls -la
+
+
     # Step 4: Build the project
     - name: Build the project
       run: |
