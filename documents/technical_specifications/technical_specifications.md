@@ -26,10 +26,26 @@
     - [5.1 Technology Stack](#51-technology-stack)
     - [5.2 REST API Design](#52-rest-api-design)
     - [5.3 Algorithm Design](#53-algorithm-design)
-  - [6. Key Features and Functions](#6-key-features-and-functions)
     - [6.1 Path Calculation](#61-path-calculation)
+      - [Overview](#overview)
+      - [Workflow](#workflow)
+      - [Optimization Techniques](#optimization-techniques)
+      - [Concurrency Handling](#concurrency-handling)
+      - [Edge Cases](#edge-cases)
+      - [Diagram](#diagram)
     - [6.2 Data Validation Tool](#62-data-validation-tool)
+      - [Overview](#overview-1)
+      - [Workflow](#workflow-1)
+      - [Correction Mechanisms](#correction-mechanisms)
+      - [Efficiency Measures](#efficiency-measures)
+      - [Diagram](#diagram-1)
     - [6.3 Performance Testing](#63-performance-testing)
+      - [Overview](#overview-2)
+      - [Key Tests](#key-tests)
+      - [Automation](#automation)
+      - [Metrics Collected](#metrics-collected)
+      - [Scalability Testing](#scalability-testing)
+      - [Diagram](#diagram-2)
   - [7. Non-Functional Requirements](#7-non-functional-requirements)
     - [7.1 Response Time](#71-response-time)
     - [7.2 Approximation Heuristic](#72-approximation-heuristic)
@@ -369,13 +385,160 @@ The algorithm computes the quickest path between two landmarks. Its design focus
 
 ---
 
-## 6. Key Features and Functions
-
 ### 6.1 Path Calculation
+
+#### Overview
+
+The path calculation system is the core functionality of the project, leveraging the A* algorithm to compute the quickest path between two landmarks. A* is chosen for its balance of performance and accuracy, with a heuristic-driven approach that ensures compliance with the 10% approximation rule.
+
+#### Workflow
+
+1. **Initialization**:
+
+   - The graph is represented as an adjacency list, derived from the dataset during preprocessing. Each node (landmark) is connected to its neighbors with associated travel times.
+   - The priority queue (min-heap) is initialized with the starting landmark (`landmark_1`) and its heuristic value (estimated travel time to `landmark_2`).
+
+2. **Exploration**:
+
+   - At each step, the node with the lowest estimated cost is dequeued, and its neighbors are examined.
+   - The travel time to each neighbor is updated if a shorter path is found, and the neighbor is added to the queue with the updated cost.
+
+3. **Heuristic Evaluation**:
+
+   - The heuristic function estimates the travel time to the destination (`landmark_2`) based on available data, ensuring efficient exploration.
+
+4. **Termination**:
+   - The algorithm terminates when the destination node is dequeued or the priority queue is empty (indicating no valid path).
+
+#### Optimization Techniques
+
+- **Graph Pruning**:
+  - During preprocessing, unnecessary nodes and connections (e.g., duplicates or isolated subgraphs) are removed to streamline computation.
+- **Path Caching**:
+  - Frequently queried paths are cached in memory to reduce redundant calculations for commonly requested routes.
+
+#### Concurrency Handling
+
+While the system is not designed to handle massive traffic, basic concurrency support ensures it can process up to 5 simultaneous queries without significant degradation. Thread pooling manages resource allocation effectively.
+
+#### Edge Cases
+
+- **Identical Landmarks**:
+  - Return a time of `0` with an empty path.
+- **Disconnected Graph**:
+  - Respond with an appropriate error when no path exists.
+
+#### Diagram
+
+- **A\* Algorithm Workflow**:
+  - Insert a flowchart showing the initialization, exploration, heuristic evaluation, and termination steps of the A\* algorithm.
+  - _Example Placeholder_: ![A* Algorithm Workflow](#)
+
+---
 
 ### 6.2 Data Validation Tool
 
+#### Overview
+
+The data validation tool ensures the integrity and usability of the dataset before it is integrated into the system. This includes validating format, removing duplicates, and ensuring graph connectivity.
+
+#### Workflow
+
+1. **Format Validation**:
+
+   - Check that each row adheres to the expected format: `Landmark_A_ID, Landmark_B_ID, Time`.
+   - Ensure that IDs are integers and the travel time is a positive number.
+
+2. **Duplicate Removal**:
+
+   - Identify and remove duplicate connections between landmarks, considering both directions (e.g., `A -> B` and `B -> A`).
+
+3. **Connectivity Check**:
+
+   - Use a Breadth-First Search (BFS) to verify that all nodes are reachable from at least one other node, ensuring a fully connected graph.
+
+4. **Cycle Detection**:
+
+   - For subgraphs expected to be acyclic (e.g., in specific regions), detect cycles using a Depth-First Search (DFS).
+
+5. **Output**:
+   - Generate a clean dataset for integration into the application.
+   - Log errors in a structured format (e.g., JSON or plain text) for review.
+
+#### Correction Mechanisms
+
+- **Manual Suggestions**:
+  - Provide a list of disconnected nodes or improperly formatted rows for manual correction.
+- **Automated Fixes**:
+  - Remove duplicates automatically.
+  - Attempt to connect isolated nodes by linking them to the nearest available neighbor.
+
+#### Efficiency Measures
+
+- Large datasets are processed in chunks to prevent memory overflow.
+- Multi-threading is utilized for independent checks (e.g., format validation and duplicate removal).
+
+#### Diagram
+
+- **Validation Workflow**:
+  - Insert a flowchart illustrating the sequential steps for dataset validation (e.g., format check → duplicate removal → connectivity check → cycle detection).
+  - _Example Placeholder_: ![Validation Workflow](#)
+
+---
+
 ### 6.3 Performance Testing
+
+#### Overview
+
+Performance testing validates that the system meets its response time and scalability requirements under realistic conditions.
+
+#### Key Tests
+
+1. **Unit Testing**:
+
+   - Verify the correctness of individual components, such as the A\* algorithm, graph construction, and REST API functionality.
+
+2. **Stress Testing**:
+
+   - Simulate up to 20 concurrent queries to assess system behavior under light traffic conditions.
+   - Measure the maximum number of queries processed without exceeding the 1-second response time.
+
+3. **Latency Measurement**:
+
+   - Measure average and maximum response times for queries with:
+     - Small datasets (~10,000 nodes).
+     - Medium datasets (~1 million nodes).
+     - Large datasets (~24 million nodes).
+
+4. **Error Simulation**:
+   - Test the system’s handling of invalid inputs (e.g., nonexistent landmarks) and disconnected graphs.
+
+#### Automation
+
+- Performance tests are automated using a combination of **Google Test** for unit testing and **Apache JMeter** for simulating concurrent queries.
+- A CI/CD pipeline ensures performance metrics are evaluated for every build.
+
+#### Metrics Collected
+
+- **Average Response Time**:
+  - Target: <1 second for valid queries.
+- **Maximum Response Time**:
+  - Should not exceed 1.5 seconds in stress scenarios.
+- **Failure Rate**:
+  - Should remain below 5% under concurrent load.
+
+#### Scalability Testing
+
+- Gradually increase dataset size and query frequency to evaluate how performance degrades.
+- Identify bottlenecks and suggest potential optimizations for future iterations.
+
+#### Diagram
+
+- **Testing Pipeline**:
+  - Insert a diagram showing the sequence of testing steps (e.g., unit tests → stress tests → latency measurements).
+  - _Example Placeholder_: ![Testing Pipeline](#)
+
+---
 
 ## 7. Non-Functional Requirements
 
