@@ -11,6 +11,7 @@ on:
       - main
       - dev
       - CD/CI
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,12 +30,11 @@ jobs:
     # Step 3: Fetch and install Google Test
     - name: Fetch Google Test
       run: |
-        cd quickest_path
-        mkdir -p googletest
-        cd googletest
-        wget https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
-        unzip v1.15.2.zip
-        cd googletest-1.15.2
+        mkdir -p external
+        cd external
+        wget https://github.com/google/googletest/archive/refs/tags/v1.15.0.zip
+        unzip v1.15.0.zip
+        cd googletest-1.15.0
         cmake .
         make
         sudo make install # Installs Google Test globally
@@ -42,8 +42,7 @@ jobs:
     # Step 4: Build the project
     - name: Build the project
       run: |
-        cd quickest_path
-        mkdir build
+        mkdir -p build
         cd build
         cmake ..
         make
@@ -51,6 +50,5 @@ jobs:
     # Step 5: Run tests
     - name: Run Tests
       run: |
-        cd quickest_path
         cd build
         ctest --output-on-failure
