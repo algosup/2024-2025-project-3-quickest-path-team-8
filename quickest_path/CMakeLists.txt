@@ -22,12 +22,12 @@ set(SOURCES ${SRC_DIR}/utils.cpp)
 # Add the main library (this will be shared with the tests)
 add_library(quickest_path_lib ${SOURCES})
 
-# Add Google Test as a subdirectory
-add_subdirectory(googletest)
-
 
 # Enable testing
 enable_testing()
+
+# Add Google Test as a subdirectory
+add_subdirectory(googletest)
 
 # Add the tests subdirectory
 add_subdirectory(tests)
