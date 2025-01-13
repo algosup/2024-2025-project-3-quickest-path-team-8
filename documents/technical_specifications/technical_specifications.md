@@ -243,6 +243,7 @@ The following technologies and tools will be used to implement the system:
   - **Apache JMeter**: For simulating concurrent requests and load testing the REST API.
 
 - **Data Preprocessing**:
+
   - Custom tools written in C++ or Python to perform dataset validation and preprocessing before integration into the main application.
 
 - **Development Machine**:
@@ -258,12 +259,13 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
   - **Base URL**: `http://127.0.0.1:8080/quickest_path`
   - **Parameters**:
+
     - `landmark_1`: Source landmark ID (integer).
     - `landmark_2`: Destination landmark ID (integer).
     - `format`: Desired output format (`json` or `xml`).
 
   - **Input Structure**:
-    All inputs must be provided as query parameters in the URL. Example request:  
+    All inputs must be provided as query parameters in the URL. Example request:
     ```
     GET /quickest_path?landmark_1=100&landmark_2=200&format=json
     ```
@@ -347,16 +349,15 @@ The algorithm computes the quickest path between two landmarks. Its design focus
 - **Complexity**:
 
   - **Time Complexity**:
-    \[
-    O((V + E) \cdot \log(V))
-    \]
-    Where \(V\) is the number of vertices (landmarks) and \(E\) is the number of edges (connections).
+    ![Time Complexity](/documents/images/formula1.png)
+
+    Where V is the number of vertices (landmarks) and E is the number of edges (connections).
 
   - **Space Complexity**:
-    \[
-    O(V + E)
-    \]
-    For storing the graph in an adjacency list.
+
+  ![Space Complexity](/documents/images/formula2.png)
+
+  For storing the graph in an adjacency list.
 
 - **Concurrency**:
 
@@ -367,7 +368,6 @@ The algorithm computes the quickest path between two landmarks. Its design focus
   - Nonexistent landmarks or unreachable nodes: Handled by the REST API with appropriate error responses.
 
 ---
-
 
 ## 6. Key Features and Functions
 
