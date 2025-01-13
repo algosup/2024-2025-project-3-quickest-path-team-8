@@ -251,7 +251,7 @@ int main() {
     // Define the filename based on the data choice
     #if DATA_CHOICE == 1
     
-        const std::string binFilename = "../data/extractedDataset.bin";
+        const std::string binFilename = "../../data/extractedDataset.bin";
 
     #endif
 
