@@ -13,6 +13,12 @@
             int landmarkA;
             int landmarkB;
             int time;
+
+            // Default constructor
+            Road() : landmarkA(0), landmarkB(0), time(0) {}
+
+            // Parameterized constructor
+            Road(int a, int b, int t) : landmarkA(a), landmarkB(b), time(t) {}
         };
 
     // This function reads a CSV file and returns a vector of Road objects

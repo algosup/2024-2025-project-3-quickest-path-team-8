@@ -38,7 +38,10 @@
                 if (std::getline(ss, landmarkA, ',') && std::getline(ss, landmarkB, ',') && std::getline(ss, time, ',')) {
 
                         // Create a Road object and add it to the vector
-                        roads.push_back({std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)});
+                        // roads.push_back({std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)});
+                        // ...existing code...
+                        // roads.push_back(Road{std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)});
+                        roads.push_back(Road(std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)));
 
                     // Otherwise, print an error message
                     } else {
