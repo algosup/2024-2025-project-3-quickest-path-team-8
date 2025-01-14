@@ -40,17 +40,19 @@
       - [3.2.1. Features](#321-features)
       - [3.2.3. Error Reporting](#323-error-reporting)
       - [3.2.4. Output](#324-output)
-    - [3.3. User Workflow](#33-user-workflow)
+    - [3.3. Pathfinding Algorithm](#33-pathfinding-algorithm)
+      - [3.3.1. Input](#331-input)
+      - [3.3.2. Output](#332-output)
+      - [3.3.3. REST API Integration](#333-rest-api-integration)
+    - [3.4. Program Flow](#34-program-flow)
   - [4. Non-functional Requirements](#4-non-functional-requirements)
     - [4.1. Performance](#41-performance)
     - [4.2. Scalability](#42-scalability)
     - [4.3. Usability](#43-usability)
     - [4.4. Data Integrity](#44-data-integrity)
     - [4.5. Reliability](#45-reliability)
-    - [4.6. Security](#46-security)
-    - [4.7. Maintainability](#47-maintainability)
-    - [4.8. Compliance](#48-compliance)
-    - [4.9. Energy Efficiency](#49-energy-efficiency)
+    - [4.6. Maintainability](#46-maintainability)
+    - [4.7. Compliance](#47-compliance)
 
 </details>
 
@@ -58,11 +60,12 @@
 
 ### 1.1. Glossary
 
-| Term       | Definition                                                                                              |
-| ---------- | ------------------------------------------------------------------------------------------------------- |
-| REST API   | A web service architecture that uses HTTP requests to provide access to resources or perform actions.   |
-| Heuristics | Techniques that find approximate solutions to complex problems more quickly than traditional methods.   |
-| MVP        | Minimum Viable Product, the simplest version of a product that can be released to gather user feedback. |
+| Term       | Definition                                                                                                                          |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| REST API   | A web service architecture that uses HTTP requests to provide access to resources or perform actions.                               |
+| HTTP       | Abbreviation for hypertext transfer protocol: A standard application-level protocol used for exchanging files on the World Wide Web |
+| Heuristics | Techniques that find approximate solutions to complex problems more quickly than traditional methods.                               |
+| MVP        | Minimum Viable Product, the simplest version of a product that can be released to gather user feedback.                             |
 
 ### 1.2. Project Overview
 
@@ -159,25 +162,34 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.4.4. Assumptions/Constraints
 
-**Assumptions:**
+**Assumptions:**  
 
-| Assumption           | Description                                        |
-| -------------------- | -------------------------------------------------- |
-| Dataset availability | The required datasets are accessible and accurate. |
+| Assumption             | Description                                                                            |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| Data Consistency       | Input data will conform to expected formats, types, and logical constraints.           |
+| Non-concurrent Queries | API will be accessed by a single user without doing concurrent queries during testing. |
+| Endpoint Accessibility | The API endpoint is reachable from authorized clients.                                 |
 
-**Constraints:**
+**Constraints:**  
 
-| Constraint           | Description                                               |
-| -------------------- | --------------------------------------------------------- |
-| Performance          | Response time must be under 1 second.                     |
-| Resource Utilization | The program must operate efficiently on a typical laptop. |
+| Constraint         | Description                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| Compatibility      | The software must run on widely-used operating systems (e.g., Windows, macOS).      |
+| Dataset Size       | The dataset must not exceed the program's memory capacity on a typical laptop.      |
+| Network Dependency | The API must function over standard HTTP protocols without advanced configurations. |
 
 #### 1.4.5. Risks/Mitigation
 
-| ID  | Description            | Consequence                 | Impact | Likelihood | Mitigation          |
-| --- | ---------------------- | --------------------------- | ------ | ---------- | ------------------- |
-| R01 | Dataset errors or gaps | Incorrect route calculation | High   | Medium     | Validate datasets.  |
-| R02 | API performance issues | Delayed response times      | High   | High       | Optimize algorithm. |
+| ID  | Description                         | Consequence                                 | Impact | Likelihood | Mitigation                                                      |
+| --- | ----------------------------------- | ------------------------------------------- | ------ | ---------- | --------------------------------------------------------------- |
+| R01 | Dataset errors or gaps              | Incorrect route calculation                 | High   | Medium     | Validate datasets.                                              |
+| R02 | API performance issues              | Delayed response times                      | High   | High       | Optimize algorithm.                                             |
+| R03 | Inconsistent input validation       | API errors or unexpected behavior           | Medium | Medium     | Implement strict input validation and testing.                  |
+| R04 | Hardware limitations                | Unable to meet performance requirements     | High   | Low        | Optimize resource usage and test on target hardware.            |
+| R05 | Memory overflow with large datasets | Crashes or unresponsiveness                 | High   | Low        | Use efficient data structures and memory management.            |
+| R06 | Incorrect heuristic implementation  | Results deviate significantly from expected | Medium | Low        | Test heuristics extensively and validate against known results. |
+
+Let me know if you'd like me to integrate this expanded list into your document!
 
 ## 2. Personas and Use Cases
 
@@ -197,15 +209,18 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 ### 2.2. Use Cases
 
-| Use Case            | Description                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Route Calculation   | User submits two landmarks, and the API returns the quickest path between them in order to transport themselves. |
-| API Integration     | Developer integrates the API into an application for real-time routing between two landmarks via their ID.       |
-| Performance Testing | System validates response times under heavy load conditions.                                                     |
+| Use Case                            | Description                                                                                                       |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Route Calculation                   | Users provide two landmark IDs, and the API returns the fastest route between them for transportation purposes.   |
+| API Integration                     | Developers integrate the API into applications to enable real-time routing between two landmarks using their IDs. |
+| Transportation Engineering Research | Supports transportation engineering research by providing relevant data and actionable insights.                  |
 
 ## 3. Functional Requirements
 
 ### 3.1. REST API Implementation
+
+> [!IMPORTANT]  
+> Example host URLs in this section use the IP address `127.0.0.1` for demonstration and general understanding purposes. When testing the API from a remote device, replace `127.0.0.1` with the correct host address.
 
 #### 3.1.1. Route Description
 
@@ -224,15 +239,17 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 3.1.2. Reponse codes
 
-| Case                      | HTTP Code | Description                                                                        | Example Response                                                                                                                  |
-| ------------------------- | --------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Valid request             | 200       | Successfully returns the quickest path.                                            | `{ "time": 66, "steps": [ { "landmark": 322, "distance": 33 }, { "landmark": 323, "distance": 33 } ] }`                           |
-| Identical landmarks       | 200       | Returns response with `time` as `0` and empty steps.                               | `{ "time": 0, "steps": [] }`                                                                                                      |
-| Non-existent landmarks    | 404       | One or both landmarks are not found in the dataset.                                | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
-| Disconnected graph        | 404       | No path exists between the specified landmarks.                                    | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                                       |
-| Missing or invalid inputs | 400       | Request does not include valid `format`, `landmark_1` and `landmark_2` parameters. | `{ "error": { "code": 400, "message": "Missing or invalid parameters: 'format', 'landmark_1' and 'landmark_2' are required." } }` |
+| Case                      | HTTP Code | Description                                                              | Example JSON Response                                                                                                   | Example XML response |
+| ------------------------- | --------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| Valid request             | 200       | Successfully returns the quickest path.                                  | `{ "time": 66, "steps": [ { "landmark": 322, "distance": 33 }, { "landmark": 323, "distance": 33 } ] }`                 |                      |
+| Identical landmarks       | 200       | Returns response with `time` as `0` and empty steps.                     | `{ "time": 0, "steps": [] }`                                                                                            |                      |
+| Missing or invalid inputs | 400       | Request does not include valid `landmark_1` and `landmark_2` parameters. | `{ "error": { "code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required." } }` |                      |
+| Non-existent landmarks    | 404       | One or both landmarks are not found in the dataset.                      | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                             |                      |
 
 #### 3.1.3. Request Examples
+
+> [!NOTE]  
+> The values of parameters `landmark_1` and `landmark_2` are used for demonstration purpose only.
 
 ```http
 GET /quickest_path?landmark_1=322&landmark_2=333 HTTP/1.1
@@ -247,6 +264,20 @@ Accept: application/xml
 ```
 
 #### 3.1.4. Response examples
+
+You can find below a sample response the API could be returning. It contains various fields described in the following:
+
+| Represented Entity      | JSON Property Name               | XML tag                 | Data Type (JSON) | Represented Element                                                                                                                                                                |
+| ----------------------- | -------------------------------- | ----------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Total Time              | `"time"`                         | `<time></time>`         | Integer          | Total time between `landmark_1` and `landmark_2`                                                                                                                                   |
+| Steps Description       | `"steps"`                        | `<steps></steps>`       | Array            | List of all the landmarks on the shortest path found                                                                                                                               |
+| Step                    | `{ "landmark": , "distance":  }` | `<step></step>`         | Object           | Representation of a landmark on the shortest path found                                                                                                                            |
+| Landmark                | `"landmark"`                     | `<landmark></landmark>` | Integer          | The ID of a step landmark on the path between `landmark_1` and `landmark_2`                                                                                                        |
+| Time between two points | `"distance"`                     | `<distance></distance>` | Integer          | The time between the previous landmark and the ID of the one indicated in the current object (the first object contains the time between `landmark_1` and the current landmark ID) |
+
+
+> [!NOTE]  
+> The values contained in the following responses are not correct nor respresentative of the dataset and are used for demonstration purposes only.
 
 **JSON Example Response:**
 
@@ -301,25 +332,66 @@ The data verification tool ensures the integrity and usability of the `USA-roads
 - A summary report indicating whether the dataset passed or failed validation.
 - Suggestions for corrective actions, such as removing duplicates or fixing disconnected subgraphs.
 
-### 3.3. User Workflow
+### 3.3. Pathfinding Algorithm
+
+#### 3.3.1. Input
+
+To work correctly, the pathfinding algorithm needs the following input parameters:
+
+| Input parameter  | Description                      |
+| ---------------- | -------------------------------- |
+| Source Node      | Identifier of the starting point |
+| Destination Node | Identifier of the endpoint       |
+
+#### 3.3.2. Output
+
+- The algorithm returns:
+  - **Path Details**: Ordered list of nodes representing the shortest path.
+  - **Travel Time**: Estimated duration for the path.
+  - **Error Codes**: In case of failure, error codes and diagnostic messages are returned.
+
+- Example output format (JSON):
+  ```json
+  {
+    "path": ["A", "B", "C"],
+    "travel_time": 120
+  }
+  ```
+
+#### 3.3.3. REST API Integration
+
+- The algorithm is exposed as a service through a REST API.
+  - **Input Handling**: The API formats user input into the algorithm's required structure.
+  - **Response Handling**: The API translates the algorithm's output into user-friendly JSON/XML formats.
+- 
+
+### 3.4. Program Flow
 
 ```mermaid
-graph TD
-A[User submits GET request] --> B[API validates parameters]
-B --> C[System calculates quickest path]
-C --> D[Returns result in JSON/XML]
+flowchart TD
+A[User submits GET request to the API] --> B{Are both parameters present and valid?}
+B --> |No| D[Return 400: Missing/Invalid Input]
+B --> |Yes| C{Are landmarks identical?}
+C --> |Yes| E[Return 200: Identical Landmarks]
+C --> |No| F[Send input to Pathfinding Algorithm]
+F --> G{Are landmarks in the dataset?}
+G --> |No| H[Algorithm returns error to API]
+H --> I[Return 404: Non-existent Landmarks]
+G --> |Yes| J[Algorithm computes shortest path]
+J --> K[Return shortest path to API]
+K --> L[Format response based on Accept headers]
+L --> M[Return 200: Success]
 ```
 
 ## 4. Non-functional Requirements
 
 ### 4.1. Performance
 
-   - The API must handle all queries within **1 second** on a typical laptop.
+   - The API must handle any single query within **1 second** on a typical laptop such as a MacBook Air M3.
 
 ### 4.2. Scalability
 
-   - The system must be designed to accommodate future expansion to larger datasets or additional geographic regions.
-   - Modular architecture to allow integration with third-party systems or additional functionality (e.g., live traffic data).
+   - The system must be designed to accommodate future expansion to larger datasets containing more landmarks and connexions.
 
 ### 4.3. Usability
 
@@ -335,20 +407,11 @@ C --> D[Returns result in JSON/XML]
    - High availability of the service with proper error handling for invalid input or unexpected conditions.
    - Ensure fault tolerance in the presence of incomplete or incorrect dataset entries.
 
-### 4.6. Security
-
-   - Implement basic security measures like **rate limiting**, **input validation**, and **HTTPS support** to prevent misuse and ensure data safety.
-   - Avoid exposing sensitive internal errors in the API response.
-
-### 4.7. Maintainability
+### 4.6. Maintainability
 
    - The codebase must follow best practices for readability and maintainability, with sufficient inline comments and comprehensive documentation.
    - Support for future updates to algorithms or dataset formats.
 
-### 4.8. Compliance
+### 4.7. Compliance
 
    - Adherence to RESTful API standards for consistency in design and implementation.
-
-### 4.9. Energy Efficiency
-
-   - Optimized computational resources to reduce power consumption during large-scale calculations, especially on personal devices like laptops.
