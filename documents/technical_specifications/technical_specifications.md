@@ -19,18 +19,21 @@
     - [Stress Testing](#stress-testing)
   - [4.3 Data Integrity Verification](#43-data-integrity-verification)
     - [Validation Criteria](#validation-criteria)
-    - [Verification Process](#verification-process)
     - [Importance of Data Integrity](#importance-of-data-integrity)
   - [5. System Architecture](#5-system-architecture)
     - [5.1 Technology Stack](#51-technology-stack)
     - [5.2 REST API Design](#52-rest-api-design)
     - [5.3 Algorithm Design](#53-algorithm-design)
+      - [Core Algorithm](#core-algorithm)
+      - [Role in the System](#role-in-the-system)
+      - [Scalability and Performance](#scalability-and-performance)
+      - [Complexity](#complexity)
   - [6. Implementation and Testing](#6-implementation-and-testing)
     - [6.1 Path Calculation](#61-path-calculation)
       - [Overview](#overview)
       - [Workflow](#workflow)
+      - [Diagram](#diagram)
       - [Optimization Techniques](#optimization-techniques)
-      - [Disconnected Graphs](#disconnected-graphs)
       - [Edge Cases](#edge-cases)
     - [6.2 Data Validation Tool](#62-data-validation-tool)
       - [Overview](#overview-1)
@@ -45,20 +48,6 @@
       - [Failure Rate](#failure-rate)
       - [Automation](#automation)
       - [Scalability Testing](#scalability-testing)
-  - [7. Non-Functional Requirements](#7-non-functional-requirements)
-    - [7.1 Response Time](#71-response-time)
-    - [7.2 Approximation Heuristic](#72-approximation-heuristic)
-    - [7.3 Data Integrity](#73-data-integrity)
-  - [8. Deliverables](#8-deliverables)
-    - [8.1 C++ Source Code](#81-c-source-code)
-    - [8.2 Time and Space Complexity](#82-time-and-space-complexity)
-    - [8.3 REST API Implementation](#83-rest-api-implementation)
-    - [8.4 Test Suite](#84-test-suite)
-    - [8.5 Data Validation Tool](#85-data-validation-tool)
-  - [9. Development Process](#9-development-process)
-    - [9.1 Milestones](#91-milestones)
-    - [9.2 Testing and Validation](#92-testing-and-validation)
-    - [9.3 Risk Management](#93-risk-management)
 
 </details>
 
@@ -137,16 +126,11 @@ The REST API provides external access to the quickest path calculation functiona
 
 ### Dataset Preprocessing
 
-- **Validation Tool**
-
-  - Ensure the dataset is preprocessed to verify graph properties, including:
-    - Absence of duplicate connections.
-    - Connectivity between all nodes.
-    - Validity of the data structure.
-    - Detection of cycles in the graph.
-
-- **Precomputed Data**
-  - Optionally, precompute frequently used paths to reduce runtime computation.
+- **Purpose**:
+  - Ensure the dataset meets validation criteria for accurate path calculations.
+- **Requirements**:
+  - The dataset must adhere to validation criteria outlined in **4.3 Data Integrity Verification**.
+  - Refer to **6.2 Data Validation Tool** for the detailed workflow and implementation.
 
 ![diagram](/documents/images/APIrequest.png)
 
@@ -201,20 +185,13 @@ To ensure accurate and reliable path calculations, the system must validate the 
 4. **Graph Validity**:
    - Ensure logical consistency by detecting and resolving cycles in regions expected to be acyclic.
 
-### Verification Process
-
-The system employs a dedicated data validation tool to enforce these criteria. The tool:
-
-- Logs errors and categorizes them into format errors, duplicate entries, disconnected nodes, and detected cycles.
-- Generates a summary report with actionable recommendations for resolution.
-
-For a detailed explanation of the validation tool’s workflow, refer to **Section 6.2: Data Validation Tool**.
-
 ### Importance of Data Integrity
 
 - **Accuracy**: Ensures that the graph reflects real-world connectivity for path calculations.
 - **Performance**: Reduces computational overhead by eliminating redundant or invalid data.
 - **Reliability**: Guarantees that the dataset can handle large-scale queries without logical inconsistencies.
+
+For the detailed workflow and technical implementation of the data validation process, refer to **Section 6.2: Data Validation Tool**.
 
 ## 5. System Architecture
 
@@ -330,48 +307,37 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
 ### 5.3 Algorithm Design
 
-The algorithm computes the quickest path between two landmarks. Its design focuses on efficiency, accuracy, and scalability:
+The algorithm is a core component of the system, responsible for calculating the quickest path between two landmarks. Its design ensures a balance between accuracy, performance, and scalability, aligned with the system’s requirements.
 
-- **Core Algorithm**:
+#### Core Algorithm
 
-  - **A\***: Selected for its heuristic-driven approach, which optimizes performance while maintaining compliance with the 10% approximation rule.
-    - **Heuristic Function**: Travel time between nodes (landmarks) is used as the heuristic to guide the search efficiently.
+- The A\* algorithm is selected for its heuristic-driven approach, combining efficient exploration with guaranteed pathfinding.
+- The heuristic function helps prioritize nodes closer to the destination, optimizing search performance.
 
-- **Graph Representation**:
+#### Role in the System
 
-  - The dataset will be represented using an **adjacency list**. This structure is memory-efficient and allows quick traversal of connections between landmarks.
+- Operates on a preprocessed dataset represented as an adjacency list, ensuring efficient traversal of landmark connections.
+- Integrated into the REST API to dynamically process pathfinding queries and return results within 1 second for typical use cases.
 
-- **Supporting Data Structures**:
+#### Scalability and Performance
 
-  - **Priority Queue**: A min-heap will be used to efficiently manage nodes during traversal, enabling fast extraction of the next optimal node.
+- The algorithm is optimized to handle large datasets containing millions of nodes and edges.
+- Preprocessing steps, such as duplicate removal and graph validation, reduce runtime overhead.
 
-- **Preprocessing**:
+#### Complexity
 
-  - A dataset preprocessing step will validate and clean the data before usage:
-    - Remove duplicate connections.
-    - Verify graph connectivity.
-    - Detect and handle cycles if applicable.
+1. **Time Complexity**:
 
-- **Complexity**:
+   - For a graph with `V` vertices (landmarks) and `E` edges (connections), A\* has a worst-case time complexity of:
+     ![Time Complexity](/documents/images/formula1.png)
 
-  - **Time Complexity**:
-    ![Time Complexity](/documents/images/formula1.png)
+2. **Space Complexity**:
+   - The adjacency list representation and additional data structures (e.g., priority queue, visited nodes) result in a space complexity of:
+     ![Space Complexity](/documents/images/formula2.png)
 
-    Where V is the number of vertices (landmarks) and E is the number of edges (connections).
+These formulas illustrate the algorithm’s efficiency for large-scale graphs, emphasizing its suitability for the project.
 
-  - **Space Complexity**:
-
-  ![Space Complexity](/documents/images/formula2.png)
-
-  For storing the graph in an adjacency list.
-
-- **Concurrency**:
-
-  - The algorithm processes one query at a time. However, the REST API ensures multiple queries can be handled concurrently by distributing them across available threads.
-
-- **Edge Cases**:
-  - Identical `landmark_1` and `landmark_2`: Return a time of `0` with an empty path.
-  - Nonexistent landmarks or unreachable nodes: Handled by the REST API with appropriate error responses.
+For the detailed workflow and implementation, refer to **6.1 Path Calculation**.
 
 ---
 
@@ -381,7 +347,7 @@ The algorithm computes the quickest path between two landmarks. Its design focus
 
 #### Overview
 
-The path calculation system is the core functionality of the project, leveraging the A* algorithm to compute the quickest path between two landmarks. A* is chosen for its balance of performance and accuracy, with a heuristic-driven approach that ensures compliance with the 10% approximation rule.
+The path calculation system implements the A\* algorithm to compute the quickest path between two landmarks. This approach ensures compliance with the system’s accuracy and performance goals.
 
 #### Workflow
 
@@ -401,35 +367,37 @@ The path calculation system is the core functionality of the project, leveraging
 
 3. **Heuristic Evaluation**:
 
-   - The heuristic function estimates the cost from a node to the destination. This function is designed to:
-     - Underestimate the actual cost (to maintain A\*'s correctness).
-     - Prioritize nodes that are closer to the destination based on estimated travel time.
-   - For this project, the heuristic could be based on:
+   - The heuristic function estimates the cost from a node to the destination. It:
+     - Underestimates the actual cost (to maintain A\*'s correctness).
+     - Prioritizes nodes closer to the destination based on estimated travel time.
+   - Examples of heuristics for this project include:
      - Straight-line distance (if coordinates are available).
      - Historical average travel times.
 
 4. **Termination**:
    - The algorithm terminates when:
-     - The destination node (`landmark_2`) is dequeued, in which case the path is reconstructed using the predecessor list.
+     - The destination node (`landmark_2`) is dequeued, and the path is reconstructed using the predecessor list.
      - The priority queue is empty, indicating no valid path exists.
+
+#### Diagram
+
+The following diagram illustrates the workflow of the A\* algorithm:
+
+![A* Algorithm Workflow](/documents/images/Algorithm.png)
 
 #### Optimization Techniques
 
 - **Graph Pruning**:
-  - During preprocessing, unnecessary nodes and connections (e.g., duplicates or isolated subgraphs) are removed to streamline computation.
+  - During preprocessing, unnecessary nodes and connections are removed to streamline computation.
 - **Path Caching**:
   - Frequently queried paths are cached in memory to reduce redundant calculations for commonly requested routes.
-
-#### Disconnected Graphs
-
-Disconnected graphs are identified during preprocessing (see **6.2**) and are flagged as errors. The algorithm itself only operates on validated, connected graphs.
 
 #### Edge Cases
 
 - **Identical Landmarks**:
   - Return a time of `0` with an empty path.
 
-![Algorithm](/documents/images/Algorithm.png)
+For a high-level explanation of the algorithm’s role in the system, refer to **5.3 Algorithm Design**.
 
 ---
 
@@ -437,7 +405,7 @@ Disconnected graphs are identified during preprocessing (see **6.2**) and are fl
 
 #### Overview
 
-The data validation tool ensures the integrity and usability of the dataset before it is integrated into the system. This includes validating format, removing duplicates, and ensuring graph connectivity.
+The data validation tool ensures the integrity and usability of the dataset before it is integrated into the system. It implements the criteria defined in **4.3** and automates error detection and logging.
 
 #### Workflow
 
@@ -459,7 +427,11 @@ The data validation tool ensures the integrity and usability of the dataset befo
    - For subgraphs expected to be acyclic (e.g., in specific regions), detect cycles using a Depth-First Search (DFS).
 
 5. **Output**:
-   - The tool outputs a list of detected errors, categorized as format issues, duplicates, disconnected nodes, or cycles.
+   - The tool outputs a list of detected errors, categorized by:
+     - Format issues.
+     - Duplicate entries.
+     - Disconnected nodes.
+     - Cycles in acyclic regions.
    - The dataset is flagged as invalid if any errors are found.
 
 #### Correction Mechanisms
@@ -475,9 +447,7 @@ The data validation tool ensures the integrity and usability of the dataset befo
 - Large datasets are processed in chunks to prevent memory overflow.
 - Multi-threading is utilized for independent checks (e.g., format validation and duplicate removal).
 
-  ![Data Validation](/documents/images/dataValidation.png)
-
----
+![Data Validation Workflow](/documents/images/dataValidation.png)
 
 ### 6.3 Performance Testing
 
@@ -531,31 +501,3 @@ The failure rate should remain below 5% under concurrent load scenarios. Higher 
   ![Testing](/documents/images/Testing.png)
 
 ---
-
-## 7. Non-Functional Requirements
-
-### 7.1 Response Time
-
-### 7.2 Approximation Heuristic
-
-### 7.3 Data Integrity
-
-## 8. Deliverables
-
-### 8.1 C++ Source Code
-
-### 8.2 Time and Space Complexity
-
-### 8.3 REST API Implementation
-
-### 8.4 Test Suite
-
-### 8.5 Data Validation Tool
-
-## 9. Development Process
-
-### 9.1 Milestones
-
-### 9.2 Testing and Validation
-
-### 9.3 Risk Management
