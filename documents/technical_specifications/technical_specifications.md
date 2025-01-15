@@ -19,9 +19,8 @@
     - [Stress Testing](#stress-testing)
   - [4.3 Data Integrity Verification](#43-data-integrity-verification)
     - [Validation Criteria](#validation-criteria)
-    - [Error Detection and Reporting](#error-detection-and-reporting)
-    - [Correction Recommendations](#correction-recommendations)
-    - [Integrity Assurance](#integrity-assurance)
+    - [Verification Process](#verification-process)
+    - [Importance of Data Integrity](#importance-of-data-integrity)
   - [5. System Architecture](#5-system-architecture)
     - [5.1 Technology Stack](#51-technology-stack)
     - [5.2 REST API Design](#52-rest-api-design)
@@ -32,20 +31,17 @@
       - [Optimization Techniques](#optimization-techniques)
       - [Concurrency Handling](#concurrency-handling)
       - [Edge Cases](#edge-cases)
-      - [Diagram](#diagram)
     - [6.2 Data Validation Tool](#62-data-validation-tool)
       - [Overview](#overview-1)
       - [Workflow](#workflow-1)
       - [Correction Mechanisms](#correction-mechanisms)
       - [Efficiency Measures](#efficiency-measures)
-      - [Diagram](#diagram-1)
     - [6.3 Performance Testing](#63-performance-testing)
       - [Overview](#overview-2)
       - [Key Tests](#key-tests)
       - [Automation](#automation)
       - [Metrics Collected](#metrics-collected)
       - [Scalability Testing](#scalability-testing)
-      - [Diagram](#diagram-2)
   - [7. Non-Functional Requirements](#7-non-functional-requirements)
     - [7.1 Response Time](#71-response-time)
     - [7.2 Approximation Heuristic](#72-approximation-heuristic)
@@ -181,50 +177,41 @@ The REST API provides external access to the quickest path calculation functiona
 
 ## 4.3 Data Integrity Verification
 
+To ensure accurate and reliable path calculations, the system must validate the integrity of the input dataset. This verification process ensures the dataset meets the following criteria:
+
 ### Validation Criteria
 
-- **Data Format Validation:**
+1. **Data Format**:
 
-  - Each row in the CSV dataset must adhere to the specified format:  
-    `Landmark_A_ID, Landmark_B_ID, Time`.
-  - Fields must be non-empty, and `Time` must be a positive integer or float.
+   - Each row in the CSV dataset must follow the required structure: `Landmark_A_ID, Landmark_B_ID, Time`.
+   - IDs should be integers, and `Time` must be a positive numeric value.
 
-- **Duplicate Entries:**
+2. **Duplicate Entries**:
 
-  - Duplicate connections (identical pairs of `Landmark_A_ID` and `Landmark_B_ID`) are flagged and removed to prevent redundancy in path calculations.
+   - Connections between landmarks should be unique, considering both directions (e.g., `A -> B` and `B -> A` are treated as equivalent).
 
-- **Connectivity Verification:**
+3. **Graph Connectivity**:
 
-  - The dataset must form a connected graph to ensure that there is at least one path between any two landmarks.
-  - Disconnected subgraphs or isolated nodes are identified and flagged for correction.
+   - The graph should form a connected network where all nodes are reachable.
+   - Disconnected subgraphs or isolated nodes are flagged for correction.
 
-- **Graph Validation:**
-  - The graph must not contain cycles in paths intended to be acyclic, ensuring logical consistency in route calculations.
+4. **Graph Validity**:
+   - Ensure logical consistency by detecting and resolving cycles in regions expected to be acyclic.
 
-### Error Detection and Reporting
+### Verification Process
 
-- A data validation tool will log all identified errors, categorized as specify the format:
+The system employs a dedicated data validation tool to enforce these criteria. The tool:
 
-  - **Format Errors:** Rows that fail to conform to the required format.
-  - **Duplicate Entries:** Repeated connections.
-  - **Disconnected Nodes:** Landmarks without connections.
-  - **Cycles Detected:** Any cyclic paths in an acyclic graph context.
+- Logs errors and categorizes them into format errors, duplicate entries, disconnected nodes, and detected cycles.
+- Generates a summary report with actionable recommendations for resolution.
 
-- A summary report will indicate the number of issues detected and provide actionable recommendations for resolution.
+For a detailed explanation of the validation tool’s workflow, refer to **Section 6.2: Data Validation Tool**.
 
-### Correction Recommendations
+### Importance of Data Integrity
 
-- Tools will suggest data fixes, such as:
-  - Removing duplicate rows.
-  - Connecting isolated nodes to the graph, if possible.
-  - Correcting improperly formatted rows.
-
-### Integrity Assurance
-
-- The verification process will be automated and must be completed before the API uses the dataset.
-- Upon successful validation, the dataset is marked as ready for use, ensuring it meets the required integrity standards.
-
-![diagram](/documents/images/dataValidation.png)
+- **Accuracy**: Ensures that the graph reflects real-world connectivity for path calculations.
+- **Performance**: Reduces computational overhead by eliminating redundant or invalid data.
+- **Reliability**: Guarantees that the dataset can handle large-scale queries without logical inconsistencies.
 
 ## 5. System Architecture
 
@@ -426,13 +413,10 @@ While the system is not designed to handle massive traffic, basic concurrency su
 - **Identical Landmarks**:
   - Return a time of `0` with an empty path.
 - **Disconnected Graph**:
+
   - Respond with an appropriate error when no path exists.
 
-#### Diagram
-
-- **A\* Algorithm Workflow**:
-  - Insert a flowchart showing the initialization, exploration, heuristic evaluation, and termination steps of the A\* algorithm.
-  - _Example Placeholder_: ![A* Algorithm Workflow](#)
+  ![Algorithm](/documents/images/Algorithm.png)
 
 ---
 
@@ -478,11 +462,7 @@ The data validation tool ensures the integrity and usability of the dataset befo
 - Large datasets are processed in chunks to prevent memory overflow.
 - Multi-threading is utilized for independent checks (e.g., format validation and duplicate removal).
 
-#### Diagram
-
-- **Validation Workflow**:
-  - Insert a flowchart illustrating the sequential steps for dataset validation (e.g., format check → duplicate removal → connectivity check → cycle detection).
-  - _Example Placeholder_: ![Validation Workflow](#)
+  ![Data Validation](/documents/images/dataValidation.png)
 
 ---
 
@@ -532,11 +512,7 @@ Performance testing validates that the system meets its response time and scalab
 - Gradually increase dataset size and query frequency to evaluate how performance degrades.
 - Identify bottlenecks and suggest potential optimizations for future iterations.
 
-#### Diagram
-
-- **Testing Pipeline**:
-  - Insert a diagram showing the sequence of testing steps (e.g., unit tests → stress tests → latency measurements).
-  - _Example Placeholder_: ![Testing Pipeline](#)
+  ![Testing](/documents/images/Testing.png)
 
 ---
 
