@@ -32,18 +32,20 @@
     - [2.2. Use Cases](#22-use-cases)
   - [3. Functional Requirements](#3-functional-requirements)
     - [3.1. REST API Implementation](#31-rest-api-implementation)
-      - [3.1.1. Route Description](#311-route-description)
-      - [3.1.2. Reponse codes](#312-reponse-codes)
+      - [Overview](#overview)
+      - [3.1.1. Endpoint Details](#311-endpoint-details)
+      - [3.1.2. Response Codes](#312-response-codes)
       - [3.1.3. Request Examples](#313-request-examples)
-      - [3.1.4. Response examples](#314-response-examples)
+      - [3.1.4. Response Examples](#314-response-examples)
     - [3.2. Data Verification Tool](#32-data-verification-tool)
-      - [3.2.1. Features](#321-features)
-      - [3.2.3. Error Reporting](#323-error-reporting)
-      - [3.2.4. Output](#324-output)
+      - [Overview](#overview-1)
+      - [3.2.1. Key Features](#321-key-features)
+      - [3.2.2. Output](#322-output)
     - [3.3. Pathfinding Algorithm](#33-pathfinding-algorithm)
-      - [3.3.1. Input](#331-input)
-      - [3.3.2. Output](#332-output)
-      - [3.3.3. REST API Integration](#333-rest-api-integration)
+      - [3.3.1. Overview](#331-overview)
+      - [3.3.2. Input Parameters](#332-input-parameters)
+      - [3.3.3. Output Details](#333-output-details)
+      - [3.3.4. REST API Workflow](#334-rest-api-workflow)
     - [3.4. Program Flow](#34-program-flow)
   - [4. Non-functional Requirements](#4-non-functional-requirements)
     - [4.1. Performance](#41-performance)
@@ -189,8 +191,6 @@ Planning will follow an iterative approach, with each iteration focused on speci
 | R05 | Memory overflow with large datasets | Crashes or unresponsiveness                 | High   | Low        | Use efficient data structures and memory management.            |
 | R06 | Incorrect heuristic implementation  | Results deviate significantly from expected | Medium | Low        | Test heuristics extensively and validate against known results. |
 
-Let me know if you'd like me to integrate this expanded list into your document!
-
 ## 2. Personas and Use Cases
 
 ### 2.1. Personas
@@ -219,68 +219,59 @@ Let me know if you'd like me to integrate this expanded list into your document!
 
 ### 3.1. REST API Implementation
 
-> [!IMPORTANT]  
-> Example host URLs in this section use the IP address `127.0.0.1` for demonstration and general understanding purposes. When testing the API from a remote device, replace `127.0.0.1` with the correct host address.
+#### Overview
+The REST API allows users to query the quickest path between two landmarks using GET requests. The API supports JSON and XML responses and provides detailed error handling for invalid or missing inputs.
 
-#### 3.1.1. Route Description
+#### 3.1.1. Endpoint Details
 
-- **URL:** `http://127.0.0.1:8080/quickest_path`
-- **Method:** `GET`
-- **Headers:**
-  - `Content-Type`: `application/json`
-  - `Accept`: `application/json` or `application/xml`
+| **Property** | **Details**                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| **Endpoint** | `/quickest_path`                                                                                |
+| **Method**   | `GET`                                                                                           |
+| **Headers**  | - `Content-Type: application/json`<br>- `Accept: application/json` or `Accept: application/xml` |
 
-- **Query Parameters:**
+ **Parameters:** 
+| Name         | Type    | Constraints                           |
+| ------------ | ------- | ------------------------------------- |
+| `landmark_1` | integer | Must be between `1` and `23,947,347`. |
+| `landmark_2` | integer | Must be between `1` and `23,947,347`. |
 
-| Parameter Name | Type    | Expected value               |
-| -------------- | ------- | ---------------------------- |
-| landmark_1     | integer | Value between 1 and 23947347 |
-| landmark_2     | integer | Value between 1 and 23947347 |
+#### 3.1.2. Response Codes
 
-#### 3.1.2. Reponse codes
-
-| Case                      | HTTP Code | Description                                                              | Example JSON Response                                                                                                   | Example XML response |
-| ------------------------- | --------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| Valid request             | 200       | Successfully returns the quickest path.                                  | `{ "time": 66, "steps": [ { "landmark": 322, "distance": 33 }, { "landmark": 323, "distance": 33 } ] }`                 |                      |
-| Identical landmarks       | 200       | Returns response with `time` as `0` and empty steps.                     | `{ "time": 0, "steps": [] }`                                                                                            |                      |
-| Missing or invalid inputs | 400       | Request does not include valid `landmark_1` and `landmark_2` parameters. | `{ "error": { "code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required." } }` |                      |
-| Non-existent landmarks    | 404       | One or both landmarks are not found in the dataset.                      | `{ "error": { "code": 404, "message": "No path found between the specified landmarks." } }`                             |                      |
+| Scenario                 | HTTP Code | Description                                         | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
+| ------------------------ | --------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Valid request            | `200`     | Successfully returns the quickest path.             | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
+| Identical landmarks      | `200`     | Returns `time` as `0` and an empty `steps` array.   | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
+| Missing or invalid input | `400`     | One or both landmarks are missing or invalid.       | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
+| Non-existent landmarks   | `404`     | One or both landmarks are not found in the dataset. | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
 
 #### 3.1.3. Request Examples
 
-> [!NOTE]  
-> The values of parameters `landmark_1` and `landmark_2` are used for demonstration purpose only.
-
+**JSON Request Example:**
 ```http
 GET /quickest_path?landmark_1=322&landmark_2=333 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/json
 ```
 
+**XML Request Example:**
 ```http
 GET /quickest_path?landmark_1=3455&landmark_2=745647 HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/xml
 ```
 
-#### 3.1.4. Response examples
+#### 3.1.4. Response Examples
 
-You can find below a sample response the API could be returning. It contains various fields described in the following:
+| Entity                 | JSON Key             | XML Tag      | Data Type | Description                                                      |
+| ---------------------- | -------------------- | ------------ | --------- | ---------------------------------------------------------------- |
+| Total time             | `time`               | `<time>`     | Integer   | Total travel time between `landmark_1` and `landmark_2`.         |
+| Steps array            | `steps`              | `<steps>`    | Array     | A list of steps representing the shortest path.                  |
+| Step object            | `{ "landmark": ...}` | `<step>`     | Object    | Details of a single step, including the landmark and distance.   |
+| Landmark ID            | `landmark`           | `<landmark>` | Integer   | The ID of a landmark in the path.                                |
+| Distance between steps | `distance`           | `<distance>` | Integer   | The distance from the previous landmark to the current landmark. |
 
-| Represented Entity      | JSON Property Name               | XML tag                 | Data Type (JSON) | Represented Element                                                                                                                                                                |
-| ----------------------- | -------------------------------- | ----------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Total Time              | `"time"`                         | `<time></time>`         | Integer          | Total time between `landmark_1` and `landmark_2`                                                                                                                                   |
-| Steps Description       | `"steps"`                        | `<steps></steps>`       | Array            | List of all the landmarks on the shortest path found                                                                                                                               |
-| Step                    | `{ "landmark": , "distance":  }` | `<step></step>`         | Object           | Representation of a landmark on the shortest path found                                                                                                                            |
-| Landmark                | `"landmark"`                     | `<landmark></landmark>` | Integer          | The ID of a step landmark on the path between `landmark_1` and `landmark_2`                                                                                                        |
-| Time between two points | `"distance"`                     | `<distance></distance>` | Integer          | The time between the previous landmark and the ID of the one indicated in the current object (the first object contains the time between `landmark_1` and the current landmark ID) |
-
-
-> [!NOTE]  
-> The values contained in the following responses are not correct nor respresentative of the dataset and are used for demonstration purposes only.
-
-**JSON Example Response:**
-
+**Sample JSON Success Response:**
 ```json
 {
   "time": 66,
@@ -291,8 +282,7 @@ You can find below a sample response the API could be returning. It contains var
 }
 ```
 
-**XML Example Response:**
-
+**Sample XML Success Response:**
 ```xml
 <response>
   <time>66</time>
@@ -311,76 +301,94 @@ You can find below a sample response the API could be returning. It contains var
 
 ### 3.2. Data Verification Tool
 
-The data verification tool ensures the integrity and usability of the `USA-roads.csv` dataset. It performs the following checks and validations:
+#### Overview
+The data verification tool ensures the integrity of the dataset (e.g., `USA-roads.csv`). It performs checks to validate the dataset’s structure and usability.
 
-#### 3.2.1. Features
+#### 3.2.1. Key Features
 
-| Feature                    | Description                                                                                               | Example error                                                                                    |
-| -------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Duplicate Connection Check | Identifies and flags any duplicate entries in the dataset to ensure unique connections between landmarks. | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                              |
-| Graph Validation           | Ensures the dataset forms a valid graph structure without any cycles (Directed Acyclic Graph - DAG).      | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`                   |
-| Connectivity Check         | Verifies that the graph is fully connected, ensuring there are paths between all pairs of landmarks.      | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                       |
-| Data format Validation     | Checks for malformed or invalid rows in the dataset.                                                      | `Invalid row format: Expected format 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322,invalid,33'.` |
+| Feature                | Description                                                                           | Example Error                                                                             | Data Integrity Context                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Duplicate Connections  | Detects duplicate connections between landmarks to ensure unique entries.             | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                       | Ensures no redundancy in the dataset, preventing incorrect path calculations.              |
+| Graph Validation       | Verifies that the dataset forms a Directed Acyclic Graph (DAG) and detects cycles.    | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`            | Prevents infinite loops in pathfinding and guarantees logical flow in the graph structure. |
+| Connectivity Check     | Confirms that all landmarks are part of a connected graph.                            | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                | Ensures all landmarks are reachable, allowing reliable pathfinding results.                |
+| Data Format Validation | Ensures that all rows follow the expected format: `Landmark_A_ID,Landmark_B_ID,Time`. | `Invalid row format: Expected 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322,invalid,33'.` | Guarantees data consistency, preventing errors during graph creation or traversal.         |
 
-#### 3.2.3. Error Reporting
+#### 3.2.2. Output
 
-- Generates a detailed log file summarizing all detected issues for developer review.
-- Categorizes errors by type (e.g., duplicate connections, graph validation errors) for quick identification.
+- **Log File**: 
+  - A comprehensive log categorizes errors by type, such as duplicate connections, cycles, and disconnected subgraphs.
+  - The log is stored in a `validation.log` file located in the same directory as the data verification tool program directory. Each entry is timestamped and formatted as follows:
+    ```
+    [2025-01-15 14:23:45] ERROR: Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.
+    [2025-01-15 14:23:45] WARNING: Disconnected subgraph starting from Landmark_A_ID=500.
+    ```
 
-#### 3.2.4. Output
+- **Console Output**: 
+  - Key findings from the log are summarized in real time, providing immediate feedback to the user.
+  - Example console output:
+    ```
+    Validation Results:
+    - 2 duplicate connections found.
+    - 1 disconnected subgraph detected.
+    - Dataset passed graph validation.
+    ```
 
-- A summary report indicating whether the dataset passed or failed validation.
-- Suggestions for corrective actions, such as removing duplicates or fixing disconnected subgraphs.
+- **Summary Report**: 
+  - After completing validation, a high-level report is generated and printed to the console, indicating whether the dataset passed validation. 
+  - Example summary:
+    ```
+    Validation Summary:
+    - Status: Passed with warnings.
+    - Issues: 3 errors detected.
+    ```
 
 ### 3.3. Pathfinding Algorithm
 
-#### 3.3.1. Input
+#### 3.3.1. Overview
+The pathfinding algorithm computes the shortest path between two landmarks and integrates with the REST API for seamless functionality. The algorithm is written in C++ and utilizes custom C++ objects for both input and output, which the REST API transforms into the correct JSON or XML format.
 
-To work correctly, the pathfinding algorithm needs the following input parameters:
+#### 3.3.2. Input Parameters
 
-| Input parameter  | Description                      |
-| ---------------- | -------------------------------- |
-| Source Node      | Identifier of the starting point |
-| Destination Node | Identifier of the endpoint       |
+| Parameter          | Type    | Description                                    |
+| ------------------ | ------- | ---------------------------------------------- |
+| `Source Node`      | Integer | Unique identifier of the starting landmark.    |
+| `Destination Node` | Integer | Unique identifier of the destination landmark. |
 
-#### 3.3.2. Output
+#### 3.3.3. Output Details
 
-- The algorithm returns:
-  - **Path Details**: Ordered list of nodes representing the shortest path.
-  - **Travel Time**: Estimated duration for the path.
-  - **Error Codes**: In case of failure, error codes and diagnostic messages are returned.
+| Scenario            | Return Code | Return Data                             | HTTP Code | Example Response                                                                                |
+| ------------------- | ----------- | --------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| Path found          | `0`         | Path (`steps`), Total time (`time`)     | `200`     | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}` |
+| Landmarks not found | `1`         | Missing landmarks (`missing_landmarks`) | `404`     | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`         |
 
-- Example output format (JSON):
-  ```json
-  {
-    "path": ["A", "B", "C"],
-    "travel_time": 120
-  }
-  ```
+#### 3.3.4. REST API Workflow
 
-#### 3.3.3. REST API Integration
+**API Input Validation:**
+- Ensures both parameters (`landmark_1`, `landmark_2`) are present and valid.
+- Checks if the landmarks are identical; if so, returns `time` as `0` and `steps` as an empty array.
 
-- The algorithm is exposed as a service through a REST API.
-  - **Input Handling**: The API formats user input into the algorithm's required structure.
-  - **Response Handling**: The API translates the algorithm's output into user-friendly JSON/XML formats.
-- 
+**Algorithm Outputs:**
+- The algorithm returns its results as C++ objects. The REST API transforms these objects into the appropriate JSON or XML format for clients.
 
 ### 3.4. Program Flow
 
+> [!NOTE]  
+> This graph contains returned codes expressed as "Return [HTTP Status Code]: Type of error.
+> 
+> For reference, you can find the error description in the [Response Codes section](#312-response-codes)
+
 ```mermaid
-flowchart TD
-A[User submits GET request to the API] --> B{Are both parameters present and valid?}
+graph TD
+A[User submits GET request to API] --> B{Are parameters valid?}
 B --> |No| D[Return 400: Missing/Invalid Input]
 B --> |Yes| C{Are landmarks identical?}
 C --> |Yes| E[Return 200: Identical Landmarks]
-C --> |No| F[Send input to Pathfinding Algorithm]
-F --> G{Are landmarks in the dataset?}
-G --> |No| H[Algorithm returns error to API]
-H --> I[Return 404: Non-existent Landmarks]
-G --> |Yes| J[Algorithm computes shortest path]
-J --> K[Return shortest path to API]
-K --> L[Format response based on Accept headers]
-L --> M[Return 200: Success]
+C --> |No| F[Invoke Pathfinding Algorithm]
+F --> G{Are landmarks in dataset?}
+G --> |No| H[Return 404: Non-existent Landmarks]
+G --> |Yes| I[Compute Shortest Path]
+I --> J[Format Response]
+J --> K[Return 200: Success]
 ```
 
 ## 4. Non-functional Requirements
