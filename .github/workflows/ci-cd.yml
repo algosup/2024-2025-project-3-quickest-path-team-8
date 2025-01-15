@@ -42,7 +42,7 @@ jobs:
     # Step 4: Build the project
     - name: Build the project
       run: |
-        cd quickest_path/build
+        cd quickest_path
         mkdir -p build
         cd build
         cmake ..
@@ -51,4 +51,5 @@ jobs:
     # Step 5: Run tests
     - name: Run Tests
       run: |
+        cd quickest_path/build
         ctest --output-on-failure
