@@ -25,11 +25,12 @@
     - [5.1 Technology Stack](#51-technology-stack)
     - [5.2 REST API Design](#52-rest-api-design)
     - [5.3 Algorithm Design](#53-algorithm-design)
+  - [6. Implementation and Testing](#6-implementation-and-testing)
     - [6.1 Path Calculation](#61-path-calculation)
       - [Overview](#overview)
       - [Workflow](#workflow)
       - [Optimization Techniques](#optimization-techniques)
-      - [Concurrency Handling](#concurrency-handling)
+      - [Disconnected Graphs](#disconnected-graphs)
       - [Edge Cases](#edge-cases)
     - [6.2 Data Validation Tool](#62-data-validation-tool)
       - [Overview](#overview-1)
@@ -38,9 +39,11 @@
       - [Efficiency Measures](#efficiency-measures)
     - [6.3 Performance Testing](#63-performance-testing)
       - [Overview](#overview-2)
-      - [Key Tests](#key-tests)
+      - [Testing](#testing)
+      - [Stress Testing](#stress-testing-1)
+      - [Latency Measurement](#latency-measurement)
+      - [Failure Rate](#failure-rate)
       - [Automation](#automation)
-      - [Metrics Collected](#metrics-collected)
       - [Scalability Testing](#scalability-testing)
   - [7. Non-Functional Requirements](#7-non-functional-requirements)
     - [7.1 Response Time](#71-response-time)
@@ -372,6 +375,8 @@ The algorithm computes the quickest path between two landmarks. Its design focus
 
 ---
 
+## 6. Implementation and Testing
+
 ### 6.1 Path Calculation
 
 #### Overview
@@ -387,15 +392,26 @@ The path calculation system is the core functionality of the project, leveraging
 
 2. **Exploration**:
 
-   - At each step, the node with the lowest estimated cost is dequeued, and its neighbors are examined.
-   - The travel time to each neighbor is updated if a shorter path is found, and the neighbor is added to the queue with the updated cost.
+   - At each step, the node with the lowest estimated cost (actual cost + heuristic) is dequeued, and its neighbors are evaluated.
+   - For each neighbor:
+     - Calculate the tentative cost (current cost + edge weight to neighbor).
+     - If the tentative cost is lower than the previously recorded cost for the neighbor, update the cost and set the current node as the predecessor.
+     - Add the neighbor to the priority queue with its updated cost.
+   - Track visited nodes to prevent re-evaluating paths unnecessarily.
 
 3. **Heuristic Evaluation**:
 
-   - The heuristic function estimates the travel time to the destination (`landmark_2`) based on available data, ensuring efficient exploration.
+   - The heuristic function estimates the cost from a node to the destination. This function is designed to:
+     - Underestimate the actual cost (to maintain A\*'s correctness).
+     - Prioritize nodes that are closer to the destination based on estimated travel time.
+   - For this project, the heuristic could be based on:
+     - Straight-line distance (if coordinates are available).
+     - Historical average travel times.
 
 4. **Termination**:
-   - The algorithm terminates when the destination node is dequeued or the priority queue is empty (indicating no valid path).
+   - The algorithm terminates when:
+     - The destination node (`landmark_2`) is dequeued, in which case the path is reconstructed using the predecessor list.
+     - The priority queue is empty, indicating no valid path exists.
 
 #### Optimization Techniques
 
@@ -404,19 +420,16 @@ The path calculation system is the core functionality of the project, leveraging
 - **Path Caching**:
   - Frequently queried paths are cached in memory to reduce redundant calculations for commonly requested routes.
 
-#### Concurrency Handling
+#### Disconnected Graphs
 
-While the system is not designed to handle massive traffic, basic concurrency support ensures it can process up to 5 simultaneous queries without significant degradation. Thread pooling manages resource allocation effectively.
+Disconnected graphs are identified during preprocessing (see **6.2**) and are flagged as errors. The algorithm itself only operates on validated, connected graphs.
 
 #### Edge Cases
 
 - **Identical Landmarks**:
   - Return a time of `0` with an empty path.
-- **Disconnected Graph**:
 
-  - Respond with an appropriate error when no path exists.
-
-  ![Algorithm](/documents/images/Algorithm.png)
+![Algorithm](/documents/images/Algorithm.png)
 
 ---
 
@@ -446,8 +459,8 @@ The data validation tool ensures the integrity and usability of the dataset befo
    - For subgraphs expected to be acyclic (e.g., in specific regions), detect cycles using a Depth-First Search (DFS).
 
 5. **Output**:
-   - Generate a clean dataset for integration into the application.
-   - Log errors in a structured format (e.g., JSON or plain text) for review.
+   - The tool outputs a list of detected errors, categorized as format issues, duplicates, disconnected nodes, or cycles.
+   - The dataset is flagged as invalid if any errors are found.
 
 #### Correction Mechanisms
 
@@ -472,44 +485,47 @@ The data validation tool ensures the integrity and usability of the dataset befo
 
 Performance testing validates that the system meets its response time and scalability requirements under realistic conditions.
 
-#### Key Tests
+#### Testing
 
-1. **Unit Testing**:
+- **General Testing**:
+  - Verify correctness of individual components (e.g., A\* algorithm, graph construction).
+  - Validate that the REST API responds correctly to all input scenarios, including edge cases.
 
-   - Verify the correctness of individual components, such as the A\* algorithm, graph construction, and REST API functionality.
+#### Stress Testing
 
-2. **Stress Testing**:
+Simulate concurrent queries to assess system behavior under load:
 
-   - Simulate up to 20 concurrent queries to assess system behavior under light traffic conditions.
-   - Measure the maximum number of queries processed without exceeding the 1-second response time.
+- Up to 20 concurrent queries are tested to reflect realistic usage scenarios.
+- Metrics are collected for response time and resource usage under different loads.
 
-3. **Latency Measurement**:
+#### Latency Measurement
 
-   - Measure average and maximum response times for queries with:
-     - Small datasets (~10,000 nodes).
-     - Medium datasets (~1 million nodes).
-     - Large datasets (~24 million nodes).
+Measure average and maximum response times for queries with:
 
-4. **Error Simulation**:
-   - Test the system’s handling of invalid inputs (e.g., nonexistent landmarks) and disconnected graphs.
+- Small datasets (~10,000 nodes).
+- Medium datasets (~1 million nodes).
+- Large datasets (~24 million nodes).
+
+#### Failure Rate
+
+Failures are defined as:
+
+1. Responses exceeding the 1-second response time threshold.
+2. Incorrect results due to concurrency issues or resource contention.
+
+The failure rate should remain below 5% under concurrent load scenarios. Higher load may cause failures due to:
+
+- Resource contention (e.g., insufficient threads or memory).
+- Latency from increased queuing or thread scheduling.
 
 #### Automation
 
-- Performance tests are automated using a combination of **Google Test** for unit testing and **Apache JMeter** for simulating concurrent queries.
-- A CI/CD pipeline ensures performance metrics are evaluated for every build.
-
-#### Metrics Collected
-
-- **Average Response Time**:
-  - Target: <1 second for valid queries.
-- **Maximum Response Time**:
-  - Should not exceed 1.5 seconds in stress scenarios.
-- **Failure Rate**:
-  - Should remain below 5% under concurrent load.
+- Tests are automated using **Google Test** and **Apache JMeter**.
+- A CI/CD pipeline ensures consistent validation of performance metrics.
 
 #### Scalability Testing
 
-- Gradually increase dataset size and query frequency to evaluate how performance degrades.
+- Gradually increase dataset size and query frequency to evaluate performance degradation.
 - Identify bottlenecks and suggest potential optimizations for future iterations.
 
   ![Testing](/documents/images/Testing.png)
