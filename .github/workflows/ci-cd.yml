@@ -42,7 +42,7 @@ jobs:
     # Step 4: Build the project
     - name: Build the project
       run: |
-        cd quickest_path
+        cd quickest_path/build
         mkdir -p build
         cd build
         cmake ..
