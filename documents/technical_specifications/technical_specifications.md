@@ -48,6 +48,15 @@
       - [Failure Rate](#failure-rate)
       - [Automation](#automation)
       - [Scalability Testing](#scalability-testing)
+  - [7. Non-Functional Requirements](#7-non-functional-requirements)
+    - [7.1 Response Time](#71-response-time)
+    - [7.2 Scalability](#72-scalability)
+    - [7.3 Usability](#73-usability)
+    - [7.4 Reliability](#74-reliability)
+    - [7.5 Security](#75-security)
+    - [7.6 Maintainability](#76-maintainability)
+    - [7.7 Data Integrity](#77-data-integrity)
+    - [7.8 Compliance](#78-compliance)
 
 </details>
 
@@ -501,3 +510,114 @@ The failure rate should remain below 5% under concurrent load scenarios. Higher 
   ![Testing](/documents/images/Testing.png)
 
 ---
+
+## 7. Non-Functional Requirements
+
+This section outlines the non-functional requirements that define the quality attributes of the system. These requirements ensure the system is reliable, scalable, secure, and maintainable, while meeting performance and usability expectations.
+
+### 7.1 Response Time
+
+- **Requirement**: The system must respond to valid queries within **1 second** on a standard laptop with medium dataset sizes (~1 million nodes).
+- **Rationale**:
+  - Users expect quick results for route calculations, even for large datasets.
+  - Ensures the system remains practical for real-time applications like logistics or navigation.
+- **Metrics**:
+  - **Average Response Time**: <1 second for valid queries.
+  - **Maximum Response Time**: <1.5 seconds under stress conditions (e.g., 20 concurrent queries).
+  - Response times must be consistent regardless of output format (JSON or XML).
+
+---
+
+### 7.2 Scalability
+
+- **Requirement**: The system must handle larger datasets and increased query loads with graceful degradation in performance.
+- **Rationale**:
+  - As datasets grow (e.g., from U.S. landmarks to global landmarks), the system should remain usable without excessive hardware upgrades.
+- **Design Considerations**:
+  - Use memory-efficient data structures like adjacency lists for graph representation.
+  - Implement multithreading to handle multiple concurrent queries.
+  - Support for adding new geographic datasets without requiring extensive reconfiguration.
+- **Metrics**:
+  - For datasets up to **24 million nodes**:
+    - Maintain response times under 1.5 seconds.
+  - For **20 concurrent queries**, the failure rate (response time > 1.5 seconds) must remain below 5%.
+
+---
+
+### 7.3 Usability
+
+- **Requirement**: The REST API must be intuitive, well-documented, and easy to integrate with external systems.
+- **Rationale**:
+  - The API is the primary interface for developers and clients, so clarity and ease of use are critical.
+- **Features**:
+  - Provide comprehensive API documentation with:
+    - Endpoint descriptions.
+    - Input/output examples.
+    - Error code explanations.
+  - Return human-readable error messages for invalid queries.
+  - Support common formats (JSON and XML) to meet diverse client requirements.
+
+---
+
+### 7.4 Reliability
+
+- **Requirement**: The system must handle expected usage without crashing or returning incorrect results.
+- **Rationale**:
+  - Ensures trust and dependability for real-world applications.
+- **Design Considerations**:
+  - Validate inputs thoroughly to prevent malformed requests from causing failures.
+  - Handle edge cases like identical landmarks or disconnected graphs gracefully (see **6.1** and **6.2**).
+  - Include retry mechanisms for transient errors in external systems (e.g., dataset loading).
+
+---
+
+### 7.5 Security
+
+- **Requirement**: Protect the system from unauthorized access, data corruption, and denial-of-service attacks.
+- **Rationale**:
+  - The REST API could be exposed to the public, so basic security measures are essential.
+- **Features**:
+  - **Rate Limiting**: Prevent excessive query submissions from overloading the system.
+  - **Input Validation**: Reject malformed or malicious queries to prevent injection attacks.
+  - **Transport Security**: Use HTTPS for all API communications to encrypt data in transit.
+  - **Access Control**: Optionally, restrict API usage to authenticated users with API keys.
+
+---
+
+### 7.6 Maintainability
+
+- **Requirement**: The codebase and system architecture must support easy debugging, updates, and expansions.
+- **Rationale**:
+  - Future developers should be able to adapt or extend the system without significant overhead.
+- **Features**:
+  - Follow clean coding practices and include sufficient inline comments.
+  - Provide clear documentation for:
+    - Codebase structure.
+    - Build and deployment processes.
+  - Modular architecture to allow future enhancements (e.g., adding new algorithms or datasets).
+
+---
+
+### 7.7 Data Integrity
+
+- **Requirement**: The system must maintain the integrity of the input dataset during validation and processing.
+- **Rationale**:
+  - Reliable route calculations depend on the correctness and consistency of the dataset.
+- **Design Considerations**:
+  - Ensure dataset preprocessing (see **6.2**) identifies and logs all errors without altering the source data.
+  - Include checksums or versioning for datasets to detect accidental modifications.
+
+---
+
+### 7.8 Compliance
+
+- **Requirement**: Adhere to established standards for RESTful APIs and data handling.
+- **Rationale**:
+  - Ensures compatibility with third-party systems and compliance with industry best practices. (put a link to c standard)
+- **Standards**:
+  - Use RESTful conventions for endpoint design and HTTP status codes.
+  - Follow JSON and XML schema standards for output formats.
+  - Ensure data handling complies with relevant privacy and security laws (if applicable).
+
+---
+
