@@ -38,7 +38,6 @@
     - [6.2 Data Validation Tool](#62-data-validation-tool)
       - [Overview](#overview-1)
       - [Workflow](#workflow-1)
-      - [Correction Mechanisms](#correction-mechanisms)
       - [Efficiency Measures](#efficiency-measures)
     - [6.3 Performance Testing](#63-performance-testing)
       - [Overview](#overview-2)
@@ -264,12 +263,11 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
     - `landmark_1`: Source landmark ID (integer).
     - `landmark_2`: Destination landmark ID (integer).
-    - `format`: Desired output format (`json` or `xml`).
 
   - **Input Structure**:
     All inputs must be provided as query parameters in the URL. Example request:
     ```
-    GET /quickest_path?landmark_1=100&landmark_2=200&format=json
+    GET /quickest_path?landmark_1=100&landmark_2=200
     ```
 
 - **Response Format Examples**:
@@ -452,14 +450,6 @@ The data validation tool ensures the integrity and usability of the dataset befo
      - Disconnected nodes.
      - Cycles in acyclic regions.
    - The dataset is flagged as invalid if any errors are found.
-
-#### Correction Mechanisms
-
-- **Manual Suggestions**:
-  - Provide a list of disconnected nodes or improperly formatted rows for manual correction.
-- **Automated Fixes**:
-  - Remove duplicates automatically.
-  - Attempt to connect isolated nodes by linking them to the nearest available neighbor.
 
 #### Efficiency Measures
 
