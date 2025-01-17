@@ -28,6 +28,7 @@
       - [Role in the System](#role-in-the-system)
       - [Scalability and Performance](#scalability-and-performance)
       - [Complexity](#complexity)
+      - [Optimizations for A\*](#optimizations-for-a)
   - [6. Implementation and Testing](#6-implementation-and-testing)
     - [6.1 Path Calculation](#61-path-calculation)
       - [Overview](#overview)
@@ -356,7 +357,30 @@ These formulas illustrate the algorithm’s efficiency for large-scale graphs, e
 
 For the detailed workflow and implementation, refer to **6.1 Path Calculation**.
 
----
+#### Optimizations for A\*
+
+The A\* algorithm is further optimized to improve performance and scalability while maintaining accuracy. The following enhancements are implemented:
+
+1. **Heuristic Refinement**:
+
+   - We use domain-specific heuristics, such as Euclidean distance or the Haversine formula, for geospatial data. This ensures that the heuristic is admissible (does not overestimate costs) and consistent (satisfies the triangle inequality).
+
+2. **Bidirectional A\***:
+
+   - The search process is executed simultaneously from the source and destination nodes. The algorithm terminates when the two searches meet, reducing the search space significantly.
+
+3. **Weighted A\***:
+
+   - A weighted heuristic (\(f(n) = g(n) + \epsilon \cdot h(n)\)) is introduced to prioritize exploration of likely paths more aggressively. This reduces the search time while slightly relaxing the accuracy constraint.
+
+4. **Priority Queue Optimization**:
+
+   - A bucket-based priority queue replaces the standard implementation, reducing computational overhead for node selection.
+
+5. **Parallelization**:
+   - The algorithm is parallelized to leverage multi-core processors. Node evaluations are distributed across threads, significantly accelerating the search process.
+
+These optimizations enable the system to handle larger datasets efficiently, ensuring rapid responses even under high-concurrency scenarios or for geographically dispersed datasets.
 
 ## 6. Implementation and Testing
 
