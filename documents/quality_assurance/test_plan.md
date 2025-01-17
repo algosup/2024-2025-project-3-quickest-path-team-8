@@ -48,15 +48,11 @@ Include a comprehensive list of edge cases, such as:
 
 - **Malformed Requests**: Improperly structured requests that violate API specifications.
 
-For each edge case, define the expected behavior and corresponding error response.
-
 **2. Error Codes and Corresponding Messages**
 
 Add a subsection titled **"API Error Codes and Messages"** under **Documentation Quality Testing**.
 
 In this subsection, provide a detailed list of all possible error codes and their corresponding messages, ensuring they align with standard HTTP status codes and best practices.
-
-For example:
 
 - **400 Bad Request**: "The request could not be understood or was missing required parameters."
 
@@ -263,7 +259,81 @@ The integrity of the dataset is paramount for accurate and reliable operation:
 The pathfinding algorithm must maintain a balance between speed and precision:
 
 - **Approximation Threshold**: Results should be accurate within a 10% deviation from the optimal path, validating the effectiveness of the heuristic approach.
-- **Edge Case Handling**: Special cases, such as disconnected nodes or ambiguous paths, must be managed appropriately to ensure robustness.
+
+To enhance the **Algorithm Accuracy** section of the Test Plan, particularly under **Edge Case Handling**, it's crucial to define explicit test cases that address potential edge scenarios. This ensures the algorithm's robustness and reliability across various inputs. Below is a detailed outline for this section:
+
+### Algorithm Accuracy
+
+#### Edge Case Handling
+
+Edge cases are scenarios that occur at the extreme boundaries of input parameters or operational conditions. Identifying and testing these cases are vital to ensure the algorithm handles all possible inputs gracefully and maintains its integrity under unexpected conditions. In the context of our pathfinding algorithm, the following edge cases have been identified:
+
+- **Identical Landmarks**: When the source and destination landmarks are the same.
+- **Missing Parameters**: When one or both required parameters (`landmark_1`, `landmark_2`) are absent.
+- **Non-existent Landmarks**: When the provided landmark IDs do not exist in the dataset.
+- **Disconnected Graph**: When there is no possible path between the source and destination landmarks.
+- **Minimum and Maximum Input Values**: Testing with the smallest and largest possible landmark IDs.
+- **Empty Dataset**: When the dataset contains no landmarks or connections.
+- **Large Dataset**: Assessing performance and accuracy with an exceptionally large number of landmarks and connections.
+
+**Test Cases:**
+
+For each identified edge case, the following test cases should be executed:
+
+- **Identical Landmarks**:
+   - **Input**: `landmark_1 = X`, `landmark_2 = X`
+   - **Expected Output**:
+     - `time = 0`
+     - `steps = []`
+   - **Purpose**: To verify that the algorithm correctly identifies and handles scenarios where the start and end points are the same, returning an immediate result with zero travel time.
+
+- **Missing Parameters**:
+   - **Input**:
+     - Case 1: `landmark_1` is provided; `landmark_2` is missing.
+     - Case 2: `landmark_1` is missing; `landmark_2` is provided.
+     - Case 3: Both `landmark_1` and `landmark_2` are missing.
+   - **Expected Output**:
+     - HTTP Status Code: `400 Bad Request`
+     - Error Message: "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."
+   - **Purpose**: To ensure the API validates input parameters and returns appropriate error messages when required inputs are missing.
+
+- **Non-existent Landmarks**:
+   - **Input**: `landmark_1 = Y`, `landmark_2 = Z`
+     - Where `Y` and `Z` are IDs not present in the dataset.
+   - **Expected Output**:
+     - HTTP Status Code: `404 Not Found`
+     - Error Message: "No path found between the specified landmarks."
+   - **Purpose**: To confirm that the algorithm appropriately handles cases where the input landmarks do not exist in the dataset, providing a clear error response.
+
+- **Disconnected Graph**:
+   - **Input**: `landmark_1 = A`, `landmark_2 = B`
+     - Where `A` and `B` exist in separate, unconnected subgraphs.
+   - **Expected Output**:
+     - HTTP Status Code: `404 Not Found`
+     - Error Message: "No path found between the specified landmarks."
+   - **Purpose**: To verify that the algorithm detects and reports the absence of a viable path between two unconnected landmarks.
+
+- **Minimum and Maximum Input Values**:
+   - **Input**:
+     - Case 1: `landmark_1 = 1`, `landmark_2 = 1`
+     - Case 2: `landmark_1 = MAX_ID`, `landmark_2 = MAX_ID`
+       - Where `MAX_ID` is the highest landmark ID in the dataset.
+   - **Expected Output**:
+     - For identical landmarks, as in Test Case 1.
+   - **Purpose**: To ensure the algorithm correctly processes the boundary values of landmark IDs without errors.
+
+- **Empty Dataset**:
+   - **Setup**: Use a dataset with no landmarks or connections.
+   - **Input**: `landmark_1 = X`, `landmark_2 = Y`
+   - **Expected Output**:
+     - HTTP Status Code: `404 Not Found`
+     - Error Message: "No path found between the specified landmarks."
+   - **Purpose**: To verify that the algorithm handles empty datasets gracefully, providing appropriate error responses.
+
+- **Large Dataset**:
+   - **Setup**: Use a dataset with a significantly large number of landmarks and connections.
+   - **Input**: `landmark_1 = P`, `landmark_2 = Q`
+   - 
 
 ### Documentation Quality
 
@@ -352,7 +422,7 @@ The testing process is conducted on a dedicated Linux-based server to ensure con
 
 - Controlled and repeatable conditions for benchmarking.
 - Validation of critical metrics, such as API response times and concurrent request handling.
-- Scalability testing with real-world datasets, including graphs with up to 24 million nodes.
+- Scalability testing with real-world datasets, including graphs with up to 23,947,347 nodes nodes.
 
 This configuration optimally supports C++ development, offering resource efficiency and compatibility for testing.
 
@@ -391,7 +461,7 @@ The project follows a **Test-Driven Development (TDD)** approach, emphasizing th
 |----------|--------------------------------------------------------------------------------------------------------------|
 | Week 1   | Develop test cases for API functionality, data validation, and core algorithms.                              |
 | Week 2   | Perform unit and integration testing of the REST API and data validation tool.                               |
-| Week 3   | Conduct performance and scalability tests with datasets up to 24M nodes and 100 concurrent requests.         |
+| Week 3   | Conduct performance and scalability tests with datasets up to 23,947,347 nodes nodes and 100 concurrent requests.         |
 | Week 4   | Conduct end-to-end testing and validate all success criteria.                                                |
 
 ---
