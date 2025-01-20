@@ -1,3 +1,14 @@
+/*
+
+    「 ✦ USA QuickPath Algorithm by TEAM 8 ✦ 」
+
+༺☆༻____________☾✧ ✩ ✧☽____________༺☆༻
+
+    STEP: 2/6 - EXTRACT
+    The files in the "extract" directory are responsible for converting the CSV data to binary format for faster processing.
+
+*/
+
 // ‿︵‿୨ Linking ୧‿︵‿
 
     #ifndef BINARY_WRITER_H
