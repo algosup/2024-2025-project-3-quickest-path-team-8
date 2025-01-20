@@ -62,12 +62,27 @@
 
 ### 1.1. Glossary
 
-| Term       | Definition                                                                                                                          |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| REST API   | A web service architecture that uses HTTP requests to provide access to resources or perform actions.                               |
-| HTTP       | Abbreviation for hypertext transfer protocol: A standard application-level protocol used for exchanging files on the World Wide Web |
-| Heuristics | Techniques that find approximate solutions to complex problems more quickly than traditional methods.                               |
-| MVP        | Minimum Viable Product, the simplest version of a product that can be released to gather user feedback.                             |
+| Term                         | Definition                                                                                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| REST API                     | A web-based interface that allows systems to communicate with each other using standard HTTP methods such as GET, POST, PUT, and DELETE. |
+| GET Endpoint                 | A specific URL where the API can be accessed using the HTTP GET method to retrieve information.                                          |
+| JSON                         | A lightweight data-interchange format that uses human-readable text to store and transmit data objects as key-value pairs.               |
+| XML                          | A markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.                |
+| HTTP Server                  | A software application that serves content to clients over the Hypertext Transfer Protocol (HTTP).                                       |
+| Approximation Heuristics     | A method or technique used to find approximate solutions to problems when exact solutions are impractical or time-consuming to compute.  |
+| Dataset                      | A collection of related data entries, often stored in a structured format like CSV files, used for analysis or processing.               |
+| C++                          | A high-performance programming language commonly used for system and application development.                                            |
+| Data Validation Tool         | A utility to check the accuracy, consistency, and integrity of input data against predefined rules or constraints.                       |
+| Quality Assurance (QA)       | The process of systematically monitoring and evaluating various aspects of a project to ensure that quality standards are met.           |
+| Test Suite                   | A collection of test cases designed to validate the functionality and performance of a software application.                             |
+| Milestone                    | A significant event or checkpoint in a project timeline used to measure progress.                                                        |
+| Assumptions                  | Statements taken as true without proof for planning purposes, used to set boundaries or expectations for a project.                      |
+| Constraints                  | Limitations or restrictions that define the scope or boundaries within which a project must operate.                                     |
+| Risk Mitigation              | Strategies or actions taken to reduce the likelihood or impact of potential problems or risks in a project.                              |
+| MVP (Minimum Viable Product) | The smallest functional version of a product that can be released to users to gather feedback and validate ideas.                        |
+| Landmark                     | A specific point of interest or location used as a reference for calculating routes in the project.                                      |
+| Transportation Optimization  | The process of improving the efficiency and effectiveness of transportation systems using algorithms and tools.                          |
+
 
 ### 1.2. Project Overview
 
@@ -152,9 +167,13 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.4.2. Milestones
 
-| Date | Milestone |
-| ---- | --------- |
-|      |           |
+| Date     | Milestone                                                                                                                                                                                                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01/13/25 | **Sprint 1:**<br>- Functional specifications first version <br> - Dataset testing                                                                                                                                                                                                           |
+| 01/20/25 | **Sprint 2:**<br>- Functional specifications refinement <br> - Technical Specifications first version <br> - QA sessions start <br> - Development of the data verification tool                                                                                                             |
+| 01/27/25 | **Sprint 3:**<br>- Functional specifications refinement <br> - Technical Specifications refinement <br> - QA sessions and Test plan refinement <br> - Refinement of the data verification tool <br> - Development and tests of the Shortest Path Algorithm                                  |
+| 02/03/25 | **Sprint 3:**<br>- Functional specifications refinement <br> - Technical Specifications refinement <br> - QA sessions and Test plan refinement <br> - Refinement of the data verification tool <br> - Development and tests of the Shortest Path Algorithm <br> - User Manual first version |
+| 02/07/25 | **Sprint 3:**<br>- Functional specifications refinement <br> - Technical Specifications refinement <br> - QA sessions and Test plan refinement <br> - Refinement of the data verification tool <br> - Development and tests of the Shortest Path Algorithm <br> - User Manual refinement    |
 
 #### 1.4.3. Dependencies
 
@@ -170,15 +189,14 @@ Planning will follow an iterative approach, with each iteration focused on speci
 | ---------------------- | -------------------------------------------------------------------------------------- |
 | Data Consistency       | Input data will conform to expected formats, types, and logical constraints.           |
 | Non-concurrent Queries | API will be accessed by a single user without doing concurrent queries during testing. |
-| Endpoint Accessibility | The API endpoint is reachable from authorized clients.                                 |
 
 **Constraints:**  
 
-| Constraint         | Description                                                                         |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| Compatibility      | The software must run on widely-used operating systems (e.g., Windows, macOS).      |
-| Dataset Size       | The dataset must not exceed the program's memory capacity on a typical laptop.      |
-| Network Dependency | The API must function over standard HTTP protocols without advanced configurations. |
+| Constraint         | Description                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| Compatibility      | The software must run on widely-used operating systems (e.g., Windows, macOS).          |
+| Dataset Size       | The dataset's file size must not exceed the program's memory capacity of a 16GB laptop. |
+| Network Dependency | The API must function over standard HTTP protocols without advanced configurations.     |
 
 #### 1.4.5. Risks/Mitigation
 
@@ -308,10 +326,10 @@ The data verification tool ensures the integrity of the dataset (e.g., `USA-road
 
 | Feature                | Description                                                                           | Example Error                                                                             | Data Integrity Context                                                                     |
 | ---------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Duplicate Connections  | Detects duplicate connections between landmarks to ensure unique entries.             | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                       | Ensures no redundancy in the dataset, preventing incorrect path calculations.              |
-| Graph Validation       | Verifies that the dataset forms a Directed Acyclic Graph (DAG) and detects cycles.    | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`            | Prevents infinite loops in pathfinding and guarantees logical flow in the graph structure. |
-| Connectivity Check     | Confirms that all landmarks are part of a connected graph.                            | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                | Ensures all landmarks are reachable, allowing reliable pathfinding results.                |
 | Data Format Validation | Ensures that all rows follow the expected format: `Landmark_A_ID,Landmark_B_ID,Time`. | `Invalid row format: Expected 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322,invalid,33'.` | Guarantees data consistency, preventing errors during graph creation or traversal.         |
+| Duplicate Connections  | Detects duplicate connections between landmarks to ensure unique entries.             | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                       | Ensures no redundancy in the dataset, preventing incorrect path calculations.              |
+| Connectivity Check     | Confirms that all landmarks are part of a connected graph.                            | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                | Ensures all landmarks are reachable, allowing reliable pathfinding results.                |
+| Graph Validation       | Verifies that the dataset forms a Directed Acyclic Graph (DAG) and detects cycles.    | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`            | Prevents infinite loops in pathfinding and guarantees logical flow in the graph structure. |
 
 #### 3.2.2. Output
 
@@ -345,7 +363,7 @@ The data verification tool ensures the integrity of the dataset (e.g., `USA-road
 ### 3.3. Pathfinding Algorithm
 
 #### 3.3.1. Overview
-The pathfinding algorithm computes the shortest path between two landmarks and integrates with the REST API for seamless functionality. The algorithm is written in C++ and utilizes custom C++ objects for both input and output, which the REST API transforms into the correct JSON or XML format.
+The pathfinding algorithm computes the shortest path between two landmarks and integrates with the REST API for seamless functionality. The algorithm is written in C++ and communicates with the REST API transforming the output into the correct JSON or XML format.
 
 #### 3.3.2. Input Parameters
 
@@ -356,10 +374,10 @@ The pathfinding algorithm computes the shortest path between two landmarks and i
 
 #### 3.3.3. Output Details
 
-| Scenario            | Return Code | Return Data                             | HTTP Code | Example Response                                                                                |
+| Scenario            | Return Code | Return Data                             | HTTP Code | Example Response from API                                                                       |
 | ------------------- | ----------- | --------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
 | Path found          | `0`         | Path (`steps`), Total time (`time`)     | `200`     | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}` |
-| Landmarks not found | `1`         | Missing landmarks (`missing_landmarks`) | `404`     | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`         |
+| Landmarks not found | `1`         | Missing landmarks (`missing_landmarks`) | `404`     | `{"error": {"code": 404, "message": "One or more landmarks specified are not present"}}`        |
 
 #### 3.3.4. REST API Workflow
 
@@ -395,7 +413,7 @@ J --> K[Return 200: Success]
 
 ### 4.1. Performance
 
-   - The API must handle any single query within **1 second** on a typical laptop such as a MacBook Air M3.
+   - The API must handle any single query within **1 second** on a typical laptop such as a MacBook Air M3 with the provided dataset.
 
 ### 4.2. Scalability
 
