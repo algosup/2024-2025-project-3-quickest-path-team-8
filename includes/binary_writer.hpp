@@ -10,7 +10,12 @@
 
 // ‿︵‿୨ Function Definition ୧‿︵‿
 
-    // This function writes a vector of Road objects to a binary file
-        void writeBinary(const std::string &filename, const std::vector<Road> &roads);
+    /**
+     * @brief Write the roads to a binary file
+     * 
+     * @param filename The name of the file to write to
+     * @param roads The roads to write
+     */
+    void writeBinary(const std::string &filename, const std::vector<Road> &roads);
 
     #endif // BINARY_WRITER_H
