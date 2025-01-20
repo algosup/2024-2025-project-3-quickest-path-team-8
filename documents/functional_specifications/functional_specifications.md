@@ -53,12 +53,13 @@
     - [3.4. Program Flow](#34-program-flow)
   - [4. Non-functional Requirements](#4-non-functional-requirements)
     - [4.1. Performance](#41-performance)
-    - [4.2. Scalability](#42-scalability)
-    - [4.3. Usability](#43-usability)
-    - [4.4. Data Integrity](#44-data-integrity)
-    - [4.5. Reliability](#45-reliability)
-    - [4.6. Maintainability](#46-maintainability)
-    - [4.7. Compliance](#47-compliance)
+    - [4.2. Precision](#42-precision)
+    - [4.3. Scalability](#43-scalability)
+    - [4.4. Usability](#44-usability)
+    - [4.5. Data Integrity](#45-data-integrity)
+    - [4.6. Reliability](#46-reliability)
+    - [4.7. Maintainability](#47-maintainability)
+    - [4.8. Compliance](#48-compliance)
 
 </details>
 
@@ -266,12 +267,14 @@ The REST API allows users to query the quickest path between two landmarks using
 
 #### 3.1.2. Response Codes
 
-| Scenario                  | HTTP Code | Description                                         | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
-| ------------------------- | --------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Valid request             | `200`     | Successfully returns the quickest path.             | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
-| Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.   | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
-| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.       | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
-| Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset. | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
+| Scenario                  | HTTP Code | Description                                                                                                    | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
+| ------------------------- | --------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Valid request             | `200`     | Successfully returns the quickest path.                                                                        | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
+| Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.                                                              | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
+| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                  | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
+| Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset.                                                            | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
+| Internal Server Error     | `500`     | An unhandled error occurred during request processing.                                                         | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
+| Service Unavailable       | `503`     | The service is temporarily unable to handle the request due to concurrent requests or current dataset loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
 
 #### 3.1.3. Request Examples
 
@@ -490,29 +493,33 @@ J --> K[Return 200: Success]
 
    - The API must handle any single query within **1 second** on a typical laptop such as a MacBook Air M3 with the provided dataset.
 
-### 4.2. Scalability
+### 4.2. Precision
+
+   - The returned path total distance should not exceed the length of the best path by 10%. This will be done by 
+
+### 4.3. Scalability
 
    - The system must be designed to accommodate future expansion to larger datasets containing more landmarks and connexions within the 16GB memory limit.
 
-### 4.3. Usability
+### 4.4. Usability
 
    - API responses must support both **JSON** and **XML** formats to meet diverse client requirements.
    - Clear API documentation to facilitate developers' easy integration.
 
-### 4.4. Data Integrity
+### 4.5. Data Integrity
 
    - Include utilities for **graph validation** and **connectivity checks** to ensure dataset consistency before use.
 
-### 4.5. Reliability
+### 4.6. Reliability
 
    - High service availability with proper error handling for invalid input or unexpected conditions.
    - Ensure fault tolerance in the presence of incomplete or incorrect dataset entries.
 
-### 4.6. Maintainability
+### 4.7. Maintainability
 
    - The codebase must follow best practices for readability and maintainability, with sufficient inline comments and comprehensive documentation.
    - Support for future updates to algorithms or dataset formats.
 
-### 4.7. Compliance
+### 4.8. Compliance
 
    - Adherence to RESTful API standards for consistency in design and implementation.
