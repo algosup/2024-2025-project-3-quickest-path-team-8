@@ -40,6 +40,10 @@
     - [3.2. Data Verification Tool](#32-data-verification-tool)
       - [3.2.1. Overview](#321-overview)
       - [3.2.2. Key Features](#322-key-features)
+        - [3.2.2.1. Data Format Validation](#3221-data-format-validation)
+        - [3.2.2.2. Duplicate Connections](#3222-duplicate-connections)
+        - [3.2.2.3. Connectivity Check](#3223-connectivity-check)
+        - [3.2.2.4. Graph Validation](#3224-graph-validation)
       - [3.2.3. Output](#323-output)
     - [3.3. Pathfinding Algorithm](#33-pathfinding-algorithm)
       - [3.3.1. Overview](#331-overview)
@@ -62,26 +66,28 @@
 
 ### 1.1. Glossary
 
-| Term                         | Definition                                                                                                                               |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| REST API                     | A web-based interface that allows systems to communicate with each other using standard HTTP methods such as GET, POST, PUT, and DELETE. |
-| GET Endpoint                 | A specific URL where the API can be accessed using the HTTP GET method to retrieve information.                                          |
-| JSON                         | A lightweight data-interchange format that uses human-readable text to store and transmit data objects as key-value pairs.               |
-| XML                          | A markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.                |
-| HTTP Server                  | A software application that serves content to clients over the Hypertext Transfer Protocol (HTTP).                                       |
-| Approximation Heuristics     | A method or technique used to find approximate solutions to problems when exact solutions are impractical or time-consuming to compute.  |
-| Dataset                      | A collection of related data entries, often stored in a structured format like CSV files, used for analysis or processing.               |
-| C++                          | A high-performance programming language commonly used for system and application development.                                            |
-| Data Validation Tool         | A utility to check the accuracy, consistency, and integrity of input data against predefined rules or constraints.                       |
-| Quality Assurance (QA)       | The process of systematically monitoring and evaluating various aspects of a project to ensure that quality standards are met.           |
-| Test Suite                   | A collection of test cases designed to validate the functionality and performance of a software application.                             |
-| Milestone                    | A significant event or checkpoint in a project timeline used to measure progress.                                                        |
-| Assumptions                  | Statements taken as true without proof for planning purposes, used to set boundaries or expectations for a project.                      |
-| Constraints                  | Limitations or restrictions that define the scope or boundaries within which a project must operate.                                     |
-| Risk Mitigation              | Strategies or actions taken to reduce the likelihood or impact of potential problems or risks in a project.                              |
-| MVP (Minimum Viable Product) | The smallest functional version of a product that can be released to users to gather feedback and validate ideas.                        |
-| Landmark                     | A specific point of interest or location used as a reference for calculating routes in the project.                                      |
-| Transportation Optimization  | The process of improving the efficiency and effectiveness of transportation systems using algorithms and tools.                          |
+| Term                         | Definition                                                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| REST API                     | A web-based interface that allows systems to communicate with each other using standard HTTP methods such as GET, POST, PUT, and DELETE.                                    |
+| GET Endpoint                 | A specific URL where the API can be accessed using the HTTP GET method to retrieve information.                                                                             |
+| JSON                         | A lightweight data-interchange format that uses human-readable and machine-readable text to store and transmit data objects as key-value pairs.                             |
+| XML                          | A markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.                                                   |
+| HTTP Server                  | A software application that serves content to clients over the Hypertext Transfer Protocol (HTTP).                                                                          |
+| Approximation Heuristics     | A method or technique used to find approximate solutions to problems when exact solutions are impractical or time-consuming to compute.                                     |
+| Dataset                      | A collection of related data entries, often stored in a structured format like CSV files, used for analysis or processing.                                                  |
+| C++                          | A high-performance programming language commonly used for system and application development.                                                                               |
+| Data Validation Tool         | A utility to check the accuracy, consistency, and integrity of input data against predefined rules or constraints.                                                          |
+| Quality Assurance (QA)       | The process of systematically monitoring and evaluating various aspects of a project to ensure that quality standards are met.                                              |
+| Test Suite                   | A collection of test cases designed to validate the functionality and performance of a software application.                                                                |
+| Milestone                    | A significant event or checkpoint in a project timeline used to measure progress.                                                                                           |
+| Assumptions                  | Statements taken as true without proof for planning purposes, used to set boundaries or expectations for a project.                                                         |
+| Constraints                  | Limitations or restrictions that define the scope or boundaries within which a project must operate.                                                                        |
+| Risk Mitigation              | Strategies or actions taken to reduce the likelihood or impact of potential problems or risks in a project.                                                                 |
+| MVP (Minimum Viable Product) | The smallest functional version of a product that can be released to users to gather feedback and validate ideas.                                                           |
+| Landmark                     | A specific point of interest or location used as a reference for calculating routes in the project.                                                                         |
+| Transportation Optimization  | The process of improving the efficiency and effectiveness of transportation systems using algorithms and tools.                                                             |
+| Directed Acyclic Graph (DAG) | A graph with directed edges where no cycles exist, meaning no path leads back to its starting point.                                                                        |
+| QA Session                   | A structured process where quality assurance professionals test, evaluate, and verify a product or system to ensure it meets specified standards and functions as intended. |
 
 
 ### 1.2. Project Overview
@@ -113,15 +119,15 @@ The target audience includes:
 
 #### 1.3.5. Deliverables
 
-| Deliverable               | Purpose                                                                                                                                                |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Functional Specifications | Detailed documentation of the features used and their non-technical aspects.                                                                           |
-| Technical Specifications  | Detailed documentation on the technical implementation of software                                                                                    |
-| Data Validation Tool      | A utility to verify the integrity of the provided CSV file.                                                                                            |
-| C++ Source Code           | The source code of the software program, including the shortest path algorithm and the HTTP server.                                                    |
-| Test Suite                | Tests to validate correctness, performance, and compliance with the 10% approximation rule.                                                            |
+| Deliverable               | Purpose                                                                                                                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Functional Specifications | Detailed documentation of the features used and their non-technical aspects.                                                                    |
+| Technical Specifications  | Detailed documentation on the technical implementation of software                                                                              |
+| Data Validation Tool      | A utility to verify the integrity of the provided CSV file.                                                                                     |
+| C++ Source Code           | The source code of the software program, including the shortest path algorithm and the HTTP server.                                             |
+| Test Suite                | Tests to validate correctness, performance, and compliance with the 10% approximation rule.                                                     |
 | Test Plan & Test Cases    | A set of scenarios validating the algorithm's performance and accuracy with a strategy to run test suite tests most accurately and efficiently. |
-| User Manual               | The end-user documentation for the software.                                                                                                           |
+| User Manual               | The end-user documentation for the software.                                                                                                    |
 
 ### 1.4. Project Organization
 
@@ -150,7 +156,7 @@ The target audience includes:
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
 | Project Manager   | Responsible for the overall planning, execution, and success of the project.                                                                                         | Victor LEROY                     |
 | Program Manager   | Ensures the project meets expectations. <br> Is in charge of design. <br> Responsible for writing the Functional Specifications.                                     | Antoine PREVOST                  |
-| Tech Lead         | Makes technical decisions for the project. <br> Translates the Functional Specification into Technical Specifications. <br> Does code review.                      | David CUAHONTE CUEVAS            |
+| Tech Lead         | Makes technical decisions for the project. <br> Translates the Functional Specification into Technical Specifications. <br> Does code review.                        | David CUAHONTE CUEVAS            |
 | Software Engineer | Writes the code. <br> Writes documentation. <br> Participate in the technical design.                                                                                | Thomas PLANCHARD<br>Mathis KAKAL |
 | Quality Assurance | Tests all the functionalities of a product to find bugs and issues. <br> Document bugs and issues. <br> Write the test plan. <br> Check that issues have been fixed. | Max BERNARD                      |
 | Technical Writer  | Responsible for creating and maintaining the project's documentation.                                                                                                | Quentin CLEMENT                  |
@@ -167,13 +173,13 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.5.2. Milestones
 
-| Date       | Milestone                                                                                                                                                                                                                      |
-|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **01/13/25** | **Sprint 1:**<br>- Initial version of functional specifications <br>- Testing of the dataset                                                                                                                                          |
-| **01/20/25** | **Sprint 2:**<br>- Refined functional specifications <br>- First version of technical specifications <br>- Start of QA sessions <br>- Development of the data verification tool                                                   |
-| **01/27/25** | **Sprint 3:**<br>- Continued refinement of functional and technical specifications <br>- Ongoing QA sessions and test plan refinement <br>- Further development of the data verification tool <br>- Development and testing of the Shortest Path Algorithm |
-| **02/03/25** | **Sprint 4:**<br>- Continued refinement of functional and technical specifications <br>- Ongoing QA sessions and test plan refinement <br>- Further development of the data verification tool <br>- User manual first version <br>- Testing of the Shortest Path Algorithm |
-| **02/07/25** | **Sprint 5:**<br>- Final refinements to functional and technical specifications <br>- Continued QA and test plan adjustments <br>- Finalization of the data verification tool <br>- Final testing and refinement of the Shortest Path Algorithm <br>- User manual refinement  |
+| Date         | Milestone                                                                                                                                                                                                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **01/13/25** | **Sprint 1:**<br>- Initial version of functional specifications <br>- Testing of the dataset                                                                                                                                                                                 |
+| **01/20/25** | **Sprint 2:**<br>- Refined functional specifications <br>- First version of technical specifications <br>- Start of QA sessions <br>- Development of the data verification tool                                                                                              |
+| **01/27/25** | **Sprint 3:**<br>- Continued refinement of functional and technical specifications <br>- Ongoing QA sessions and test plan refinement <br>- Further development of the data verification tool <br>- Development and testing of the Shortest Path Algorithm                   |
+| **02/03/25** | **Sprint 4:**<br>- Continued refinement of functional and technical specifications <br>- Ongoing QA sessions and test plan refinement <br>- Further development of the data verification tool <br>- User manual first version <br>- Testing of the Shortest Path Algorithm   |
+| **02/07/25** | **Sprint 5:**<br>- Final refinements to functional and technical specifications <br>- Continued QA and test plan adjustments <br>- Finalization of the data verification tool <br>- Final testing and refinement of the Shortest Path Algorithm <br>- User manual refinement |
 
 #### 1.5.3. Dependencies
 
@@ -194,7 +200,7 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 | Constraint         | Description                                                                             |
 | ------------------ | --------------------------------------------------------------------------------------- |
-| Compatibility      | The software must run on widely used operating systems (e.g., Windows, macOS).          |
+| Compatibility      | The API and algorithm must run on widely used operating systems (e.g., Windows, macOS). |
 | Dataset Size       | The dataset's file size must not exceed the program's memory capacity of a 16GB laptop. |
 | Network Dependency | The API must function over standard HTTP protocols without advanced configurations.     |
 
@@ -238,15 +244,16 @@ Planning will follow an iterative approach, with each iteration focused on speci
 ### 3.1. REST API Implementation
 
 #### Overview
-The REST API allows users to query the quickest path between two landmarks using GET requests. The API supports JSON and XML responses and provides detailed error handling for invalid or missing inputs.
+
+The REST API allows users to query the quickest path between two landmarks using GET requests, either on their own computer or on a computer on the local network. The API supports JSON and XML responses and provides detailed error handling for invalid or missing inputs.
 
 #### 3.1.1. Endpoint Details
 
-| **Property** | **Details** |
+| **Property** | **Details**                                                                                     |
 | ------------ | ----------------------------------------------------------------------------------------------- |
-| **Endpoint** | `/quickest_path` |
-| **Method** | `GET` |
-| **Headers** | - `Content-Type: application/json`<br>- `Accept: application/json` or `Accept: application/xml` |
+| **Endpoint** | `/quickest_path`                                                                                |
+| **Method**   | `GET`                                                                                           |
+| **Headers**  | - `Content-Type: application/json`<br>- `Accept: application/json` or `Accept: application/xml` |
 
  **Parameters:** 
 | Name         | Type    | Constraints                           |
@@ -259,12 +266,12 @@ The REST API allows users to query the quickest path between two landmarks using
 
 #### 3.1.2. Response Codes
 
-| Scenario                 | HTTP Code | Description                                         | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
-| ------------------------ | --------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Valid request            | `200` | Successfully returns the quickest path.             | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}` | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
-| Identical landmarks      | `200` | Returns `time` as `0` and an empty `steps` array.   | `{"time": 0, "steps": []}` | `<response><time>0</time><steps /></response>` |
-| Missing or invalid inputs | `400` | One or both landmarks are missing or invalid.       | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>` |
-| Nonexistent landmarks   | `404` | One or both landmarks are not found in the dataset. | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}` | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>` |
+| Scenario                  | HTTP Code | Description                                         | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
+| ------------------------- | --------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Valid request             | `200`     | Successfully returns the quickest path.             | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
+| Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.   | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
+| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.       | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
+| Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset. | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
 
 #### 3.1.3. Request Examples
 
@@ -286,11 +293,11 @@ Accept: application/xml
 
 | Entity                 | JSON Key             | XML Tag      | Data Type | Description                                                      |
 | ---------------------- | -------------------- | ------------ | --------- | ---------------------------------------------------------------- |
-| Total time             | `time` | `<time>` | Integer   | Total travel time between `landmark_1` and `landmark_2`.         |
-| Steps array            | `steps` | `<steps>` | Array     | A list of steps representing the shortest path.                  |
-| Step object            | `{ "landmark": ...}` | `<step>` | Object    | Details of a single step, including the landmark and distance.   |
-| Landmark ID            | `landmark` | `<landmark>` | Integer   | The ID of a landmark in the path.                                |
-| Distance between steps | `distance` | `<distance>` | Integer   | The distance from the previous landmark to the current landmark. |
+| Total time             | `time`               | `<time>`     | Integer   | Total travel time between `landmark_1` and `landmark_2`.         |
+| Steps array            | `steps`              | `<steps>`    | Array     | A list of steps representing the shortest path.                  |
+| Step object            | `{ "landmark": ...}` | `<step>`     | Object    | Details of a single step, including the landmark and distance.   |
+| Landmark ID            | `landmark`           | `<landmark>` | Integer   | The ID of a landmark in the path.                                |
+| Distance between steps | `distance`           | `<distance>` | Integer   | The distance from the previous landmark to the current landmark. |
 
 **Sample JSON Success Response:**
 ```json
@@ -324,16 +331,80 @@ Accept: application/xml
 
 #### 3.2.1. Overview
 
-The data verification tool ensures the integrity of the dataset (e.g., `USA-roads.csv`). It performs checks to validate the dataset’s structure and usability.
+The data verification tool is an external script separate from the API, designed to ensure the integrity of datasets (e.g., `USA-roads.csv`). This command-line-only tool performs checks to validate the dataset's structure and usability. To use the tool, execute the script with the following format:
+
+```
+<script_name> <filename>
+```
+
+> [!NOTE]
+> `<script_name>` is the name of the script file (e.g., `data_verifier`) and `<filename>` is the name of the CSV file you want to verify, provided it adheres to the correct data format.
+
+> [!WARNING]  
+> If the Data Verification Tool identifies any issues, an email should be sent to the client to notify them about the problem. The email should also include a request for a corrected dataset to ensure the data is clean and error-free.
 
 #### 3.2.2. Key Features
 
-| Feature                | Description                                                                           | Example Error                                                                             | Data Integrity Context                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Data Format Validation | Ensures that all rows follow the expected format: `Landmark_A_ID,Landmark_B_ID,Time`. | `Invalid row format: Expected 'Landmark_A_ID,Landmark_B_ID,Time'. Row: '322, invalid,33'.` | Guarantees data consistency, preventing errors during graph creation or traversal.         |
-| Duplicate Connections  | Detects duplicate connections between landmarks to ensure unique entries.             | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.` | Ensures no redundancy in the dataset, preventing incorrect path calculations.              |
-| Connectivity Check     | Confirms that all landmarks are part of a connected graph.                            | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.` | Ensures all landmarks are reachable, allowing reliable pathfinding results.                |
-| Graph Validation       | Verifies that the dataset forms a Directed Acyclic Graph (DAG) and detects cycles.    | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.` | Prevents infinite loops in pathfinding and guarantees logical flow in the graph structure. |
+| **Feature**                | **Description**                                                                           | **Example Error**                                                                            | **Data Integrity Context**                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Data Format Validation** | Validates that all rows follow the expected format: `Landmark_A_ID, Landmark_B_ID, Time`. | `Invalid row format: Expected 'Landmark_A_ID, Landmark_B_ID, Time'. Row: '322, invalid,33'.` | Ensures consistent data structure, reducing errors during graph creation or traversal. |
+| **Duplicate Connections**  | Identifies duplicate connections between landmarks to ensure unique entries.              | `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`                          | Prevents redundant data, avoiding incorrect path calculations.                         |
+| **Connectivity Check**     | Verifies that all landmarks belong to a single connected graph.                           | `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`                   | Ensures full graph connectivity, enabling reliable pathfinding.                        |
+| **Graph Validation**       | Ensures the dataset forms a Directed Acyclic Graph (DAG) and detects any cycles.          | `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`               | Avoids infinite loops and ensures logical graph traversal.                             |
+
+---
+
+##### 3.2.2.1. Data Format Validation
+
+This module ensures the dataset adheres to the required structure for seamless processing. It addresses:
+
+- **Missing or Additional Fields**: Each row must have exactly three values separated by commas (`Landmark_A_ID, Landmark_B_ID, Time`).
+- **Non-Negative Distances**: All time values must be positive integers.
+- **Data Type Consistency**: Each field must be numeric to prevent parsing errors.
+
+> [!NOTE]  
+> Example: 
+> |Input line|Output|Reason|
+> |---|---|---|
+> |322,43,33|No output|The data follows expected format|
+> |322,invalid,33| Error: `Invalid row format: Expected 'Landmark_A_ID, Landmark_B_ID, Time'. Row: '322,invalid,33'.` | One of the fields is not a number|
+> |322, 43, -54| Error: `Invalid row format: Expected 'Landmark_A_ID, Landmark_B_ID, Time'. Row: '322, 43, -54'.` | One of the field has a negative distance |
+
+---
+
+##### 3.2.2.2. Duplicate Connections
+
+This module ensures each connection between landmarks is declared only once. It identifies redundant entries that could lead to incorrect calculations or inflated data sizes. 
+
+> [!NOTE]  
+> Example: 
+> The entries `322, 333, 10` and `322, 333, 10` in the dataset would raise an error:  
+> `Duplicate connection found: Landmark_A_ID=322, Landmark_B_ID=333.`
+
+---
+
+##### 3.2.2.3. Connectivity Check
+
+This module validates that all landmarks in the dataset form a single connected graph. It ensures there are no isolated nodes or subgraphs. 
+
+> [!NOTE]  
+> Example: 
+> If a subgraph exists where Landmark `500` is isolated, the tool raises an error:  
+> `Disconnected subgraph found: Node group starting from Landmark_A_ID=500.`
+
+This ensures all landmarks are accessible for accurate pathfinding.
+
+---
+
+##### 3.2.2.4. Graph Validation
+
+This module checks the dataset to ensure it forms a Directed Acyclic Graph (DAG). It detects and reports any cycles that could disrupt graph traversal. 
+> [!NOTE]  
+> Example: 
+> If the dataset contains a loop such as `100 -> 200 -> 100`, the tool raises an error:  
+> `Cycle detected: Landmark_A_ID=100 -> Landmark_B_ID=200 -> Landmark_A_ID=100.`
+
+By enforcing acyclic structures, the dataset supports efficient pathfinding algorithms and avoids infinite loops.
 
 #### 3.2.3. Output
 
@@ -366,21 +437,22 @@ The data verification tool ensures the integrity of the dataset (e.g., `USA-road
 ### 3.3. Pathfinding Algorithm
 
 #### 3.3.1. Overview
+
 The pathfinding algorithm computes the shortest path between two landmarks and integrates with the REST API for seamless functionality. The algorithm is written in C++ and communicates with the REST API transforming the output into the correct JSON or XML format.
 
 #### 3.3.2. Input Parameters
 
 | Parameter          | Type    | Description                                    |
 | ------------------ | ------- | ---------------------------------------------- |
-| `Source Node` | Integer | Unique identifier of the starting landmark.    |
+| `Source Node`      | Integer | Unique identifier of the starting landmark.    |
 | `Destination Node` | Integer | Unique identifier of the destination landmark. |
 
 #### 3.3.3. Output Details
 
 | Scenario            | Return Code | Return Data                             | HTTP Code | Example Response from API                                                                       |
 | ------------------- | ----------- | --------------------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
-| Path found          | `0` | Path (`steps`), Total time (`time`)     | `200` | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}` |
-| Landmarks not found | `1` | Missing landmarks (`missing_landmarks`) | `404` | `{"error": {"code": 404, "message": "One or more landmarks specified are not present"}}` |
+| Path found          | `0`         | Path (`steps`), Total time (`time`)     | `200`     | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}` |
+| Landmarks not found | `1`         | Missing landmarks (`missing_landmarks`) | `404`     | `{"error": {"code": 404, "message": "One or more landmarks specified are not present"}}`        |
 
 #### 3.3.4. REST API Workflow
 
@@ -420,7 +492,7 @@ J --> K[Return 200: Success]
 
 ### 4.2. Scalability
 
-   - The system must be designed to accommodate future expansion to larger datasets containing more landmarks and connexions.
+   - The system must be designed to accommodate future expansion to larger datasets containing more landmarks and connexions within the 16GB memory limit.
 
 ### 4.3. Usability
 
