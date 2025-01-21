@@ -20,53 +20,53 @@
   - [4.3 Data Integrity Verification](#43-data-integrity-verification)
     - [Validation Criteria](#validation-criteria)
     - [Importance of Data Integrity](#importance-of-data-integrity)
-  - [5. System Architecture](#5-system-architecture)
-    - [5.1 Technology Stack](#51-technology-stack)
-    - [5.2 REST API Design](#52-rest-api-design)
-    - [5.3 Algorithm Design](#53-algorithm-design)
-      - [Core Algorithm](#core-algorithm)
-      - [Role in the System](#role-in-the-system)
-      - [Scalability and Performance](#scalability-and-performance)
-      - [Complexity](#complexity)
-      - [Optimizations for A\*](#optimizations-for-a)
-  - [6. Implementation and Testing](#6-implementation-and-testing)
-    - [6.1 Path Calculation](#61-path-calculation)
-      - [Overview](#overview)
-      - [Workflow](#workflow)
-      - [Diagram](#diagram)
-      - [Optimization Techniques](#optimization-techniques)
-      - [Edge Cases](#edge-cases)
-    - [6.2 Data Validation Tool](#62-data-validation-tool)
-      - [Overview](#overview-1)
-      - [Workflow](#workflow-1)
-      - [Efficiency Measures](#efficiency-measures)
-    - [6.3 Performance Testing](#63-performance-testing)
-      - [Overview](#overview-2)
-      - [Testing](#testing)
-      - [Stress Testing](#stress-testing-1)
-      - [Latency Measurement](#latency-measurement)
-      - [Failure Rate](#failure-rate)
-      - [Automation](#automation)
-      - [Scalability Testing](#scalability-testing)
-  - [7. Non-Functional Requirements](#7-non-functional-requirements)
-    - [7.1 Response Time](#71-response-time)
-    - [7.2 Scalability](#72-scalability)
-    - [7.3 Usability](#73-usability)
-    - [7.4 Reliability](#74-reliability)
-    - [7.5 Security](#75-security)
-    - [7.6 Maintainability](#76-maintainability)
-    - [7.7 Data Integrity](#77-data-integrity)
-    - [7.8 Compliance](#78-compliance)
-  - [8. Deliverables](#8-deliverables)
-    - [8.1 Source Code](#81-source-code)
-    - [8.2 Test Suite](#82-test-suite)
-    - [8.3 Data Validation Outputs](#83-data-validation-outputs)
+- [5. System Architecture](#5-system-architecture)
+  - [5.1 Technology Stack](#51-technology-stack)
+  - [5.2 REST API Design](#52-rest-api-design)
+  - [5.3 Algorithm Design](#53-algorithm-design)
+    - [Core Algorithm](#core-algorithm)
+    - [Role in the System](#role-in-the-system)
+    - [Scalability and Performance](#scalability-and-performance)
+    - [Complexity](#complexity)
+    - [Optimizations for A\*](#optimizations-for-a)
+- [6. Implementation and Testing](#6-implementation-and-testing)
+  - [6.1 Path Calculation](#61-path-calculation)
+    - [Overview](#overview)
+    - [Workflow](#workflow)
+    - [Diagram](#diagram)
+    - [Optimization Techniques](#optimization-techniques)
+    - [Edge Cases](#edge-cases)
+  - [6.2 Data Validation Tool](#62-data-validation-tool)
+    - [Overview](#overview-1)
+    - [Workflow](#workflow-1)
+    - [Efficiency Measures](#efficiency-measures)
+  - [6.3 Performance Testing](#63-performance-testing)
+    - [Overview](#overview-2)
+    - [Testing](#testing)
+    - [Stress Testing](#stress-testing-1)
+    - [Latency Measurement](#latency-measurement)
+    - [Failure Rate](#failure-rate)
+    - [Automation](#automation)
+    - [Scalability Testing](#scalability-testing)
+- [7. Non-Functional Requirements](#7-non-functional-requirements)
+  - [7.1 Response Time](#71-response-time)
+  - [7.2 Scalability](#72-scalability)
+  - [7.3 Usability](#73-usability)
+  - [7.4 Reliability](#74-reliability)
+  - [7.5 Security](#75-security)
+  - [7.6 Maintainability](#76-maintainability)
+  - [7.7 Data Integrity](#77-data-integrity)
+  - [7.8 Compliance](#78-compliance)
+- [8. Deliverables](#8-deliverables)
+  - [8.1 Source Code](#81-source-code)
+  - [8.2 Test Suite](#82-test-suite)
+  - [8.3 Data Validation Outputs](#83-data-validation-outputs)
     - [Reference](#reference)
-  - [9. Development Framework](#9-development-framework)
-    - [9.1 Code Design Principles](#91-code-design-principles)
-    - [9.2 Challenges](#92-challenges)
-    - [9.3 Possible Bugs](#93-possible-bugs)
-    - [9.4 Development Process](#94-development-process)
+- [9. Development Framework](#9-development-framework)
+  - [9.1 Code Design Principles](#91-code-design-principles)
+  - [9.2 Challenges](#92-challenges)
+  - [9.3 Possible Bugs](#93-possible-bugs)
+  - [9.4 Development Process](#94-development-process)
 
 </details>
 
@@ -212,13 +212,13 @@ To ensure accurate and reliable path calculations, the system must validate the 
 
 For the detailed workflow and technical implementation of the data validation process, refer to **Section 6.2: Data Validation Tool**.
 
-## 5. System Architecture
+# 5. System Architecture
 
 The system architecture defines the technical blueprint for implementing the software.
 
 ---
 
-### 5.1 Technology Stack
+## 5.1 Technology Stack
 
 The following technologies and tools will be used to implement the system:
 
@@ -253,7 +253,7 @@ The following technologies and tools will be used to implement the system:
 
 ---
 
-### 5.2 REST API Design
+## 5.2 REST API Design
 
 The REST API handles requests for the quickest path between landmarks. Design considerations include:
 
@@ -323,26 +323,26 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
 ---
 
-### 5.3 Algorithm Design
+## 5.3 Algorithm Design
 
 The algorithm is a core component of the system, responsible for calculating the quickest path between two landmarks. Its design ensures a balance between accuracy, performance, and scalability, aligned with the system’s requirements.
 
-#### Core Algorithm
+### Core Algorithm
 
 - The A\* algorithm is selected for its heuristic-driven approach, combining efficient exploration with guaranteed pathfinding.
 - The heuristic function helps prioritize nodes closer to the destination, optimizing search performance.
 
-#### Role in the System
+### Role in the System
 
 - Operates on a preprocessed dataset represented as an adjacency list, ensuring efficient traversal of landmark connections.
 - Integrated into the REST API to dynamically process pathfinding queries and return results within 1 second for typical use cases.
 
-#### Scalability and Performance
+### Scalability and Performance
 
 - The algorithm is optimized to handle large datasets containing millions of nodes and edges.
 - Preprocessing steps, such as duplicate removal and graph validation, reduce runtime overhead.
 
-#### Complexity
+### Complexity
 
 1. **Time Complexity**:
 
@@ -357,7 +357,7 @@ These formulas illustrate the algorithm’s efficiency for large-scale graphs, e
 
 For the detailed workflow and implementation, refer to **6.1 Path Calculation**.
 
-#### Optimizations for A\*
+### Optimizations for A\*
 
 The A\* algorithm is further optimized to improve performance and scalability while maintaining accuracy. The following enhancements are implemented:
 
@@ -382,15 +382,15 @@ The A\* algorithm is further optimized to improve performance and scalability wh
 
 These optimizations enable the system to handle larger datasets efficiently, ensuring rapid responses even under high-concurrency scenarios or for geographically dispersed datasets.
 
-## 6. Implementation and Testing
+# 6. Implementation and Testing
 
-### 6.1 Path Calculation
+## 6.1 Path Calculation
 
-#### Overview
+### Overview
 
 The path calculation system implements the A\* algorithm to compute the quickest path between two landmarks. This approach ensures compliance with the system’s accuracy and performance goals.
 
-#### Workflow
+### Workflow
 
 1. **Initialization**:
 
@@ -420,20 +420,20 @@ The path calculation system implements the A\* algorithm to compute the quickest
      - The destination node (`landmark_2`) is dequeued, and the path is reconstructed using the predecessor list.
      - The priority queue is empty, indicating no valid path exists.
 
-#### Diagram
+### Diagram
 
 The following diagram illustrates the workflow of the A\* algorithm:
 
 ![A* Algorithm Workflow](/documents/images/Algorithm.png)
 
-#### Optimization Techniques
+### Optimization Techniques
 
 - **Graph Pruning**:
   - During preprocessing, unnecessary nodes and connections are removed to streamline computation.
 - **Path Caching**:
   - Frequently queried paths are cached in memory to reduce redundant calculations for commonly requested routes.
 
-#### Edge Cases
+### Edge Cases
 
 - **Identical Landmarks**:
   - Return a time of `0` with an empty path.
@@ -442,13 +442,13 @@ For a high-level explanation of the algorithm’s role in the system, refer to *
 
 ---
 
-### 6.2 Data Validation Tool
+## 6.2 Data Validation Tool
 
-#### Overview
+### Overview
 
 The data validation tool ensures the integrity and usability of the dataset before it is integrated into the system. It implements the criteria defined in **4.3** and automates error detection and logging.
 
-#### Workflow
+### Workflow
 
 1. **Format Validation**:
 
@@ -475,33 +475,33 @@ The data validation tool ensures the integrity and usability of the dataset befo
      - Cycles in acyclic regions.
    - The dataset is flagged as invalid if any errors are found.
 
-#### Efficiency Measures
+### Efficiency Measures
 
 - Large datasets are processed in chunks to prevent memory overflow.
 - Multi-threading is utilized for independent checks (e.g., format validation and duplicate removal).
 
 ![Data Validation Workflow](/documents/images/dataValidation.png)
 
-### 6.3 Performance Testing
+## 6.3 Performance Testing
 
-#### Overview
+### Overview
 
 Performance testing validates that the system meets its response time and scalability requirements under realistic conditions.
 
-#### Testing
+### Testing
 
 - **General Testing**:
   - Verify correctness of individual components (e.g., A\* algorithm, graph construction).
   - Validate that the REST API responds correctly to all input scenarios, including edge cases.
 
-#### Stress Testing
+### Stress Testing
 
 Simulate concurrent queries to assess system behavior under load:
 
 - Up to 20 concurrent queries are tested to reflect realistic usage scenarios.
 - Metrics are collected for response time and resource usage under different loads.
 
-#### Latency Measurement
+### Latency Measurement
 
 Measure average and maximum response times for queries with:
 
@@ -509,7 +509,7 @@ Measure average and maximum response times for queries with:
 - Medium datasets (~1 million nodes).
 - Large datasets (~24 million nodes).
 
-#### Failure Rate
+### Failure Rate
 
 Failures are defined as:
 
@@ -521,12 +521,12 @@ The failure rate should remain below 5% under concurrent load scenarios. Higher 
 - Resource contention (e.g., insufficient threads or memory).
 - Latency from increased queuing or thread scheduling.
 
-#### Automation
+### Automation
 
 - Tests are automated using **Google Test** and **Apache JMeter**.
 - A CI/CD pipeline ensures consistent validation of performance metrics.
 
-#### Scalability Testing
+### Scalability Testing
 
 - Gradually increase dataset size and query frequency to evaluate performance degradation.
 - Identify bottlenecks and suggest potential optimizations for future iterations.
@@ -535,11 +535,11 @@ The failure rate should remain below 5% under concurrent load scenarios. Higher 
 
 ---
 
-## 7. Non-Functional Requirements
+# 7. Non-Functional Requirements
 
 This section outlines the non-functional requirements that define the quality attributes of the system. These requirements ensure the system is reliable, scalable, secure, and maintainable, while meeting performance and usability expectations.
 
-### 7.1 Response Time
+## 7.1 Response Time
 
 - **Requirement**: The system must respond to valid queries within **1 second** on a standard laptop with medium dataset sizes (~1 million nodes).
 - **Rationale**:
@@ -552,7 +552,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.2 Scalability
+## 7.2 Scalability
 
 - **Requirement**: The system must handle larger datasets and increased query loads with graceful degradation in performance.
 - **Rationale**:
@@ -568,7 +568,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.3 Usability
+## 7.3 Usability
 
 - **Requirement**: The REST API must be intuitive, well-documented, and easy to integrate with external systems.
 - **Rationale**:
@@ -583,7 +583,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.4 Reliability
+## 7.4 Reliability
 
 - **Requirement**: The system must handle expected usage without crashing or returning incorrect results.
 - **Rationale**:
@@ -595,7 +595,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.5 Security
+## 7.5 Security
 
 - **Requirement**: Protect the system from unauthorized access, data corruption, and denial-of-service attacks.
 - **Rationale**:
@@ -608,7 +608,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.6 Maintainability
+## 7.6 Maintainability
 
 - **Requirement**: The codebase and system architecture must support easy debugging, updates, and expansions.
 - **Rationale**:
@@ -622,7 +622,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.7 Data Integrity
+## 7.7 Data Integrity
 
 - **Requirement**: The system must maintain the integrity of the input dataset during validation and processing.
 - **Rationale**:
@@ -633,7 +633,7 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-### 7.8 Compliance
+## 7.8 Compliance
 
 - **Requirement**: Adhere to established standards for RESTful APIs and data handling.
 - **Rationale**:
@@ -645,11 +645,11 @@ This section outlines the non-functional requirements that define the quality at
 
 ---
 
-## 8. Deliverables
+# 8. Deliverables
 
 The following deliverables outline the technical outputs developers need to produce or interact with during the project.
 
-### 8.1 Source Code
+## 8.1 Source Code
 
 - **Content**:
   - Complete implementation of:
@@ -662,7 +662,7 @@ The following deliverables outline the technical outputs developers need to prod
 
 ---
 
-### 8.2 Test Suite
+## 8.2 Test Suite
 
 - **Content**:
   - Automated tests to validate:
@@ -674,7 +674,7 @@ The following deliverables outline the technical outputs developers need to prod
 
 ---
 
-### 8.3 Data Validation Outputs
+## 8.3 Data Validation Outputs
 
 - **Content**:
   - Logs and error reports generated by the data validation tool, categorized by:
@@ -691,11 +691,11 @@ The following deliverables outline the technical outputs developers need to prod
 
 For a comprehensive list of project deliverables, including non-technical outputs such as final presentations or reports, refer to the Functional Specifications.
 
-## 9. Development Framework
+# 9. Development Framework
 
 This section outlines the principles, challenges, potential risks, and approach for the development of the system. It serves as a guide for developers to ensure alignment with project goals and efficient implementation.
 
-### 9.1 Code Design Principles
+## 9.1 Code Design Principles
 
 The following coding design principles will guide the development of the system:
 
@@ -717,7 +717,7 @@ The following coding design principles will guide the development of the system:
 
 ---
 
-### 9.2 Challenges
+## 9.2 Challenges
 
 The project presents several significant challenges that must be addressed during development:
 
@@ -742,7 +742,7 @@ The project presents several significant challenges that must be addressed durin
 
 ---
 
-### 9.3 Possible Bugs
+## 9.3 Possible Bugs
 
 The following potential bugs or limitations could arise during development:
 
@@ -771,7 +771,7 @@ The following potential bugs or limitations could arise during development:
 
 ---
 
-### 9.4 Development Process
+## 9.4 Development Process
 
 The development process will follow an incremental approach, focusing on building a working system while gradually expanding its capabilities:
 
