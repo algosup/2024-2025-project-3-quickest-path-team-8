@@ -140,9 +140,6 @@ The REST API provides external access to the quickest path calculation functiona
   - A heuristic approximation algorithm (e.g., A\* or Dijkstra’s algorithm) will be used to balance speed and accuracy.
   - The returned route duration must not exceed the shortest possible duration by more than 10%.
 
-- **Concurrency Support**
-  - The API will handle multiple concurrent queries with minimal impact on performance.
-
 ### Dataset Preprocessing
 
 - **Purpose**:
