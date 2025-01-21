@@ -26,6 +26,7 @@
   - [5.3 Algorithm Design](#53-algorithm-design)
     - [Core Algorithm](#core-algorithm)
     - [Role in the System](#role-in-the-system)
+      - [Why Adjacency List Over Adjacency Matrix?](#why-adjacency-list-over-adjacency-matrix)
     - [Scalability and Performance](#scalability-and-performance)
     - [Complexity](#complexity)
     - [Optimizations for A\*](#optimizations-for-a)
@@ -39,6 +40,7 @@
   - [6.2 Data Validation Tool](#62-data-validation-tool)
     - [Overview](#overview-1)
     - [Workflow](#workflow-1)
+      - [Example Output](#example-output)
     - [Efficiency Measures](#efficiency-measures)
   - [6.3 Performance Testing](#63-performance-testing)
     - [Overview](#overview-2)
@@ -334,6 +336,31 @@ The algorithm is a core component of the system, responsible for calculating the
 - Operates on a preprocessed dataset represented as an adjacency list, ensuring efficient traversal of landmark connections.
 - Integrated into the REST API to dynamically process pathfinding queries and return results within 1 second for typical use cases.
 
+#### Why Adjacency List Over Adjacency Matrix?
+
+We use an adjacency list to represent the graph instead of an adjacency matrix for the following reasons:
+
+1. **Dimensionality of the Graph**:
+
+   - The graph is sparse, meaning each landmark connects to only a subset of other landmarks. An adjacency matrix would waste memory as most entries would be `0` after the first dimension.
+
+2. **Memory Efficiency**:
+
+   - For a graph with `V` vertices and `E` edges:
+     - An adjacency matrix requires \(O(V^2)\) space, regardless of the number of edges.
+     - An adjacency list requires \(O(V + E)\), making it far more efficient for sparse graphs.
+   - Given the dataset’s scale (millions of landmarks with limited connections per landmark), the adjacency list minimizes memory usage.
+
+3. **Traversal Speed**:
+
+   - In an adjacency matrix, traversing all possible connections for a vertex requires \(O(V)\) time, even for unconnected vertices.
+   - With an adjacency list, traversal is proportional to the vertex's degree (\(O(\text{degree})\)), significantly improving performance.
+
+4. **Alignment with Pathfinding**:
+   - Pathfinding algorithms like A\* prioritize traversing edges between connected nodes. An adjacency list directly stores these edges, avoiding unnecessary computations on unconnected nodes.
+
+This choice ensures the system remains efficient and scalable, aligning with the performance goals defined in **4.2 Performance Goals**.
+
 ### Scalability and Performance
 
 - The algorithm is optimized to handle large datasets containing millions of nodes and edges.
@@ -360,7 +387,11 @@ The A\* algorithm is further optimized to improve performance and scalability wh
 
 1. **Heuristic Refinement**:
 
-   - We use domain-specific heuristics, such as Euclidean distance or the Haversine formula, for geospatial data. This ensures that the heuristic is admissible (does not overestimate costs) and consistent (satisfies the triangle inequality).
+   - To improve the efficiency of the A\* algorithm, we implement a heuristic function using a strength-based 3D representation of the nodes.
+   - During preprocessing, nodes are mapped to a 3D space where their positions reflect their connectivity and relationships to other nodes in the graph.
+   - The Euclidean distance between nodes in this 3D space is used as the heuristic function (\(h(n)\)).
+     - This heuristic is admissible (does not overestimate costs) and consistent (satisfies the triangle inequality), ensuring the correctness of the algorithm.
+   - If preprocessing is unavailable, the algorithm can fall back to a heuristic-free approach, equivalent to Dijkstra’s algorithm, at the cost of reduced performance.
 
 2. **Bidirectional A\***:
 
@@ -465,12 +496,60 @@ The data validation tool ensures the integrity and usability of the dataset befo
    - For subgraphs expected to be acyclic (e.g., in specific regions), detect cycles using a Depth-First Search (DFS).
 
 5. **Output**:
-   - The tool outputs a list of detected errors, categorized by:
+   - The tool outputs a structured report summarizing detected errors, categorized for easy review. Errors are categorized as:
      - Format issues.
      - Duplicate entries.
      - Disconnected nodes.
      - Cycles in acyclic regions.
    - The dataset is flagged as invalid if any errors are found.
+
+#### Example Output
+
+Below is an example of the tool's output in JSON format:
+
+```json
+{
+  "summary": {
+    "total_errors": 5,
+    "format_issues": 2,
+    "duplicate_entries": 1,
+    "disconnected_nodes": 1,
+    "cycles_detected": 1
+  },
+  "details": {
+    "format_issues": [
+      {
+        "row_number": 10,
+        "issue": "Invalid time value: 'N/A'",
+        "row_data": "123,456,N/A"
+      },
+      {
+        "row_number": 45,
+        "issue": "Missing landmark ID",
+        "row_data": ",789,25"
+      }
+    ],
+    "duplicate_entries": [
+      {
+        "entry": "Landmark_A_ID: 123, Landmark_B_ID: 456, Time: 15",
+        "occurrences": 2
+      }
+    ],
+    "disconnected_nodes": [
+      {
+        "node_id": 789,
+        "issue": "Node is isolated and has no connections."
+      }
+    ],
+    "cycles_detected": [
+      {
+        "cycle_path": [123, 456, 789, 123],
+        "issue": "Cycle detected in acyclic region."
+      }
+    ]
+  }
+}
+```
 
 ### Efficiency Measures
 
