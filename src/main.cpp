@@ -35,7 +35,7 @@ int main() {
         auto start = std::chrono::high_resolution_clock::now();
 
         // Read the CSV file and write the binary file
-        std::vector<Road> roads = readCSV("../data/USA-roads.csv");
+        std::vector<Road> roads = readCSV("../data/USA-roads_sorted.csv");
         writeBinary("../data/extractedDataset.bin", roads);
 
         // End the timer

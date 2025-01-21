@@ -4,40 +4,42 @@
 #include <sstream>
 #include <iostream>
 
-std::vector<Road> loadRoads(const std::string &filename) {
+using namespace std;
+
+vector<Road> loadRoads(const string &filename) {
 
     // Create a container to store all the roads
-    std::vector<Road> roads;
+    vector<Road> roads;
 
     // Open input file for reading
-    std::ifstream file(filename);
+    ifstream file(filename);
 
     // Temporary string to hold each line in the file
-    std::string line;
+    string line;
 
     // Read and discard the header line of the CSV file
-    std::getline(file, line);
+    getline(file, line);
 
     // Read the remaining lines in the file
-    while (std::getline(file, line)) {
+    while (getline(file, line)) {
 
         // Create a string stream to parse the line
-        std::istringstream ss(line);
+        istringstream ss(line);
 
         // Temporary variables to hold parsed values
-        std::string landmarkA, landmarkB, time;
+        string landmarkA, landmarkB, time;
 
         // Extract first value (landmarkA) from the string stream
-        std::getline(ss, landmarkA, ',');
+        getline(ss, landmarkA, ',');
 
         // Extract second value (landmarkB) from the string stream
-        std::getline(ss, landmarkB, ',');
+        getline(ss, landmarkB, ',');
 
         // Extract third value (time) from the string stream
-        std::getline(ss, time, ',');
+        getline(ss, time, ',');
 
         // Convert parsed values to integers and add a Road object to vector
-        roads.push_back({static_cast<int>(std::stoi(landmarkA)), static_cast<int>(std::stoi(landmarkB)), std::stod(time)});
+        roads.push_back({static_cast<int>(stoi(landmarkA)), static_cast<int>(stoi(landmarkB)), stod(time)});
     }
 
     // Return the vector containing all roads
@@ -45,12 +47,12 @@ std::vector<Road> loadRoads(const std::string &filename) {
 }
 
 /// Function to load road data from a binary file
-std::vector<Road> loadRoadsFromBinary(const std::string &filename) {
-    std::vector<Road> roads;
-    std::ifstream file(filename, std::ios::binary);
+vector<Road> loadRoadsFromBinary(const string &filename) {
+    vector<Road> roads;
+    ifstream file(filename, ios::binary);
 
     if (!file) {
-        std::cerr << "Error: Unable to open binary file " << filename << std::endl;
+        cerr << "Error: Unable to open binary file " << filename << endl;
         return roads;
     }
 
@@ -61,17 +63,17 @@ std::vector<Road> loadRoadsFromBinary(const std::string &filename) {
     }
 
     if (roads.empty()) {
-        std::cerr << "Error: No data read from binary file " << filename << std::endl;
+        cerr << "Error: No data read from binary file " << filename << endl;
     }
 
     return roads;
 }
 
 /// Function to build a graph from the list of roads
-std::unordered_map<int, std::vector<std::pair<int, double>>> buildGraph(const std::vector<Road> &roads) {
+unordered_map<int, vector<pair<int, double>>> buildGraph(const vector<Road> &roads) {
 
     // Create an adjacency list representation of the graph
-    std::unordered_map<int, std::vector<std::pair<int, double>>> graph;
+    unordered_map<int, vector<pair<int, double>>> graph;
 
     // Iterates through all roads to populate the graph
     for (const auto &road : roads) {
@@ -85,4 +87,13 @@ std::unordered_map<int, std::vector<std::pair<int, double>>> buildGraph(const st
 
     // Returns the graph as an adjacency list
     return graph;
+}
+
+
+unordered_map<int, vector<pair<int, double>>> getAdjacencyList(const vector<Road> &roads) {
+    unordered_map<int, vector<pair<int, double>>> adjacencyList;
+    for (const auto &road : roads) {
+        adjacencyList[road.landmarkA].push_back({road.landmarkB, road.time});
+    }
+    return adjacencyList;
 }
