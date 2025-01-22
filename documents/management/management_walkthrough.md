@@ -52,4 +52,4 @@ Now that you are aware of the responsibilities of each team member, you should r
 
 ### 2.5. Weekly Reports
 
-Every week, the team will create a Weekly Report to summarize the work done during the week, accompanied with a feedback of the team about the current feeling about the project. You can find the Weekly Reports [here](management_artifacts/weekly_reports).
+Every week, the team will create a Weekly Report to summarize the work done during the week, accompanied with a feedback of the team about the current feeling about the project. You can find the Weekly Reports [here](weekly_reports).
