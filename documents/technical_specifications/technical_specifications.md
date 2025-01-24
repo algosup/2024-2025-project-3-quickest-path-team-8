@@ -23,6 +23,8 @@
 - [5. System Architecture](#5-system-architecture)
   - [5.1 Technology Stack](#51-technology-stack)
   - [5.2 REST API Design](#52-rest-api-design)
+    - [Error Handling](#error-handling)
+    - [Performance Considerations](#performance-considerations)
   - [5.3 Algorithm Design](#53-algorithm-design)
     - [Core Algorithm](#core-algorithm)
     - [Role in the System](#role-in-the-system)
@@ -261,8 +263,8 @@ The REST API handles requests for the quickest path between landmarks. Design co
   - **Base URL**: `http://127.0.0.1:8080/quickest_path`
   - **Parameters**:
 
-    - `landmark_1`: Source landmark ID (integer).
-    - `landmark_2`: Destination landmark ID (integer).
+    - `landmark_1`: Source landmark ID (integer). Must be between `1` and `23,947,347`.
+    - `landmark_2`: Destination landmark ID (integer). Must be between `1` and `23,947,347`.
 
   - **Input Structure**:
     All inputs must be provided as query parameters in the URL. Example request:
@@ -307,18 +309,22 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
   - JSON and XML responses are serialized using lightweight libraries (e.g., `nlohmann::json`).
 
-- **Error Handling**  
-   The API must handle invalid or erroneous inputs:
+### Error Handling
 
-  | Case                      | HTTP Code | Description                                             |
-  | ------------------------- | --------- | ------------------------------------------------------- |
-  | Missing parameters        | 400       | Invalid or incomplete query parameters.                 |
-  | Unsupported output format | 406       | Format not supported (e.g., anything besides JSON/XML). |
-  | Disconnected graph        | 404       | No route exists between the provided landmarks.         |
-  | Nonexistent landmarks     | 404       | One or both landmarks are not present in the dataset.   |
+The API provides detailed error responses for invalid inputs, missing parameters, and other exceptional cases. The following table outlines the possible scenarios and their corresponding HTTP status codes:
 
-- **Performance Considerations**:
-  - Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
+| **Scenario**                  | **HTTP Code** | **Description**                                                                                                       | **Example JSON Response**                                                                                           | **Example XML Response**                                                                                                                                                      |
+| ----------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Valid request**             | `200`         | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
+| **Identical landmarks**       | `200`         | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
+| **Missing or invalid inputs** | `400`         | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
+| **Nonexistent landmarks**     | `404`         | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
+| **Internal Server Error**     | `500`         | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
+| **Service Unavailable**       | `503`         | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
+
+### Performance Considerations
+
+- Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
 
 ---
 
