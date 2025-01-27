@@ -33,9 +33,9 @@ TODO: If the size of the dataset is known and fixed, std::array<Road, N> could b
 // Ensure the structure is packed tightly without padding
 #pragma pack(push, 1)
 struct Road {
-    int landmarkA;
-    int landmarkB;
-    int time;
+    int32_t landmarkA; // Starting node
+    int32_t landmarkB; // Ending node
+    int16_t time;      // Travel time
 };
 #pragma pack(pop)
 
@@ -59,7 +59,7 @@ std::vector<Road> readCSV(const std::string &filename) {
         if (std::getline(ss, landmarkA, ',') &&
             std::getline(ss, landmarkB, ',') &&
             std::getline(ss, time, ',')) {
-            roads.push_back({std::stoi(landmarkA), std::stoi(landmarkB), std::stoi(time)});
+            roads.push_back({std::stoi(landmarkA), std::stoi(landmarkB), static_cast<int16_t>(std::stoi(time))});
         } else {
             std::cerr << "Error: Malformed line in CSV file: " << line << std::endl;
         }
@@ -101,10 +101,10 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
     
     // Read the CSV file
-    std::vector<Road> roads = readCSV("../../quickest_path/data/USA-roads.csv");
+    std::vector<Road> roads = readCSV("../../data/USA-roads_sorted.csv");
 
     // Write to a binary file
-    writeBinary("../../quickest_path/data/extractedDataset.bin", roads);
+    writeBinary("../../data/extractedDataset.bin", roads);
 
     // Stop measuring time
     auto end = std::chrono::high_resolution_clock::now();
