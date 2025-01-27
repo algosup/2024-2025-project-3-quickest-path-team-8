@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <unordered_map>
-#include "../../includes/04-load/graph.hpp" // Include the Graph base class
+#include "../04-load/graph.cpp" // Include the Graph base class
 
 using namespace std;
 
@@ -33,7 +33,7 @@ class PathFinder : public Graph {
 public:
     // Standard Dijkstra's algorithm for shortest path
     pair<int, vector<int>> dijkstra(int source, int destination) {
-        const auto& adjList = getAdjList(); // Retrieve adjacency list
+        const auto& adjList = getAdjacencyList(); // Retrieve adjacency list
         int n = adjList.size();
 
         // Distance and parent vectors
@@ -77,7 +77,7 @@ public:
 
     // Bidirectional Dijkstra algorithm for shortest path
     pair<int, vector<int>> bidirectionalDijkstra(int source, int destination) {
-        const auto& adjList = getAdjList(); // Retrieve adjacency list
+        const auto& adjList = getAdjacencyList(); // Retrieve adjacency list
         int n = adjList.size();
 
         // Forward and backward distances
