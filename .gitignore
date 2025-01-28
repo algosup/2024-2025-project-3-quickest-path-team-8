@@ -57,7 +57,6 @@ src/restAPI/rest_api
 src/extraction/extract
 quickest_path/data/val_de_loire_roads.csv
 quickest_path/data/extractedDataset.bin
-src/data/extractedDataset.bin
-data/USA-roads.csv
 data/extractedDataset.bin
+data/USA-roads.csv
 data/val_de_loire_roads.csv
