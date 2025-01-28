@@ -219,38 +219,38 @@ private:
     }
 };
 
-// Test function: Entry point for the program
-int main() {
-    PathFinder graph;
+// // Test function: Entry point for the program
+// int main() {
+//     PathFinder graph;
 
-    // Load the graph from the binary file
-    auto start = chrono::high_resolution_clock::now();
-    graph.loadGraphFromBinary("../../data/graph_data.bin");
-    auto end = chrono::high_resolution_clock::now();
-    auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-    cout << "Time to load graph: " << loadTime << " ms\n";
+//     // Load the graph from the binary file
+//     auto start = chrono::high_resolution_clock::now();
+//     graph.loadGraphFromBinary("../../data/graph_data.bin");
+//     auto end = chrono::high_resolution_clock::now();
+//     auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+//     cout << "Time to load graph: " << loadTime << " ms\n";
 
-    // Define source and destination
-    int source = 1;
-    int destination = 20000000;
+//     // Define source and destination
+//     int source = 1;
+//     int destination = 600000;
 
-    // Measure time for Bidirectional Dijkstra
-    start = chrono::high_resolution_clock::now();
-    auto result = graph.bidirectionalDijkstra(source, destination);
-    end = chrono::high_resolution_clock::now();
-    auto dijkstraTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-    cout << "Time to execute Bidirectional Dijkstra: " << dijkstraTime << " ms\n";
+//     // Measure time for Bidirectional Dijkstra
+//     start = chrono::high_resolution_clock::now();
+//     auto result = graph.bidirectionalDijkstra(source, destination);
+//     end = chrono::high_resolution_clock::now();
+//     auto dijkstraTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+//     cout << "Time to execute Bidirectional Dijkstra: " << dijkstraTime << " ms\n";
 
-    // Output the results
-    int travelTime = result.first;
-    vector<int> path = result.second;
+//     // Output the results
+//     int travelTime = result.first;
+//     vector<int> path = result.second;
 
-    cout << "Shortest travel time: " << travelTime << "\n";
-    cout << "Path: ";
-    for (int landmark : path) {
-        cout << landmark << " ";
-    }
-    cout << "\n";
+//     cout << "Shortest travel time: " << travelTime << "\n";
+//     cout << "Path: ";
+//     for (int landmark : path) {
+//         cout << landmark << " ";
+//     }
+//     cout << "\n";
 
-    return 0;
-}
+//     return 0;
+// }
