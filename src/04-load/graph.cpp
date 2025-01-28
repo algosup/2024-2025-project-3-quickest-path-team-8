@@ -1,134 +1,93 @@
-
 #include <iostream>
-#include <vector>
-#include <cstdint>
 #include <fstream>
+#include <unordered_map>
+#include <vector>
+#include <string>
 #include <limits>
-#include <unordered_set>
 
 using namespace std;
 
-// Edge structure optimized for fast traversal
+// Define a structure for graph edges
 struct Edge {
-    int destination;   // Destination node
-    int travel_time;   // Edge weight
+    int destination;
+    int travel_time;
 };
 
-// Road structure for binary file loading (aligned with binary data format)
+// Ensure the structure matches the binary file format
 #pragma pack(push, 1)
 struct Road {
-    int32_t landmarkA; // Starting node
-    int32_t landmarkB; // Ending node
-    int32_t time;      // Travel time
+    int32_t landmarkA;
+    int32_t landmarkB;
+    int16_t time;
 };
 #pragma pack(pop)
 
-// Compressed adjacency list representation of a graph
+// Graph class to manage landmarks and connections
 class Graph {
 public:
-    // Constructor
-    Graph(size_t numNodes = 0, size_t numEdges = 0) {
-        if (numNodes > 0) {
-            adjacencyList.resize(numNodes); // Preallocate space for nodes
-        }
-    }
-
     // Add a bidirectional edge between two landmarks
     void addEdge(int landmarkA, int landmarkB, int time) {
-        adjacencyList[landmarkA].emplace_back(Edge{landmarkB, time}); // A -> B
-        adjacencyList[landmarkB].emplace_back(Edge{landmarkA, time}); // B -> A
+        adjList[landmarkA].push_back({landmarkB, time}); 
+        adjList[landmarkB].push_back({landmarkA, time});  // Bidirectional
     }
 
     // Load the graph from a binary file
     void loadGraphFromBinary(const string& filename) {
-    // Open the binary file
-    ifstream file(filename, ios::binary);
+        ifstream file(filename, ios::binary);
 
-    // Check if the file opened successfully
-    if (!file.is_open()) {
-        cerr << "Error: Could not open binary file: " << filename << endl;
-        return;
+        if (!file.is_open()) {
+            cerr << "Error: Could not open binary file: " << filename << endl;
+            return;
+        }
+
+        // Determine the size of the file
+        file.seekg(0, ios::end);
+        size_t fileSize = file.tellg();
+        file.seekg(0, ios::beg);
+
+        // Ensure the file size is a multiple of the Road structure size
+        if (fileSize % sizeof(Road) != 0) {
+            cerr << "Error: File size is not aligned with Road structure size." << endl;
+            return;
+        }
+
+        // Calculate the number of Road records
+        size_t numRecords = fileSize / sizeof(Road);
+
+        // Read the binary data into a buffer
+        vector<Road> roads(numRecords);
+        file.read(reinterpret_cast<char*>(roads.data()), fileSize);
+
+        if (!file) {
+            cerr << "Error: Failed to read binary file: " << filename << endl;
+            return;
+        }
+
+        // Add edges to the adjacency list
+        for (const auto& road : roads) {
+            addEdge(road.landmarkA, road.landmarkB, road.time);
+        }
+
+        cout << "Successfully loaded graph with " << roads.size() << " edges from binary file: " << filename << endl;
     }
 
-    // Get the size of the file (in bytes)
-    file.seekg(0, ios::end); // Move to the end of the file
-    size_t fileSize = file.tellg(); // Get the current position (end of the file)
-    file.seekg(0, ios::beg); // Move back to the beginning of the file
-
-    // Ensure the file size is a multiple of the size of a Road structure
-    if (fileSize % sizeof(Road) != 0) {
-        cerr << "Error: File size is not aligned with the size of Road structures." << endl;
-        return;
-    }
-
-    // Calculate the number of edges (each Road structure represents an edge)
-    size_t numEdges = fileSize / sizeof(Road);
-
-    // Temporary storage for unique node IDs to calculate the number of nodes
-    unordered_set<int> uniqueNodes;
-
-    // Create a vector to hold all edges (Road structures)
-    vector<Road> roads(numEdges);
-
-    // Read the entire file into the vector
-    file.read(reinterpret_cast<char*>(roads.data()), fileSize);
-
-    // Check if the file was read successfully
-    if (!file) {
-        cerr << "Error: Failed to read the binary file: " << filename << endl;
-        return;
-    }
-
-    // Track the maximum node ID for adjacency list resizing
-    int maxNodeID = 0;
-
-    // Process each road in the vector
-    for (const auto& road : roads) {
-        // Add both nodes to the set of unique nodes
-        uniqueNodes.insert(road.landmarkA);
-        uniqueNodes.insert(road.landmarkB);
-
-        // Update the maximum node ID
-        maxNodeID = max({maxNodeID, road.landmarkA, road.landmarkB});
-    }
-
-    // Resize the adjacency list to accommodate the highest node ID
-    adjacencyList.resize(maxNodeID + 1);
-
-    // Add edges to the adjacency list
-    for (const auto& road : roads) {
-        addEdge(road.landmarkA, road.landmarkB, road.time);
-    }
-
-    // Print a success message with the total number of nodes and edges
-    size_t numNodes = uniqueNodes.size();
-    cout << "Successfully loaded graph with " << numNodes << " nodes and " << numEdges
-         << " edges from binary file: " << filename << endl;
-    }
-
-    // Display the adjacency list for debugging
-    void displayGraph() const {
-        for (size_t i = 0; i < adjacencyList.size(); ++i) {
-            if (!adjacencyList[i].empty()) {
-                cout << "Node " << i << " -> ";
-                for (const auto& edge : adjacencyList[i]) {
-                    cout << "(Dest: " << edge.destination << ", Time: " << edge.travel_time << ") ";
-                }
-                cout << "\n";
+    // Display the adjacency list
+    void displayGraph() {
+        for (const auto& pair : adjList) {
+            cout << "Landmark " << pair.first << " -> ";
+            for (const auto& edge : pair.second) {
+                cout << "(Dest: " << edge.destination 
+                     << ", Time: " << edge.travel_time << ") ";
             }
+            cout << "\n";
         }
     }
 
     // Get the adjacency list
-    const vector<vector<Edge>>& getAdjacencyList() const {
-        return adjacencyList;
-    }
-
-    // Get the number of nodes in the graph
-    size_t getNumNodes() const {
-        return adjacencyList.size();
+    const unordered_map<int, vector<Edge>>& getAdjList() const {
+        return adjList;
     }
 
 private:
-    vector<vector<Edge>> adjacencyList; // Compressed adjacency list for fast neighbor access
+    unordered_map<int, vector<Edge>> adjList; // Adjacency list for the graph
 };

@@ -33,7 +33,7 @@ class PathFinder : public Graph {
 public:
     // Standard Dijkstra's algorithm for shortest path
     pair<int, vector<int>> dijkstra(int source, int destination) {
-        const auto& adjList = getAdjacencyList(); // Retrieve adjacency list
+        const auto& adjList = getAdjList(); // Retrieve adjacency list
         int n = adjList.size();
 
         // Distance and parent vectors
@@ -77,7 +77,7 @@ public:
 
     // Bidirectional Dijkstra algorithm for shortest path
     pair<int, vector<int>> bidirectionalDijkstra(int source, int destination) {
-        const auto& adjList = getAdjacencyList(); // Retrieve adjacency list
+        const auto& adjList = getAdjList(); // Retrieve adjacency list
         int n = adjList.size();
 
         // Forward and backward distances
@@ -225,7 +225,7 @@ int main() {
 
     // Load the graph from the binary file
     auto start = chrono::high_resolution_clock::now();
-    graph.loadGraphFromBinary("../../data/extractedDataset.bin");
+    graph.loadGraphFromBinary("../../data/graph_data.bin");
     auto end = chrono::high_resolution_clock::now();
     auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
     cout << "Time to load graph: " << loadTime << " ms\n";
