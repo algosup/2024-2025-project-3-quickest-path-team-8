@@ -9,6 +9,8 @@
 
 */
 
+// ---------------------- Includes ---------------------- //
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -20,7 +22,7 @@
 #include <stack>
 #include <chrono>
 
-// ---------------------- Data Structures ---------------------- //
+// ---------------------- Definitions ---------------------- //
 
 // Each edge in the adjacency list is (neighbor, distance).
 struct Edge {
@@ -31,7 +33,6 @@ struct Edge {
 // The adjacency list: landmark -> vector of (neighbor, distance).
 using AdjacencyList = std::unordered_map<int, std::vector<Edge>>;
 
-// --------------------- Helper Functions ---------------------- //
 
 /// @brief Reads a CSV file and populates the adjacency list (only forward edges). 
 /// @param filename is the path to the CSV file.
@@ -39,7 +40,9 @@ using AdjacencyList = std::unordered_map<int, std::vector<Edge>>;
 /// @return a boolean indicating success or failure.
 /// @note Assumes CSV format: landmark1,landmark2,distance
 bool readCSV(const std::string& filename, AdjacencyList& adjList) {
+
     std::ifstream file(filename);
+
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filename << "\n";
         return false;
@@ -54,9 +57,9 @@ bool readCSV(const std::string& filename, AdjacencyList& adjList) {
         // If there's a header, skip it (assuming the very first line is a header).
         if (isFirstLine) {
             isFirstLine = false;
+
             // Attempt a naive check: if the line contains non-numeric,
             // assume it's a header and skip this iteration.
-            // Otherwise, to handle files without header, comment out the continue below.
             if (line.find_first_not_of("0123456789.,- ") != std::string::npos) {
                 continue; 
             }
@@ -95,7 +98,7 @@ bool readCSV(const std::string& filename, AdjacencyList& adjList) {
 /// @note This function modifies the input adjacency list by adding reverse edges, so that A->B with distance d also implies B->A with distance d.
 void addReverseEdges(AdjacencyList& adjList) {
     
-    // We will collect all edges in a temporary structure first
+    // Collect all edges in a temporary structure first
     // so we don’t add reverse edges repeatedly in one pass.
     std::vector<std::pair<int, Edge>> reverseEdges;
     reverseEdges.reserve(10'000);
@@ -118,25 +121,33 @@ void addReverseEdges(AdjacencyList& adjList) {
                     }
                 }
             }
+
             if (!reverseExists) {
                 reverseEdges.push_back({to, {from, dist}});
             }
+
         }
     }
 
     // Now add the new reverse edges
     for (auto& rev : reverseEdges) {
-        int from = rev.first;           // the "to" node from the original edge
-        Edge e = rev.second;            // the reversed edge {original_from, distance}
+        
+        // the "to" node from the original edge
+        int from = rev.first;
+
+        // the reversed edge {original_from, distance}
+        Edge e = rev.second;
         adjList[from].push_back(e);
     }
 }
 
-// --------------------- Dijkstra's Algorithm --------------------- //
-//
-// Returns the total distance of the shortest path from 'start' to 'destination'.
-// Also fills 'path' vector with the sequence of landmarks on that shortest path.
-
+/// @brief Dijkstra's algorithm to find the shortest path from 'start' to 'destination'.
+/// @param adjList is the graph represented as an adjacency list.
+/// @param start is the starting landmark ID.
+/// @param destination is the destination landmark ID.
+/// @param path is an output parameter that will be filled with the sequence of landmarks on the shortest path.
+/// @return the total distance of the shortest path from 'start' to 'destination'.
+/// @note If no path is found, the return value will be infinity.
 double dijkstra(const AdjacencyList& adjList, int start, int destination, std::vector<int>& path) {
     // Distances map: landmark -> current best distance from 'start'
     std::unordered_map<int, double> dist;
