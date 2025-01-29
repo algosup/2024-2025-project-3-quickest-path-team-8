@@ -244,6 +244,7 @@ The REST API allows users to query the quickest path between two landmarks using
 | ------------ | ------- | ------------------------------------- |
 | `landmark_1` | integer | Must be between `1` and `23,947,347`. |
 | `landmark_2` | integer | Must be between `1` and `23,947,347`. |
+| `format`     | string  | `xml` or `json`                       |
 
 > [!NOTE]  
 > The indicated bounds of `landmark_1` and `landmark_2` are based on dataset limitations.
@@ -254,7 +255,7 @@ The REST API allows users to query the quickest path between two landmarks using
 | ------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Valid request             | `200`     | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
 | Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
-| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
+| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1', 'landmark_2' and 'format' are required.</message></error>`                                                |
 | Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
 | Internal Server Error     | `500`     | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
 | Service Unavailable       | `503`     | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
@@ -263,14 +264,14 @@ The REST API allows users to query the quickest path between two landmarks using
 
 **JSON Request Example:**
 ```http
-GET /quickest_path?landmark_1=322&landmark_2=333 HTTP/1.1
+GET /quickest_path?landmark_1=322&landmark_2=333&format=json HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/json
 ```
 
 **XML Request Example:**
 ```http
-GET /quickest_path?landmark_1=3455&landmark_2=745647 HTTP/1.1
+GET /quickest_path?landmark_1=3455&landmark_2=745647&format=xml HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/xml
 ```
