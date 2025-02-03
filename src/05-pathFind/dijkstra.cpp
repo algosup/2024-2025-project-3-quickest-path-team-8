@@ -1,256 +1,180 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 #include <limits>
-#include <algorithm>
 #include <chrono>
-#include <unordered_map>
-#include "../04-load/graph.cpp" // Include the Graph base class
+#include "../04-load/graph.cpp"
 
 using namespace std;
 
-
-// Define a structure for priority queue nodes
-struct Node {
-    int id;            // Node ID
-    int gCost;         // Cost from the source to this node
-    bool operator>(const Node& other) const {
-        return gCost > other.gCost; // Min-heap based on cost
-    }
+struct NodeData {
+    int forward_cost = numeric_limits<int>::max();
+    int backward_cost = numeric_limits<int>::max();
+    bool forward_processed = false;
+    bool backward_processed = false;
 };
 
-// Define a structure for the bidirectional priority queue nodes
-struct BiNode {
-    int id;            // Node ID
-    int cost;          // Cost from source/destination
-    bool operator>(const BiNode& other) const {
-        return cost > other.cost; // Min-heap based on cost
+template<int d=16>
+class DaryHeap {
+
+    vector<pair<int, int>> heap;
+    
+    void heapify_up(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / d;
+            if (heap[index].second >= heap[parent].second) break;
+            swap(heap[index], heap[parent]);
+            index = parent;
+        }
     }
+
+    void heapify_down(int index) {
+        while (true) {
+            int first = index * d + 1;
+            if (first >= heap.size()) break;
+            
+            int smallest = index;
+            for (int i = 0; i < d && (first+i) < heap.size(); ++i) {
+                if (heap[first+i].second < heap[smallest].second)
+                    smallest = first+i;
+            }
+            
+            if (smallest == index) break;
+            swap(heap[index], heap[smallest]);
+            index = smallest;
+        }
+    }
+
+public:
+
+    size_t size() const { return heap.size(); }
+
+    void push(int id, int cost) {
+        heap.emplace_back(id, cost);
+        heapify_up(heap.size()-1);
+    }
+
+    pair<int, int> pop() {
+        auto top = heap.front();
+        heap[0] = heap.back();
+        heap.pop_back();
+        heapify_down(0);
+        return top;
+    }
+
+    bool empty() const { return heap.empty(); }
+    int top_cost() const { return heap.empty() ? numeric_limits<int>::max() : heap.front().second; }
 };
 
-// Class PathFinder extends Graph to include both Dijkstra and Bidirectional Dijkstra algorithms
 class PathFinder : public Graph {
 public:
-    // Standard Dijkstra's algorithm for shortest path
-    pair<int, vector<int>> dijkstra(int source, int destination) {
-        const auto& adjList = getAdjList(); // Retrieve adjacency list
-        int n = adjList.size();
+    pair<int, vector<int>> bidirectionalDijkstra(int source, int dest) {
+        const int mapped_source = getMappedId(source);
+        const int mapped_dest = getMappedId(dest);
+        if (mapped_source == mapped_dest) return {0, {source}};
 
-        // Distance and parent vectors
-        vector<int> gCost(n, numeric_limits<int>::max());
-        vector<int> parent(n, -1);
+        const auto& edges = getEdges();
+        const auto& offsets = getOffsets();
+        const int numNodes = offsets.size() - 1;
+        
+        vector<NodeData> nodeData(numNodes);
+        vector<int> parentForward(numNodes, -1);
+        vector<int> parentBackward(numNodes, -1);
+        DaryHeap<16> forwardHeap, backwardHeap;
+        int best_known = numeric_limits<int>::max();
+        int meeting_node = -1;
 
-        // Min-heap priority queue
-        priority_queue<Node, vector<Node>, greater<Node>> pq;
+        // Initialize
+        nodeData[mapped_source].forward_cost = 0;
+        nodeData[mapped_dest].backward_cost = 0;
+        forwardHeap.push(mapped_source, 0);
+        backwardHeap.push(mapped_dest, 0);
 
-        // Initialize source node
-        gCost[source] = 0;
-        pq.push({source, 0});
+        while (!forwardHeap.empty() && !backwardHeap.empty()) {
+            // Alternate direction based on frontier size
+            bool expand_forward = forwardHeap.size() <= backwardHeap.size();
+            
+            if (expand_forward) {
+                auto [current, f_cost] = forwardHeap.pop();
+                if (nodeData[current].forward_processed) continue;
+                nodeData[current].forward_processed = true;
 
-        while (!pq.empty()) {
-            Node current = pq.top();
-            pq.pop();
+                // Process forward edges
+                for (size_t i = offsets[current]; i < offsets[current+1]; ++i) {
+                    
+                    const Edge& e = edges[i];
+                    int new_cost = f_cost + e.travel_time;
 
-            // Early exit if we reach the destination
-            if (current.id == destination) break;
-
-            // Relax edges
-            for (const auto& edge : adjList.at(current.id)) {
-                int neighbor = edge.destination;
-                int newCost = gCost[current.id] + edge.travel_time;
-
-                // Update if a shorter path is found
-                if (newCost < gCost[neighbor]) {
-                    gCost[neighbor] = newCost;
-                    parent[neighbor] = current.id;
-                    pq.push({neighbor, newCost});
-                }
-            }
-        }
-
-        // Reconstruct path
-        vector<int> path = reconstructPath(parent, source, destination);
-
-        // Return the shortest path cost and the reconstructed path
-        return {gCost[destination], path};
-    }
-
-    // Bidirectional Dijkstra algorithm for shortest path
-    pair<int, vector<int>> bidirectionalDijkstra(int source, int destination) {
-        const auto& adjList = getAdjList(); // Retrieve adjacency list
-        int n = adjList.size();
-
-        // Forward and backward distances
-        vector<int> forwardCost(n, numeric_limits<int>::max());
-        vector<int> backwardCost(n, numeric_limits<int>::max());
-
-        // Parent vectors for path reconstruction
-        vector<int> parentForward(n, -1);
-        vector<int> parentBackward(n, -1);
-
-        // Priority queues for forward and backward searches
-        priority_queue<BiNode, vector<BiNode>, greater<BiNode>> forwardQueue;
-        priority_queue<BiNode, vector<BiNode>, greater<BiNode>> backwardQueue;
-
-        // Initialize forward and backward searches
-        forwardCost[source] = 0;
-        backwardCost[destination] = 0;
-        forwardQueue.push({source, 0});
-        backwardQueue.push({destination, 0});
-
-        // Set to keep track of processed nodes
-        vector<bool> processedForward(n, false);
-        vector<bool> processedBackward(n, false);
-
-        int shortestPath = numeric_limits<int>::max();
-        int meetingNode = -1;
-
-        while (!forwardQueue.empty() && !backwardQueue.empty()) {
-            // Forward step
-            if (!forwardQueue.empty()) {
-                BiNode currentF = forwardQueue.top();
-                forwardQueue.pop();
-
-                if (processedForward[currentF.id]) continue;
-                processedForward[currentF.id] = true;
-
-                // Relax edges
-                for (const auto& edge : adjList.at(currentF.id)) {
-                    int neighbor = edge.destination;
-                    int newCost = forwardCost[currentF.id] + edge.travel_time;
-
-                    if (newCost < forwardCost[neighbor]) {
-                        forwardCost[neighbor] = newCost;
-                        parentForward[neighbor] = currentF.id;
-                        forwardQueue.push({neighbor, newCost});
+                    if (new_cost < nodeData[e.destination].forward_cost) {
+                        nodeData[e.destination].forward_cost = new_cost;
+                        parentForward[e.destination] = current;
+                        forwardHeap.push(e.destination, new_cost);
                     }
 
-                    // Check if neighbor is processed in backward search
-                    if (processedBackward[neighbor]) {
-                        int totalCost = forwardCost[currentF.id] + edge.travel_time + backwardCost[neighbor];
-                        if (totalCost < shortestPath) {
-                            shortestPath = totalCost;
-                            meetingNode = neighbor;
+                    // Check for intersection
+                    if (nodeData[e.destination].backward_processed) {
+                        int total = new_cost + nodeData[e.destination].backward_cost;
+                        if (total < best_known) {
+                            best_known = total;
+                            meeting_node = e.destination;
+                        }
+                    }
+                }
+            } else {
+                auto [current, b_cost] = backwardHeap.pop();
+                if (nodeData[current].backward_processed) continue;
+                nodeData[current].backward_processed = true;
+
+                // Process backward edges
+                for (size_t i = offsets[current]; i < offsets[current+1]; ++i) {
+                    const Edge& e = edges[i];
+                    int new_cost = b_cost + e.travel_time;
+
+                    if (new_cost < nodeData[e.destination].backward_cost) {
+                        nodeData[e.destination].backward_cost = new_cost;
+                        parentBackward[e.destination] = current;
+                        backwardHeap.push(e.destination, new_cost);
+                    }
+
+                    // Check for intersection
+                    if (nodeData[e.destination].forward_processed) {
+                        int total = new_cost + nodeData[e.destination].forward_cost;
+                        if (total < best_known) {
+                            best_known = total;
+                            meeting_node = e.destination;
                         }
                     }
                 }
             }
 
-            // Backward step
-            if (!backwardQueue.empty()) {
-                BiNode currentB = backwardQueue.top();
-                backwardQueue.pop();
-
-                if (processedBackward[currentB.id]) continue;
-                processedBackward[currentB.id] = true;
-
-                // Relax edges
-                for (const auto& edge : adjList.at(currentB.id)) {
-                    int neighbor = edge.destination;
-                    int newCost = backwardCost[currentB.id] + edge.travel_time;
-
-                    if (newCost < backwardCost[neighbor]) {
-                        backwardCost[neighbor] = newCost;
-                        parentBackward[neighbor] = currentB.id;
-                        backwardQueue.push({neighbor, newCost});
-                    }
-
-                    // Check if neighbor is processed in forward search
-                    if (processedForward[neighbor]) {
-                        int totalCost = backwardCost[currentB.id] + edge.travel_time + forwardCost[neighbor];
-                        if (totalCost < shortestPath) {
-                            shortestPath = totalCost;
-                            meetingNode = neighbor;
-                        }
-                    }
-                }
+            // Enhanced early termination
+            if (forwardHeap.top_cost() + backwardHeap.top_cost() >= best_known * 1.05) {
+                break;
             }
-
-            // Termination condition
-            if (!forwardQueue.empty() && !backwardQueue.empty() &&
-                forwardCost[forwardQueue.top().id] + backwardCost[backwardQueue.top().id] >= shortestPath) {
+            if (best_known < numeric_limits<int>::max() && 
+                forwardHeap.top_cost() > best_known / 2 &&
+                backwardHeap.top_cost() > best_known / 2) {
                 break;
             }
         }
 
-        // Reconstruct path
-        vector<int> path = reconstructBidirectionalPath(parentForward, parentBackward, source, destination, meetingNode);
+        if (meeting_node == -1) return {-1, {}};
 
-        return {shortestPath, path};
-    }
-
-private:
-    // Helper to reconstruct the path in unidirectional Dijkstra
-    vector<int> reconstructPath(const vector<int>& parent, int source, int destination) {
+        // Reconstruct path with original IDs
         vector<int> path;
-        int current = destination;
+        path.reserve(1000);
+        int current = meeting_node;
         while (current != -1) {
-            path.push_back(current);
-            current = parent[current];
-        }
-        reverse(path.begin(), path.end());
-        return (path.front() == source) ? path : vector<int>{}; // Return empty if no path exists
-    }
-
-    // Helper to reconstruct the path in bidirectional Dijkstra
-    vector<int> reconstructBidirectionalPath(const vector<int>& parentForward, const vector<int>& parentBackward, int source, int destination, int meetingNode) {
-        if (meetingNode == -1) return {}; // No path exists
-
-        vector<int> forwardPath, backwardPath;
-
-        // Build the forward part of the path
-        int current = meetingNode;
-        while (current != -1) {
-            forwardPath.push_back(current);
+            path.push_back(getOriginalId(current));
             current = parentForward[current];
         }
-        reverse(forwardPath.begin(), forwardPath.end());
-
-        // Build the backward part of the path
-        current = parentBackward[meetingNode];
+        reverse(path.begin(), path.end());
+        
+        current = parentBackward[meeting_node];
         while (current != -1) {
-            backwardPath.push_back(current);
+            path.push_back(getOriginalId(current));
             current = parentBackward[current];
         }
 
-        // Combine both parts
-        forwardPath.insert(forwardPath.end(), backwardPath.begin(), backwardPath.end());
-        return forwardPath;
+        return {best_known, path};
     }
 };
-
-// // Test function: Entry point for the program
-// int main() {
-//     PathFinder graph;
-
-//     // Load the graph from the binary file
-//     auto start = chrono::high_resolution_clock::now();
-//     graph.loadGraphFromBinary("../../data/graph_data.bin");
-//     auto end = chrono::high_resolution_clock::now();
-//     auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-//     cout << "Time to load graph: " << loadTime << " ms\n";
-
-//     // Define source and destination
-//     int source = 1;
-//     int destination = 600000;
-
-//     // Measure time for Bidirectional Dijkstra
-//     start = chrono::high_resolution_clock::now();
-//     auto result = graph.bidirectionalDijkstra(source, destination);
-//     end = chrono::high_resolution_clock::now();
-//     auto dijkstraTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-//     cout << "Time to execute Bidirectional Dijkstra: " << dijkstraTime << " ms\n";
-
-//     // Output the results
-//     int travelTime = result.first;
-//     vector<int> path = result.second;
-
-//     cout << "Shortest travel time: " << travelTime << "\n";
-//     cout << "Path: ";
-//     for (int landmark : path) {
-//         cout << landmark << " ";
-//     }
-//     cout << "\n";
-
-//     return 0;
-// }

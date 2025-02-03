@@ -15,24 +15,22 @@ int main() {
     auto end = chrono::high_resolution_clock::now();
     auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-    // Fichier de sortie
     ofstream outputFile("results.txt");
     if (!outputFile.is_open()) {
         cerr << "Erreur : Impossible to write\n";
         return 1;
     }
 
-    // Écrire le temps de chargement du graphe
     outputFile << "Time to load graph: " << loadTime << " ms\n";
 
 
     // Define landmarks (source-destination pairs)
     vector<pair<int, int>> landmarkPairs = {
-        {1, 18},  // Replace with desired landmarks
-        {500, 70000}, // Add additional pairs here
-        {50, 700000}, // Add additional pairs here
-        {3930, 976358}, // Add additional pairs here
-        {1, 20000000} // Add additional pairs here
+        {1, 18},  
+        {500, 70000},
+        {50, 700000},
+        {3930, 976358},
+        {9489093, 22377087} 
     };
 
     // Loop through the landmark pairs and test Dijkstra's algorithm
