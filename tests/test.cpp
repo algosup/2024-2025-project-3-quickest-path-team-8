@@ -2,7 +2,7 @@
 #include <vector>
 #include <chrono>
 #include <fstream>
-#include "src/dijkstra.cpp" // Include the Graph base class
+#include "../src/dijkstra.cpp" // Include the Graph base class
 
 using namespace std;
 
