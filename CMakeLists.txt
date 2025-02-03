@@ -9,12 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(COMMON_INCLUDES 
-    ${PROJECT_SOURCE_DIR}/includes/01-validate/
-    ${PROJECT_SOURCE_DIR}/includes/02-extract/
-    ${PROJECT_SOURCE_DIR}/includes/03-preprocess/
-    ${PROJECT_SOURCE_DIR}/includes/04-load/
-    ${PROJECT_SOURCE_DIR}/includes/05-pathFind/
-    ${PROJECT_SOURCE_DIR}/includes/06-restApi/
+    ${PROJECT_SOURCE_DIR}/includes/
 )
 include_directories(${COMMON_INCLUDES})
 

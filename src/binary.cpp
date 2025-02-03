@@ -14,6 +14,7 @@ struct Road {
     int32_t landmarkB; // Ending node
     int16_t time;      // Travel time
 };
+
 #pragma pack(pop)
 
 // Function to convert CSV to binary
@@ -55,7 +56,7 @@ void convertCSVtoBinary(const string& csvFilename, const string& binaryFilename)
 
 int main() {
     // Convert CSV to binary
-    convertCSVtoBinary("../../data/USA-roads_sorted.csv", "graph_data.bin");
+    convertCSVtoBinary("../../data/USA-roads.csv", "graph_data.bin");
 
     return 0;
 }

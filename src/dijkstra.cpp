@@ -2,7 +2,7 @@
 #include <vector>
 #include <limits>
 #include <chrono>
-#include "../04-load/graph.cpp"
+#include "graph.cpp"
 
 using namespace std;
 
