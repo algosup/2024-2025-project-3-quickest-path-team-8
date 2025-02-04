@@ -1,26 +1,34 @@
-// g++ -std=c++17 -O1 -march=native "test.cpp" -o test && ./test
+// RUN WITH:
+// g++ -std=c++17 -O1 -march=native "test.cpp" "../src/binary.cpp" "../src/graph.cpp" "../src/dijkstra.cpp" -o test && ./test && rm test
 
 #include <iostream>
 #include <vector>
 #include <chrono>
 #include <fstream>
-#include "../src/dijkstra.cpp" // Include the Graph base class
+#include "../src/includes/binary.hpp" // Include the Graph base class
+#include "../src/includes/graph.hpp" // Include the Graph base class
+#include "../src/includes/dijkstra.hpp" // Include the Graph base class
 
-using namespace std;
 
 int main() {
     PathFinder graph; // create an instance of the graph 
 
-    // Load the graph from the binary file
-    auto start = chrono::high_resolution_clock::now();
-    graph.loadGraphFromBinary("../data/graph.bin");
-    auto end = chrono::high_resolution_clock::now();
-    auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    // Add code to verify the existence of the binary file
+    // if it doesn't exist, then create it
+    if (!std::ifstream("../data/graph.bin").good()) {
+        convertCSVtoBinary("../data/USA-roads.csv", "../data/graph.bin");
+    }
 
-    cout << "Time to load graph: " << loadTime << " ms\n";
+    // Load the graph from the binary file
+    auto start = std::chrono::high_resolution_clock::now();
+    graph.loadGraphFromBinary("../data/graph.bin");
+    auto end = std::chrono::high_resolution_clock::now();
+    auto loadTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    std::cout << "Time to load graph: " << loadTime << " ms\n";
 
     // Define landmarks (source-destination pairs)
-    vector<pair<int, int>> landmarkPairs = {
+    std::vector<std::pair<int, int>> landmarkPairs = {
         {1, 18},  
         {500, 70000},
         {50, 700000},
@@ -33,25 +41,25 @@ int main() {
         int source = landmarkPairs[i].first;
         int destination = landmarkPairs[i].second;
 
-        cout << "Test " << i + 1 << ": Source = " << source << ", Destination = " << destination << "\n";
+        std::cout << "Test " << i + 1 << ": Source = " << source << ", Destination = " << destination << "\n";
 
         // Measure time for Bidirectional Dijkstra
-        start = chrono::high_resolution_clock::now();
+        start = std::chrono::high_resolution_clock::now();
         auto result = graph.bidirectionalDijkstra(source, destination);
-        end = chrono::high_resolution_clock::now();
-        auto dijkstraTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-        cout << "Time to execute Bidirectional Dijkstra: " << dijkstraTime << " ms\n";
+        end = std::chrono::high_resolution_clock::now();
+        auto dijkstraTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        std::cout << "Time to execute Bidirectional Dijkstra: " << dijkstraTime << " ms\n";
 
         // Output the results
         int travelTime = result.first;
-        vector<int> path = result.second;
+        std::vector<int> path = result.second;
 
-        cout << "Shortest travel time: " << travelTime << "\n";
+        std::cout << "Shortest travel time: " << travelTime << "\n";
         // cout << "Path: ";
         // for (int landmark : path) {
         //     cout << landmark << " ";
         // }
-        cout << "\n\n";
+        std::cout << "\n\n";
     }
 
     return 0;
