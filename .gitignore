@@ -60,3 +60,6 @@ quickest_path/data/extractedDataset.bin
 data/extractedDataset.bin
 data/USA-roads.csv
 data/val_de_loire_roads.csv
+data/graph_data.bin
+data/USA-roads_sorted.csv
+data/graph.bin
