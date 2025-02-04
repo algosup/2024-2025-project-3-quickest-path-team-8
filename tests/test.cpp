@@ -1,3 +1,5 @@
+// g++ -std=c++17 -O1 -march=native "test.cpp" -o test && ./test
+
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -11,7 +13,7 @@ int main() {
 
     // Load the graph from the binary file
     auto start = chrono::high_resolution_clock::now();
-    graph.loadGraphFromBinary("../data/graph_data.bin");
+    graph.loadGraphFromBinary("../data/graph.bin");
     auto end = chrono::high_resolution_clock::now();
     auto loadTime = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 

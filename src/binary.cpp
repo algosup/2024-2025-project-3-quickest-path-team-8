@@ -1,3 +1,7 @@
+// g++ -std=c++17 -O1 -march=native "binary.cpp" -o binary && ./binary
+
+#include "includes/binary.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -5,41 +9,30 @@
 #include <cstdint>
 #include <string>
 
-using namespace std;
-
-// Road structure for binary file storage
-#pragma pack(push, 1)
-struct Road {
-    int32_t landmarkA; // Starting node
-    int32_t landmarkB; // Ending node
-    int16_t time;      // Travel time
-};
-
-#pragma pack(pop)
 
 // Function to convert CSV to binary
-void convertCSVtoBinary(const string& csvFilename, const string& binaryFilename) {
+void convertCSVtoBinary(const std::string& csvFilename, const std::string& binaryFilename) {
     // Open the CSV file for reading
-    ifstream csvFile(csvFilename);
+    std::ifstream csvFile(csvFilename);
     if (!csvFile.is_open()) {
-        cerr << "Error: Could not open CSV file: " << csvFilename << endl;
+        std::cerr << "Error: Could not open CSV file: " << csvFilename << std::endl;
         return;
     }
 
     // Open the binary file for writing
-    ofstream binaryFile(binaryFilename, ios::binary);
+    std::ofstream binaryFile(binaryFilename, std::ios::binary);
     if (!binaryFile.is_open()) {
-        cerr << "Error: Could not open binary file for writing: " << binaryFilename << endl;
+        std::cerr << "Error: Could not open binary file for writing: " << binaryFilename << std::endl;
         return;
     }
 
-    string line;
+    std::string line;
     Road road;
     char comma; // To handle the commas in the CSV
 
     // Read the CSV file line by line
     while (getline(csvFile, line)) {
-        stringstream ss(line);
+        std::stringstream ss(line);
         // Parse the line: landmarkA,landmarkB,time
         ss >> road.landmarkA >> comma >> road.landmarkB >> comma >> road.time;
 
@@ -51,12 +44,6 @@ void convertCSVtoBinary(const string& csvFilename, const string& binaryFilename)
     csvFile.close();
     binaryFile.close();
 
-    cout << "Successfully converted CSV file to binary format: " << binaryFilename << endl;
+    std::cout << "Successfully converted CSV file to binary format: " << binaryFilename << std::endl;
 }
 
-int main() {
-    // Convert CSV to binary
-    convertCSVtoBinary("../../data/USA-roads.csv", "graph_data.bin");
-
-    return 0;
-}

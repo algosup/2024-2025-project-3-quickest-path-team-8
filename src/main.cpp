@@ -9,3 +9,13 @@
 
 */
 
+#include "includes/binary.hpp"
+
+// fromm binary 
+
+int main() {
+    // Convert CSV to binary
+    convertCSVtoBinary("../data/USA-roads.csv", "../data/graph.bin");
+
+    return 0;
+}
