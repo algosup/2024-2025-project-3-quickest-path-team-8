@@ -11,8 +11,8 @@ void startServer(const unordered_map<int, vector<pair<int, double>>> &graph) {
     httplib::Server svr;
     PathFinder pathFinder;
 
-
     svr.Get("/quickest_path", [&](const httplib::Request &req, httplib::Response &res) {
+    res.set_header("Access-Control-Allow-Origin", "*");
         try {
             if (!req.has_param("format") || !req.has_param("landmark_1") || !req.has_param("landmark_2")) {
                 res.status = 400;
