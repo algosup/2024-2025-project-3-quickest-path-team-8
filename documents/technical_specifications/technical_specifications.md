@@ -279,8 +279,8 @@ The REST API handles requests for the quickest path between landmarks. Design co
     {
       "time": 66,
       "steps": [
-        { "landmark": 322, "distance": 33 },
-        { "landmark": 323, "distance": 33 }
+        { "landmark": 322},
+        { "landmark": 323 }
       ]
     }
     ```
@@ -291,11 +291,9 @@ The REST API handles requests for the quickest path between landmarks. Design co
       <steps>
         <step>
           <landmark>322</landmark>
-          <distance>33</distance>
         </step>
         <step>
           <landmark>323</landmark>
-          <distance>33</distance>
         </step>
       </steps>
     </response>
