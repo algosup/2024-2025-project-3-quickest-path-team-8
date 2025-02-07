@@ -62,12 +62,12 @@ string formatError(const ApiError& error, const string& format) {
 
 // Define common API errors
 const ApiError MISSING_PARAMETERS = {400, "Missing Parameters", "Required parameters: format, landmark_1, landmark_2"};
-const ApiError INVALID_FORMAT = {400, "Invalid Format", "Supported formats: json, xml"};
-const ApiError INVALID_LANDMARK = {400, "Invalid Landmark", "Landmark IDs must be valid integers"};
-const ApiError LANDMARK_NOT_FOUND = {404, "Landmark Not Found", "Specified landmark ID does not exist"};
+const ApiError INVALID_FORMAT = {401, "Invalid Format", "Supported formats: json, xml"};
+const ApiError INVALID_LANDMARK = {402, "Invalid Landmark Type", "Landmark IDs must be valid integers"};
+const ApiError LANDMARK_OUT_OF_RANGE = {404,  "Invalid Landmark Range", "Landmark IDs must be between 1 and 23947347"};
 const ApiError SERVER_ERROR = {500, "Internal Server Error", "An unexpected error occurred"};
 
-
+\
 void startServer(PathFinder &graph) {
     httplib::Server svr;
 
@@ -83,8 +83,7 @@ void startServer(PathFinder &graph) {
             string format = req.get_param_value("format");
             if (format != "json" && format != "xml") {
                 res.status = INVALID_FORMAT.status_code;
-                res.set_content(formatError(INVALID_FORMAT, format), 
-                    format == "json" ? "application/json" : "application/xml");
+                res.set_content(formatError(INVALID_FORMAT, "json"), "application/json");
                 return;
             }
 
@@ -92,10 +91,19 @@ void startServer(PathFinder &graph) {
             try {
                 landmark_1 = stoi(req.get_param_value("landmark_1"));
                 landmark_2 = stoi(req.get_param_value("landmark_2"));
+                
+                // Add range validation
+                if (landmark_1 < 1 || landmark_1 > 23947347 || 
+                    landmark_2 < 1 || landmark_2 > 23947347) {
+                    res.status = LANDMARK_OUT_OF_RANGE.status_code;
+                    res.set_content(formatError(LANDMARK_OUT_OF_RANGE, req.get_param_value("format")),
+                        req.get_param_value("format") == "json" ? "application/json" : "application/xml");
+                    return;
+                }
             } catch (const std::invalid_argument&) {
                 res.status = INVALID_LANDMARK.status_code;
-                res.set_content(formatError(INVALID_LANDMARK, format),
-                    format == "json" ? "application/json" : "application/xml");
+                res.set_content(formatError(INVALID_LANDMARK, req.get_param_value("format")),
+                    req.get_param_value("format") == "json" ? "application/json" : "application/xml");
                 return;
             }
 
