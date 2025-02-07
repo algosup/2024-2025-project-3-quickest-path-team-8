@@ -1,5 +1,4 @@
 #include "includes/dijkstra.hpp"
-
 #include <iostream>
 #include <chrono>
 

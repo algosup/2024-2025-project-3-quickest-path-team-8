@@ -5,10 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <cstdint>
-#include <string>
-
 
 // Function to convert CSV to binary
 void convertCSVtoBinary(const std::string& csvFilename, const std::string& binaryFilename) {

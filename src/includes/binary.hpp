@@ -1,13 +1,8 @@
 #ifndef BINARY_HPP
 #define BINARY_HPP
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <cstdint>
 #include <string>
-
+#include <cstdint>
 /// @brief Road structure for binary file storage (pragma pack to minimize memory padding)
 #pragma pack(push, 1)
 struct Road {

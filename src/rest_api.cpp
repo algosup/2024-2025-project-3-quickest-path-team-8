@@ -1,15 +1,14 @@
 #include "includes/httplib.h"
+#include "includes/dijkstra.hpp"
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <unordered_map>
-#include <vector>
+
 
 using namespace std;
 
-void startServer(const unordered_map<int, vector<pair<int, double>>> &graph) {
+void startServer(PathFinder &graph) {
     httplib::Server svr;
-    PathFinder pathFinder;
 
     svr.Get("/quickest_path", [&](const httplib::Request &req, httplib::Response &res) {
     res.set_header("Access-Control-Allow-Origin", "*");
@@ -24,7 +23,7 @@ void startServer(const unordered_map<int, vector<pair<int, double>>> &graph) {
             int landmark_1 = stoi(req.get_param_value("landmark_1"));
             int landmark_2 = stoi(req.get_param_value("landmark_2"));
 
-            auto [distance, path] = pathFinder.bidirectionalDijkstra(landmark_1, landmark_2);
+            auto [distance, path] = graph.bidirectionalDijkstra(landmark_1, landmark_2);
 
             if (format == "json") {
                 ostringstream response;

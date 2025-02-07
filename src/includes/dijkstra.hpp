@@ -1,5 +1,5 @@
-#ifndef PATHFINDER_HPP
-#define PATHFINDER_HPP
+#ifndef DIJKSTRA_HPP
+#define DIJKSTRA_HPP
 
 #include "graph.hpp"
 #include <vector>
@@ -80,4 +80,4 @@ public:
     std::pair<int, std::vector<int>> bidirectionalDijkstra(int source, int dest);
 };
 
-#endif // PATHFINDER_HPP
+#endif // DIJKSTRA_HPP

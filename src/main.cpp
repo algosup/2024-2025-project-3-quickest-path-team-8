@@ -4,30 +4,34 @@
 
 ༺☆༻____________☾✧ ✩ ✧☽____________༺☆༻
 
-    Main Program
-    This program will...
+g++ -std=c++17 -O1 -march=native main.cpp graph.cpp dijkstra.cpp binary.cpp rest_api.cpp -o api && ./api 
 
 */
 
 #include "includes/binary.hpp"
 #include "includes/graph.hpp"
 #include "includes/dijkstra.hpp"
+#include "includes/rest_api.hpp"
+#include <iostream>
+#include <cstdlib>
+
 
 // fromm binary 
 
 int main() {
-    // Convert CSV to binary
-    convertCSVtoBinary("../data/USA-roads.csv", "../data/graph.bin");
+    // // Convert CSV to binary
+    // convertCSVtoBinary("../data/USA-road_sorted.csv", "../data/graph.bin");
 
     PathFinder graph; // create an instance of the graph 
 
     // Load the graph from the binary file
-    auto start = std::chrono::high_resolution_clock::now();
     graph.loadGraphFromBinary("../data/graph.bin");
-    auto end = std::chrono::high_resolution_clock::now();
-    auto loadTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    std::cout << "Time to load graph: " << loadTime << " ms\n";
+    // Open the UI in the default browser
+    system("open index.html");
+
+    // Start the server
+    startServer(graph);
 
     return 0;
 }
