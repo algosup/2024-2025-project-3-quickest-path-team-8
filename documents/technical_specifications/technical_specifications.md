@@ -397,8 +397,6 @@ To improve performance and **ensure real-time query processing**, the following 
    - Edges in the adjacency list are **sorted by travel time** to prioritize the most optimal paths first.
    - This reduces unnecessary computations when expanding nodes.
 
-4. **Parallel Processing**:
-   - Node expansions are **parallelized** across multiple threads to improve speed.
 
 These optimizations allow the system to process queries **efficiently**, even when handling large datasets.
 
