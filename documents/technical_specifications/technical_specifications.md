@@ -443,9 +443,6 @@ The path calculation system implements **Dijkstra’s algorithm** to compute the
 
   - **Edges are pre-sorted** to prioritize faster paths in graph traversal.
 
-- **Parallel Node Expansion**:
-  - The algorithm **leverages multi-threading** to expand nodes in parallel.
-
 ### Edge Cases
 
 - **Identical Landmarks**:
