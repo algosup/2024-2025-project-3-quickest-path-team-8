@@ -1,7 +1,7 @@
 <h1 align="center"> Management Walkthrough </h1>
 
 <p align="center">
-Created by: Victor LEROY <br> Creation Date: 01/20/2025 <br> Last update: 01/20/2025
+Created by: Victor LEROY <br> Creation Date: 01/20/2025 <br> Last update: 02/07/2025
 </p>
 
 <details>  
@@ -14,9 +14,6 @@ Created by: Victor LEROY <br> Creation Date: 01/20/2025 <br> Last update: 01/20/
   - [2.1. Milestones](#21-milestones)
   - [2.2. KPIs](#22-kpis)
   - [2.3. RACI Matrix](#23-raci-matrix)
-  - [2.4. RACI Matrix](#24-risk-management)
-  - [2.5. Weekly Reports](#25-weekly-reports)
-
 </details>
 
 ---
@@ -45,11 +42,3 @@ Key Performance Indicators (KPIs) are metrics that help us measure the success o
 The RACI Matrix is a tool used to define roles and responsibilities for each task in the project. You can find the RACI Matrix [here](https://docs.google.com/spreadsheets/d/1ks8q_6eMADyZjF8dcJEFqMipRGraHNshNAtUv45jEs0/edit?usp=sharing). 
 
 
-
-### 2.4. Risk Management
-
-Now that you are aware of the responsibilities of each team member, you should read the [Risk Management](https://docs.google.com/spreadsheets/d/13ppuQtH63KG5h03xVnGx2j9pGNSQNAlM/edit?usp=sharing&ouid=117083838720275060736&rtpof=true&sd=true) document. This document outlines the risks associated with the project and the mitigation strategies that have been put in place to address them.
-
-### 2.5. Weekly Reports
-
-Every week, the team will create a Weekly Report to summarize the work done during the week, accompanied with a feedback of the team about the current feeling about the project. You can find the Weekly Reports [here](weekly_reports).
