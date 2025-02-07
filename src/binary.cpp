@@ -1,14 +1,39 @@
-// g++ -std=c++17 -O1 -march=native "binary.cpp" -o binary && ./binary
+/**
+ * @file binary.cpp
+ * @brief Handles conversion of road network data from CSV to binary format
+ * 
+ * This module provides functionality to convert road network data stored in CSV
+ * format to a more efficient binary representation. The binary format reduces
+ * file size and improves read performance for the path-finding algorithm.
+ */
+
+#include "includes/binary.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+/**
+ * @brief Converts road network data from CSV format to binary
+ * 
+ * @param csvFilename Source CSV file path containing road network data
+ * @param binaryFilename Destination binary file path
+ * 
+ * @details
+ * The function performs the following operations:
+ * 1. Opens source CSV file in text mode
+ * 2. Creates/opens destination binary file
+ * 3. Processes CSV data line by line
+ * 4. Writes structured binary records
+ * 
+ * @note command to run the file: g++ -std=c++17 -O1 -march=native "binary.cpp" -o binary && ./binary
+ * @throws Prints error message to cerr if file operations fail
+ */
 
 #include "includes/binary.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <cstdint>
-#include <string>
-
 
 // Function to convert CSV to binary
 void convertCSVtoBinary(const std::string& csvFilename, const std::string& binaryFilename) {

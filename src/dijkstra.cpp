@@ -1,7 +1,19 @@
 #include "includes/dijkstra.hpp"
-
 #include <iostream>
 #include <chrono>
+
+/**
+ * @brief Implements bidirectional Dijkstra's shortest path algorithm
+ * 
+ * @param source Starting node ID
+ * @param dest Destination node ID
+ * @return std::pair<int, std::vector<int>> {total_cost, path_nodes}
+ * 
+ * @details
+ * Performs simultaneous forward and backward searches from source and destination.
+ * Maintains two priority queues and explores nodes until searches meet.
+ * Uses D-ary heap optimization for improved performance.
+ */
 
 std::pair<int, std::vector<int>> PathFinder::bidirectionalDijkstra(int source, int dest) 
 {

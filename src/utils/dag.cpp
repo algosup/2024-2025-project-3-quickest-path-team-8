@@ -1,3 +1,13 @@
+/**
+ * @file dag.cpp
+ * @brief Directed Acyclic Graph (DAG) utilities for road network processing
+ * 
+ * Provides functionality to:
+ * - Read road network data from CSV format
+ * - Detect cycles in the network
+ * - Validate network integrity
+ */
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,21 +17,43 @@
 #include <queue>
 #include <sstream>
 
+/**
+ * @brief Represents a directed edge in the road network
+ * 
+ * Edge direction is from source to target node.
+ * Node IDs are preserved from input data.
+ */
 struct Edge {
-    int source;
-    int target;
+    int source;     // Source node ID
+    int target;     // Target node ID 
 };
+
+/**
+ * @brief Reads road network edges from CSV file
+ * 
+ * @param filePath Path to CSV file containing edge data
+ * @return vector<Edge> List of edges in the network
+ * 
+ * @details
+ * - Expects CSV format: source_id,target_id
+ * - Skips malformed lines
+ * - Returns empty vector on file error
+ * 
+ * @throws Prints error to cerr if file cannot be opened
+ */
 
 std::vector<Edge> readCSV(const std::string& filePath) {
     std::vector<Edge> edges;
     std::ifstream file(filePath);
     std::string line;
 
+  // Validate file access
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filePath << "\n";
         return edges;
     }
 
+    // Process CSV line by line
     while (std::getline(file, line)) {
         std::stringstream ss(line);
         std::string sourceStr, targetStr;

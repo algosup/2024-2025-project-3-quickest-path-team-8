@@ -1,33 +1,38 @@
-/*
-
-    「 ✦ USA QuickPath Algorithm by TEAM 8 ✦ 」
-
-༺☆༻____________☾✧ ✩ ✧☽____________༺☆༻
-
-    Main Program
-    This program will...
-
-*/
+/**
+ * @file main.cpp
+ * @brief Entry point for the road network path-finding application
+ * 
+ * Initializes the graph data structure, loads network data, and starts the web server.
+ * Provides REST API endpoints for path-finding operations.
+ */
 
 #include "includes/binary.hpp"
 #include "includes/graph.hpp"
 #include "includes/dijkstra.hpp"
+#include "includes/rest_api.hpp"
+#include <iostream>
+#include <cstdlib>
 
-// fromm binary 
 
 int main() {
-    // Convert CSV to binary
-    convertCSVtoBinary("../data/USA-roads.csv", "../data/graph.bin");
+    // CSV to binary conversion commented out - only needed for initial data prep
+    // convertCSVtoBinary("../data/USA-road_sorted.csv", "../data/graph.bin");
 
-    PathFinder graph; // create an instance of the graph 
+    // Initialize path-finding engine with optimized graph structure
+    PathFinder graph;
 
-    // Load the graph from the binary file
-    auto start = std::chrono::high_resolution_clock::now();
+    // Load pre-processed binary graph data
+    // Binary format provides faster loading and reduced memory footprint
     graph.loadGraphFromBinary("../data/graph.bin");
-    auto end = std::chrono::high_resolution_clock::now();
-    auto loadTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    std::cout << "Time to load graph: " << loadTime << " ms\n";
+    // Launch web UI in default browser
+    // Note: Mac-specific command, would need modification for other platforms
+    system("open index.html");
+
+    // Start REST API server
+    // Handles path-finding requests from web UI
+    // Blocks until process termination
+    startServer(graph);
 
     return 0;
 }

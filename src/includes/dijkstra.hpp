@@ -1,5 +1,5 @@
-#ifndef PATHFINDER_HPP
-#define PATHFINDER_HPP
+#ifndef DIJKSTRA_HPP
+#define DIJKSTRA_HPP
 
 #include "graph.hpp"
 #include <vector>
@@ -8,8 +8,7 @@
 #include <algorithm>
 #include <cstdint>
 
-// Keep this struct if you need it as part of the PathFinder interface.
-// If it's strictly internal, you can move it to the .cpp.
+
 struct NodeData {
     int forward_cost = std::numeric_limits<int>::max();
     int backward_cost = std::numeric_limits<int>::max();
@@ -17,8 +16,7 @@ struct NodeData {
     bool backward_processed = false;
 };
 
-// Templated classes must generally stay in a header (or an inline .hpp) 
-// because the compiler needs to see the full definition to instantiate them.
+// D-ary heap implementation
 template<int d = 16>
 class DaryHeap {
     std::vector<std::pair<int, int>> heap;
@@ -80,4 +78,4 @@ public:
     std::pair<int, std::vector<int>> bidirectionalDijkstra(int source, int dest);
 };
 
-#endif // PATHFINDER_HPP
+#endif // DIJKSTRA_HPP
