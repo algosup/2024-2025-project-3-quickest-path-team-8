@@ -53,7 +53,7 @@ Follow these steps to set up the project locally:
 2. Navigate to the project directory:
 
    ```sh
-   cd 2024-2025-project-3-quickest-path-team-8
+   cd 2024-2025-project-3-quickest-path-team-8/src
    ```
 
 3. Install G++:
@@ -74,11 +74,11 @@ Follow these steps to set up the project locally:
 4. Compile the project:
 
    ```sh
-   g++ -o quickpath main.cpp
+   g++ -std=c++17 -O1 -march=native main.cpp graph.cpp dijkstra.cpp binary.cpp rest_api.cpp -o api 
    ```
 
 5. Run the application:
 
    ```sh
-   ./quickpath
+   ./api
    ```
