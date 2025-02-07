@@ -291,8 +291,8 @@ Accept: application/xml
 {
   "time": 66,
   "steps": [
- { "landmark": 322, "distance": 33 },
- { "landmark": 323, "distance": 33 }
+ { "landmark": 322},
+ { "landmark": 323 }
  ]
 }
 ```
@@ -304,11 +304,9 @@ Accept: application/xml
   <steps>
     <step>
       <landmark>322</landmark>
-      <distance>33</distance>
     </step>
     <step>
       <landmark>323</landmark>
-      <distance>33</distance>
     </step>
   </steps>
 </response>
