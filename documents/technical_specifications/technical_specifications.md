@@ -23,8 +23,6 @@
 - [5. System Architecture](#5-system-architecture)
   - [5.1 Technology Stack](#51-technology-stack)
   - [5.2 REST API Design](#52-rest-api-design)
-    - [Error Handling](#error-handling)
-    - [Performance Considerations](#performance-considerations)
   - [5.3 Algorithm Design](#53-algorithm-design)
     - [Core Algorithm](#core-algorithm)
     - [Role in the System](#role-in-the-system)
@@ -44,8 +42,13 @@
     - [Workflow](#workflow-1)
       - [Example Output](#example-output)
     - [Efficiency Measures](#efficiency-measures)
-  - [6.3 Performance Testing](#63-performance-testing)
+  - [6.3 Dataset Conversion and Storage](#63-dataset-conversion-and-storage)
     - [Overview](#overview-2)
+    - [Conversion Process](#conversion-process)
+    - [Benefits of Binary Conversion](#benefits-of-binary-conversion)
+    - [Example Structure of Binary Format](#example-structure-of-binary-format)
+  - [6.4 Performance Testing](#64-performance-testing)
+    - [Overview](#overview-3)
     - [Testing](#testing)
     - [Stress Testing](#stress-testing-1)
     - [Latency Measurement](#latency-measurement)
@@ -160,8 +163,7 @@ The REST API provides external access to the quickest path calculation functiona
 
 ### Response Time
 
-- The API must respond to all vali
-- d queries within **1 second** on a typical laptop, even when handling datasets with millions of nodes and connections.
+- The API must respond to all valid queries within **1 second** on a typical laptop, even when handling datasets with millions of nodes and connections.
 - Queries to landmarks with no valid path should also return responses within the same time frame.
 
 ### Scalability
@@ -263,8 +265,8 @@ The REST API handles requests for the quickest path between landmarks. Design co
   - **Base URL**: `http://127.0.0.1:8080/quickest_path`
   - **Parameters**:
 
-    - `landmark_1`: Source landmark ID (integer). Must be between `1` and `23,947,347`.
-    - `landmark_2`: Destination landmark ID (integer). Must be between `1` and `23,947,347`.
+    - `landmark_1`: Source landmark ID (integer).
+    - `landmark_2`: Destination landmark ID (integer).
 
   - **Input Structure**:
     All inputs must be provided as query parameters in the URL. Example request:
@@ -278,10 +280,7 @@ The REST API handles requests for the quickest path between landmarks. Design co
     ```json
     {
       "time": 66,
-      "steps": [
-        { "landmark": 322},
-        { "landmark": 323 }
-      ]
+      "steps": [{ "landmark": 322 }, { "landmark": 323 }]
     }
     ```
   - **XML Format Example**:
@@ -307,22 +306,18 @@ The REST API handles requests for the quickest path between landmarks. Design co
 
   - JSON and XML responses are serialized using lightweight libraries (e.g., `nlohmann::json`).
 
-### Error Handling
+- **Error Handling**  
+   The API must handle invalid or erroneous inputs:
 
-The API provides detailed error responses for invalid inputs, missing parameters, and other exceptional cases. The following table outlines the possible scenarios and their corresponding HTTP status codes:
+  | Case                      | HTTP Code | Description                                             |
+  | ------------------------- | --------- | ------------------------------------------------------- |
+  | Missing parameters        | 400       | Invalid or incomplete query parameters.                 |
+  | Unsupported output format | 406       | Format not supported (e.g., anything besides JSON/XML). |
+  | Disconnected graph        | 404       | No route exists between the provided landmarks.         |
+  | Nonexistent landmarks     | 404       | One or both landmarks are not present in the dataset.   |
 
-| **Scenario**                  | **HTTP Code** | **Description**                                                                                                       | **Example JSON Response**                                                                                           | **Example XML Response**                                                                                                                                                      |
-| ----------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Valid request**             | `200`         | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
-| **Identical landmarks**       | `200`         | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
-| **Missing or invalid inputs** | `400`         | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
-| **Nonexistent landmarks**     | `404`         | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
-| **Internal Server Error**     | `500`         | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
-| **Service Unavailable**       | `503`         | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
-
-### Performance Considerations
-
-- Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
+- **Performance Considerations**:
+  - Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
 
 ---
 
@@ -562,7 +557,62 @@ Below is an example of the tool's output in JSON format:
 
 ![Data Validation Workflow](/documents/images/dataValidation.png)
 
-## 6.3 Performance Testing
+## 6.3 Dataset Conversion and Storage
+
+### Overview
+
+Once the dataset has been validated and processed, the system converts it into a custom binary (`.bin`) format to improve storage efficiency and access speed. This format reduces the dataset's memory footprint and optimizes query performance.
+
+### Conversion Process
+
+1. **Data Validation and Preprocessing**:
+
+   - The dataset undergoes verification through the **Data Validation Tool** (see **6.2**) to ensure correctness.
+   - Duplicate entries and disconnected graphs (DSG) are removed.
+   - The dataset is sorted to optimize storage and retrieval.
+
+2. **Binary Format Conversion**:
+
+   - The validated dataset is transformed into a binary format (`.bin`).
+   - Each record is stored in **16-bit encoding**, reducing storage requirements while maintaining precision.
+
+3. **Sorting Paths for Optimized Access**:
+
+   - Path entries are sorted to enhance search and retrieval efficiency.
+   - Sorting enables faster lookups and improves performance in path calculations.
+
+4. **Storage Mechanism**:
+   - The `.bin` file is stored in a structured format to allow rapid access by the **Path Calculation Module** (see **6.1**).
+   - The data structure is designed to be memory-efficient while allowing direct access to required paths.
+
+### Benefits of Binary Conversion
+
+- **Space Optimization**:
+  - The `.bin` format reduces the dataset’s size compared to CSV or JSON, improving memory efficiency.
+- **Faster Read and Write Operations**:
+
+  - Binary files are significantly faster to read compared to text-based formats.
+
+- **Optimized Pathfinding Performance**:
+  - The sorted paths improve lookup speeds for the A\* algorithm.
+
+### Example Structure of Binary Format
+
+Each record in the `.bin` file consists of:
+
+| Field        | Type     | Size (bits) | Description                           |
+| ------------ | -------- | ----------- | ------------------------------------- |
+| `landmark_A` | `uint16` | 16          | Source landmark ID                    |
+| `landmark_B` | `uint16` | 16          | Destination landmark ID               |
+| `time`       | `uint16` | 16          | Travel time between the two landmarks |
+
+Example of a binary representation:
+
+```plaintext
+0000001011010010 0000001100101100 0000000000111110
+```
+
+## 6.4 Performance Testing
 
 ### Overview
 
