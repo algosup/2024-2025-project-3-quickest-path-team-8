@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickPath API UI TEAM 8</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .response {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .response-time {
+            font-weight: 600;
+            margin-top: 1rem;
+            text-align: right;
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: #eee;
+        }
+
+        .slow-response {
+            color: #e74c3c;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading:after {
+            content: '';
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QuickPath API UI TEAM 8</h1>
+        <div class="form-group">
+            <label for="format">Response Format:</label>
+            <select id="format">
+                <option value="json">JSON</option>
+                <option value="xml">XML</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="landmark1">Landmark 1:</label>
+            <input type="number" id="landmark1" required placeholder="Enter first landmark ID">
+        </div>
+        <div class="form-group">
+            <label for="landmark2">Landmark 2:</label>
+            <input type="number" id="landmark2" required placeholder="Enter second landmark ID">
+        </div>
+        <button onclick="sendRequest()">Find Quickest Path</button>
+        
+        <div id="loading" class="loading"></div>
+        <div id="response" class="response"></div>
+        <div id="responseTime" class="response-time"></div>
+    </div>
+
+    <script>
+        async function sendRequest() {
+            const format = document.getElementById('format').value;
+            const landmark1 = document.getElementById('landmark1').value;
+            const landmark2 = document.getElementById('landmark2').value;
+            const responseDiv = document.getElementById('response');
+            const responseTimeDiv = document.getElementById('responseTime');
+            const loadingDiv = document.getElementById('loading');
+
+            if (!landmark1 || !landmark2) {
+                responseDiv.textContent = 'Please enter both landmarks';
+                return;
+            }
+
+            loadingDiv.style.display = 'block';
+            responseDiv.textContent = '';
+            responseTimeDiv.textContent = '';
+
+            const startTime = performance.now();
+
+            try {
+                const response = await fetch(`http://localhost:8080/quickest_path?format=${format}&landmark_1=${landmark1}&landmark_2=${landmark2}`);
+                const data = await response.text();
+                
+                const endTime = performance.now();
+                const timeTaken = endTime - startTime;
+
+                responseDiv.textContent = format === 'json' ? 
+                    JSON.stringify(JSON.parse(data), null, 2) : 
+                    data;
+                    
+                responseTimeDiv.textContent = `Response time: ${timeTaken.toFixed(2)}ms`;
+                responseTimeDiv.className = 'response-time' + (timeTaken > 1000 ? ' slow-response' : '');
+            } catch (error) {
+                responseDiv.textContent = `Error: ${error.message}`;
+                responseTimeDiv.textContent = '';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
