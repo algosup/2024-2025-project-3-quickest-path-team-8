@@ -1,3 +1,11 @@
+/**
+ * @file graph.cpp
+ * @brief Graph data structure implementation using memory-mapped binary files
+ * 
+ * Provides efficient graph loading and traversal capabilities for large road networks.
+ * Uses memory mapping (mmap) for optimal performance with large datasets.
+ */
+
 #include "includes/binary.hpp"
 #include "includes/graph.hpp"
 
@@ -6,6 +14,20 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+/**
+ * @brief Loads road network graph from binary file using memory mapping
+ * 
+ * @param filename Path to binary file containing road network data
+ * 
+ * @details
+ * Performance optimizations:
+ * - Uses mmap() for zero-copy I/O
+ * - Pre-allocates vectors to avoid reallocation
+ * - Two-phase loading for efficient ID mapping
+ * 
+ * @throws Prints error to cerr if file operations fail
+ */
 
 void Graph::loadGraphFromBinary(const std::string& filename) {
 

@@ -1,12 +1,10 @@
-/*
-
-    「 ✦ USA QuickPath Algorithm by TEAM 8 ✦ 」
-
-༺☆༻____________☾✧ ✩ ✧☽____________༺☆༻
-
-g++ -std=c++17 -O1 -march=native main.cpp graph.cpp dijkstra.cpp binary.cpp rest_api.cpp -o api && ./api 
-
-*/
+/**
+ * @file main.cpp
+ * @brief Entry point for the road network path-finding application
+ * 
+ * Initializes the graph data structure, loads network data, and starts the web server.
+ * Provides REST API endpoints for path-finding operations.
+ */
 
 #include "includes/binary.hpp"
 #include "includes/graph.hpp"
@@ -16,21 +14,24 @@ g++ -std=c++17 -O1 -march=native main.cpp graph.cpp dijkstra.cpp binary.cpp rest
 #include <cstdlib>
 
 
-// fromm binary 
-
 int main() {
-    // // Convert CSV to binary
+    // CSV to binary conversion commented out - only needed for initial data prep
     // convertCSVtoBinary("../data/USA-road_sorted.csv", "../data/graph.bin");
 
-    PathFinder graph; // create an instance of the graph 
+    // Initialize path-finding engine with optimized graph structure
+    PathFinder graph;
 
-    // Load the graph from the binary file
+    // Load pre-processed binary graph data
+    // Binary format provides faster loading and reduced memory footprint
     graph.loadGraphFromBinary("../data/graph.bin");
 
-    // Open the UI in the default browser
+    // Launch web UI in default browser
+    // Note: Mac-specific command, would need modification for other platforms
     system("open index.html");
 
-    // Start the server
+    // Start REST API server
+    // Handles path-finding requests from web UI
+    // Blocks until process termination
     startServer(graph);
 
     return 0;

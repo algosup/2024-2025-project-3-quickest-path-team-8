@@ -4,6 +4,17 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @file rest_api.cpp
+ * @brief RESTful API implementation for path-finding service
+ * 
+ * Provides HTTP endpoints for:
+ * - Path finding between landmarks
+ * - Distance calculations
+ * - Multiple response formats (JSON/XML)
+ */
+
+
 
 using namespace std;
 
@@ -19,10 +30,12 @@ void startServer(PathFinder &graph) {
                 return;
             }
 
+            // Parse query parameters
             string format = req.get_param_value("format");
             int landmark_1 = stoi(req.get_param_value("landmark_1"));
             int landmark_2 = stoi(req.get_param_value("landmark_2"));
 
+            // Perform path-finding
             auto [distance, path] = graph.bidirectionalDijkstra(landmark_1, landmark_2);
 
             if (format == "json") {
