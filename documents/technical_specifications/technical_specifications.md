@@ -29,14 +29,13 @@
       - [Why Adjacency List Over Adjacency Matrix?](#why-adjacency-list-over-adjacency-matrix)
     - [Scalability and Performance](#scalability-and-performance)
     - [Complexity](#complexity)
-    - [Optimizations for A\*](#optimizations-for-a)
-- [6. Implementation and Testing](#6-implementation-and-testing)
+    - [Optimizations for Dijkstra’s](#optimizations-for-dijkstras)
   - [6.1 Path Calculation](#61-path-calculation)
     - [Overview](#overview)
     - [Workflow](#workflow)
-    - [Diagram](#diagram)
     - [Optimization Techniques](#optimization-techniques)
     - [Edge Cases](#edge-cases)
+    - [Diagram](#diagram)
   - [6.2 Data Validation Tool](#62-data-validation-tool)
     - [Overview](#overview-1)
     - [Workflow](#workflow-1)
@@ -106,15 +105,15 @@ Key objectives include:
 
 # 3. Glossary
 
-| Term                             | Definition                                                                                           |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Landmark**                     | A point in the graph representing a location in the U.S.                                             |
-| **Graph**                        | A network of nodes (landmarks) connected by edges (paths) with associated travel times.              |
-| **DAG (Directed Acyclic Graph)** | A graph that doesn’t contain cycles, used to model the landmark connections when applicable.         |
-| **REST API**                     | A web service exposing functionality via HTTP endpoints, in this case, to query the shortest path.   |
-| **Shortest Path Algorithm**      | An algorithm (e.g., Dijkstra's or A\*) designed to find the minimum cost or time path between nodes. |
-| **Connected Graph**              | A graph where every node is reachable from any other node.                                           |
-| **Disconnected Subgraph**        | A subset of nodes within a graph that are not connected to the main graph or other subgraphs.        |
+| Term                             | Definition                                                                                         |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Landmark**                     | A point in the graph representing a location in the U.S.                                           |
+| **Graph**                        | A network of nodes (landmarks) connected by edges (paths) with associated travel times.            |
+| **DAG (Directed Acyclic Graph)** | A graph that doesn’t contain cycles, used to model the landmark connections when applicable.       |
+| **REST API**                     | A web service exposing functionality via HTTP endpoints, in this case, to query the shortest path. |
+| **Shortest Path Algorithm**      | An algorithm (e.g., Dijkstra’s, A\*) designed to find the minimum cost or time path between nodes. |
+| **Connected Graph**              | A graph where every node is reachable from any other node.                                         |
+| **Disconnected Subgraph**        | A subset of nodes within a graph that are not connected to the main graph or other subgraphs.      |
 
 ---
 
@@ -145,7 +144,6 @@ The REST API provides external access to the quickest path calculation functiona
 
 - **Shortest Path Calculation**
 
-  - A heuristic approximation algorithm (e.g., A\* or Dijkstra’s algorithm) will be used to balance speed and accuracy.
   - The returned route duration must not exceed the shortest possible duration by more than 10%.
 
 ### Dataset Preprocessing
@@ -314,11 +312,10 @@ The REST API handles requests for the quickest path between landmarks. Design co
 | ------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Valid request             | `200`     | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
 | Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
-| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1', 'landmark_2' and 'format' are required.</message></error>`                                                |
+| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1', 'landmark_2' and 'format' are required.</message></error>`                                      |
 | Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
 | Internal Server Error     | `500`     | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
 | Service Unavailable       | `503`     | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
-
 
 - **Performance Considerations**:
   - Lightweight HTTP server optimizations ensure that API response times meet the <1-second requirement under typical workloads.
@@ -331,145 +328,136 @@ The algorithm is a core component of the system, responsible for calculating the
 
 ### Core Algorithm
 
-- The A\* algorithm is selected for its heuristic-driven approach, combining efficient exploration with guaranteed pathfinding.
-- The heuristic function helps prioritize nodes closer to the destination, optimizing search performance.
+- The **Dijkstra’s algorithm** is selected for its ability to find the shortest path in a weighted graph without negative edges.
+- Unlike A\*, **Dijkstra’s does not use a heuristic**, ensuring an optimal solution by systematically exploring the lowest-cost paths.
 
 ### Role in the System
 
-- Operates on a preprocessed dataset represented as an adjacency list, ensuring efficient traversal of landmark connections.
-- Integrated into the REST API to dynamically process pathfinding queries and return results within 1 second for typical use cases.
+- Operates on a **preprocessed dataset** represented as an **adjacency list**, ensuring efficient graph traversal.
+- Integrated into the **REST API** to process pathfinding queries dynamically and return results within **1 second** for typical use cases.
 
 #### Why Adjacency List Over Adjacency Matrix?
 
-We use an adjacency list to represent the graph instead of an adjacency matrix for the following reasons:
+We use an **adjacency list** instead of an **adjacency matrix** due to the following advantages:
 
-1. **Dimensionality of the Graph**:
+1. **Graph Sparsity**:
 
-   - The graph is sparse, meaning each landmark connects to only a subset of other landmarks. An adjacency matrix would waste memory as most entries would be `0` after the first dimension.
+   - The dataset consists of **millions of landmarks**, but each landmark connects to a limited subset.
+   - An adjacency matrix would be mostly **empty (zero values)**, wasting memory.
 
 2. **Memory Efficiency**:
 
-   - For a graph with `V` vertices and `E` edges:
-     - An adjacency matrix requires \(O(V^2)\) space, regardless of the number of edges.
-     - An adjacency list requires \(O(V + E)\), making it far more efficient for sparse graphs.
-   - Given the dataset’s scale (millions of landmarks with limited connections per landmark), the adjacency list minimizes memory usage.
+   - An adjacency matrix requires **\(O(V^2)\) space**, while an adjacency list only needs **\(O(V + E)\)**, making it significantly more efficient for sparse graphs.
 
 3. **Traversal Speed**:
 
-   - In an adjacency matrix, traversing all possible connections for a vertex requires \(O(V)\) time, even for unconnected vertices.
-   - With an adjacency list, traversal is proportional to the vertex's degree (\(O(\text{degree})\)), significantly improving performance.
+   - In an adjacency matrix, iterating over all connections for a node takes **\(O(V)\) time**, even if most connections do not exist.
+   - With an adjacency list, traversal is **\(O(\text{degree})\)**, reducing unnecessary computations.
 
-4. **Alignment with Pathfinding**:
-   - Pathfinding algorithms like A\* prioritize traversing edges between connected nodes. An adjacency list directly stores these edges, avoiding unnecessary computations on unconnected nodes.
+4. **Pathfinding Alignment**:
+   - Dijkstra’s algorithm **naturally works with adjacency lists**, as it prioritizes exploring existing edges.
 
-This choice ensures the system remains efficient and scalable, aligning with the performance goals defined in **4.2 Performance Goals**.
+This choice ensures the system remains **efficient and scalable**, aligning with the performance goals in **4.2 Performance Goals**.
 
 ### Scalability and Performance
 
-- The algorithm is optimized to handle large datasets containing millions of nodes and edges.
-- Preprocessing steps, such as duplicate removal and graph validation, reduce runtime overhead.
+- The algorithm is optimized to handle large datasets with **millions of nodes and edges**.
+- Preprocessing steps such as **duplicate removal, graph validation, and sorting** reduce runtime overhead.
 
 ### Complexity
 
 1. **Time Complexity**:
 
-   - For a graph with `V` vertices (landmarks) and `E` edges (connections), A\* has a worst-case time complexity of:
+   - Using a priority queue (min-heap), Dijkstra’s achieves **\(O((V + E) \log V)\)** time complexity.
+   - The use of **bidirectional search** further improves efficiency.
      ![Time Complexity](/documents/images/formula1.png)
 
-2. **Space Complexity**:
-   - The adjacency list representation and additional data structures (e.g., priority queue, visited nodes) result in a space complexity of:
-     ![Space Complexity](/documents/images/formula2.png)
+1. **Space Complexity**:
+   - The adjacency list representation and **priority queue** require **\(O(V + E)\)** space.
 
-These formulas illustrate the algorithm’s efficiency for large-scale graphs, emphasizing its suitability for the project.
+These optimizations make the algorithm well-suited for **large-scale route calculations**.
 
 For the detailed workflow and implementation, refer to **6.1 Path Calculation**.
 
-### Optimizations for A\*
+### Optimizations for Dijkstra’s
 
-The A\* algorithm is further optimized to improve performance and scalability while maintaining accuracy. The following enhancements are implemented:
+To improve performance and **ensure real-time query processing**, the following optimizations are applied:
 
-1. **Heuristic Refinement**:
+1. **Heap Optimization**:
 
-   - To improve the efficiency of the A\* algorithm, we implement a heuristic function using a strength-based 3D representation of the nodes.
-   - During preprocessing, nodes are mapped to a 3D space where their positions reflect their connectivity and relationships to other nodes in the graph.
-   - The Euclidean distance between nodes in this 3D space is used as the heuristic function (\(h(n)\)).
-     - This heuristic is admissible (does not overestimate costs) and consistent (satisfies the triangle inequality), ensuring the correctness of the algorithm.
-   - If preprocessing is unavailable, the algorithm can fall back to a heuristic-free approach, equivalent to Dijkstra’s algorithm, at the cost of reduced performance.
+   - Instead of a traditional priority queue, a **custom heap implementation** is used to improve insertion and extraction efficiency.
 
-2. **Bidirectional A\***:
+2. **Bidirectional Dijkstra’s**:
 
-   - The search process is executed simultaneously from the source and destination nodes. The algorithm terminates when the two searches meet, reducing the search space significantly.
+   - The search runs **simultaneously from the source and destination**.
+   - The algorithm terminates **when both searches meet**, reducing the number of explored nodes.
 
-3. **Weighted A\***:
+3. **Path Sorting for Faster Access**:
 
-   - A weighted heuristic (\(f(n) = g(n) + \epsilon \cdot h(n)\)) is introduced to prioritize exploration of likely paths more aggressively. This reduces the search time while slightly relaxing the accuracy constraint.
+   - Edges in the adjacency list are **sorted by travel time** to prioritize the most optimal paths first.
+   - This reduces unnecessary computations when expanding nodes.
 
-4. **Priority Queue Optimization**:
+4. **Parallel Processing**:
+   - Node expansions are **parallelized** across multiple threads to improve speed.
 
-   - A bucket-based priority queue replaces the standard implementation, reducing computational overhead for node selection.
+These optimizations allow the system to process queries **efficiently**, even when handling large datasets.
 
-5. **Parallelization**:
-   - The algorithm is parallelized to leverage multi-core processors. Node evaluations are distributed across threads, significantly accelerating the search process.
-
-These optimizations enable the system to handle larger datasets efficiently, ensuring rapid responses even under high-concurrency scenarios or for geographically dispersed datasets.
-
-# 6. Implementation and Testing
+---
 
 ## 6.1 Path Calculation
 
 ### Overview
 
-The path calculation system implements the A\* algorithm to compute the quickest path between two landmarks. This approach ensures compliance with the system’s accuracy and performance goals.
+The path calculation system implements **Dijkstra’s algorithm** to compute the **quickest** path between two landmarks. The algorithm is optimized to balance **accuracy and speed**, ensuring **sub-second query responses**.
 
 ### Workflow
 
 1. **Initialization**:
 
-   - The graph is represented as an adjacency list, derived from the dataset during preprocessing. Each node (landmark) is connected to its neighbors with associated travel times.
-   - The priority queue (min-heap) is initialized with the starting landmark (`landmark_1`) and its heuristic value (estimated travel time to `landmark_2`).
+   - The graph is represented as an **adjacency list**.
+   - A **min-heap priority queue** is initialized with the **starting landmark**.
+   - The algorithm starts with the **source node** at distance **0**.
 
-2. **Exploration**:
+2. **Bidirectional Search**:
 
-   - At each step, the node with the lowest estimated cost (actual cost + heuristic) is dequeued, and its neighbors are evaluated.
-   - For each neighbor:
-     - Calculate the tentative cost (current cost + edge weight to neighbor).
-     - If the tentative cost is lower than the previously recorded cost for the neighbor, update the cost and set the current node as the predecessor.
-     - Add the neighbor to the priority queue with its updated cost.
-   - Track visited nodes to prevent re-evaluating paths unnecessarily.
+   - The algorithm runs **simultaneously** from both the **start** and **destination** nodes.
+   - Nodes are processed alternately from each side.
+   - The search **terminates early** when the two searches meet.
 
-3. **Heuristic Evaluation**:
+3. **Priority Queue Handling**:
 
-   - The heuristic function estimates the cost from a node to the destination. It:
-     - Underestimates the actual cost (to maintain A\*'s correctness).
-     - Prioritizes nodes closer to the destination based on estimated travel time.
-   - Examples of heuristics for this project include:
-     - Straight-line distance (if coordinates are available).
-     - Historical average travel times.
+   - The **priority queue** selects the node with the **smallest travel time**.
+   - Neighboring nodes are **updated** if a **shorter path** is found.
 
-4. **Termination**:
-   - The algorithm terminates when:
-     - The destination node (`landmark_2`) is dequeued, and the path is reconstructed using the predecessor list.
-     - The priority queue is empty, indicating no valid path exists.
-
-### Diagram
-
-The following diagram illustrates the workflow of the A\* algorithm:
-
-![A* Algorithm Workflow](/documents/images/Algorithm.png)
+4. **Path Construction**:
+   - Once the **destination** is reached, the shortest path is **reconstructed** using **predecessor tracking**.
+   - The result is returned in **JSON/XML format** through the **REST API**.
 
 ### Optimization Techniques
 
-- **Graph Pruning**:
-  - During preprocessing, unnecessary nodes and connections are removed to streamline computation.
-- **Path Caching**:
-  - Frequently queried paths are cached in memory to reduce redundant calculations for commonly requested routes.
+- **Heap Optimization**:
+
+  - A **custom heap** is used instead of a standard priority queue, improving extraction efficiency.
+
+- **Sorting of Paths**:
+
+  - **Edges are pre-sorted** to prioritize faster paths in graph traversal.
+
+- **Parallel Node Expansion**:
+  - The algorithm **leverages multi-threading** to expand nodes in parallel.
 
 ### Edge Cases
 
 - **Identical Landmarks**:
-  - Return a time of `0` with an empty path.
+  - If `landmark_1 == landmark_2`, return `time = 0` with an empty path.
 
-For a high-level explanation of the algorithm’s role in the system, refer to **5.3 Algorithm Design**.
+### Diagram
+
+The following diagram illustrates **Bidirectional Dijkstra’s search**:
+
+![Dijkstra Algorithm Workflow](/documents/images/Algorithm.png)
+
+For further details on graph representation, see **5.3 Algorithm Design**.
 
 ---
 
@@ -570,15 +558,18 @@ Once the dataset has been validated and processed, it is converted into a custom
 ### Conversion Process
 
 1. **Data Validation and Preprocessing**:
+
    - The dataset undergoes validation using the **Data Validation Tool** (see **6.2**) to ensure data integrity.
    - Duplicate entries and disconnected graphs (DSG) are removed.
    - The dataset is **sorted before storage** to optimize search and retrieval.
 
 2. **Binary Format Conversion**:
+
    - The validated dataset is transformed into a binary format (`.bin`) for **efficient storage and retrieval**.
    - Each record is stored as **16-bit integers**, minimizing memory usage while preserving accuracy.
 
 3. **Optimized Path Sorting**:
+
    - Paths are **sorted prior to writing** to the binary file, allowing faster lookups.
    - Sorting ensures that queries can be processed with minimal overhead.
 
@@ -590,10 +581,12 @@ Once the dataset has been validated and processed, it is converted into a custom
 ### Benefits of Binary Conversion
 
 - **Reduced Storage Space**:
+
   - The `.bin` format is more compact than CSV or JSON.
   - Each entry is stored as raw **16-bit integers**, reducing disk usage.
 
 - **Faster Read and Write Operations**:
+
   - Binary files allow **direct memory access**, eliminating text parsing.
   - Compared to CSV parsing, binary read/write operations are significantly faster.
 
@@ -606,16 +599,17 @@ Once the dataset has been validated and processed, it is converted into a custom
 Each record in the `.bin` file consists of:
 
 | Field        | Type     | Size (bits) | Description                           |
-|-------------|----------|------------|---------------------------------------|
-| `landmark_A` | `uint16` | 16         | Source landmark ID                    |
-| `landmark_B` | `uint16` | 16         | Destination landmark ID               |
-| `time`       | `uint16` | 16         | Travel time between the two landmarks |
+| ------------ | -------- | ----------- | ------------------------------------- |
+| `landmark_A` | `uint16` | 16          | Source landmark ID                    |
+| `landmark_B` | `uint16` | 16          | Destination landmark ID               |
+| `time`       | `uint16` | 16          | Travel time between the two landmarks |
 
 Example binary representation:
 
 ```plaintext
 0000001011010010 0000001100101100 0000000000111110
 ```
+
 This corresponds to:
 
 - `landmark_A = 722`
@@ -637,7 +631,7 @@ Performance testing validates that the system meets its response time and scalab
 ### Testing
 
 - **General Testing**:
-  - Verify correctness of individual components (e.g., A\* algorithm, graph construction).
+  - Verify correctness of individual components (e.g., Dijkstra’s algorithm, graph construction).
   - Validate that the REST API responds correctly to all input scenarios, including edge cases.
 
 ### Stress Testing
@@ -799,7 +793,7 @@ The following deliverables outline the technical outputs developers need to prod
 
 - **Content**:
   - Complete implementation of:
-    - A\* algorithm for pathfinding.
+    - Dijkstra’s algorithm for pathfinding.
     - REST API using `cpp-httplib` or an equivalent framework.
     - Data validation and preprocessing utilities.
   - Modular and well-documented C++ code (with inline comments for maintainability).
@@ -812,7 +806,7 @@ The following deliverables outline the technical outputs developers need to prod
 
 - **Content**:
   - Automated tests to validate:
-    - A\* algorithm correctness and performance.
+    - Dijkstra’s algorithm correctness and performance.
     - REST API responses, including edge cases.
     - Dataset validation tool outputs.
 - **Purpose**:
@@ -851,7 +845,7 @@ The following coding design principles will guide the development of the system:
 
 2. **Focus on Algorithmic Complexity**:
 
-   - Emphasize improving algorithmic efficiency (e.g., A\* optimization) over micro-optimizations to ensure scalability for large datasets.
+   - Emphasize improving algorithmic efficiency (e.g., Dijkstra’s optimization) over micro-optimizations to ensure scalability for large datasets.
 
 3. **Code Readability and Maintainability**:
 
@@ -873,7 +867,7 @@ The project presents several significant challenges that must be addressed durin
 
 2. **Balancing Accuracy and Performance**:
 
-   - Implementing the A\* algorithm to achieve results within 10% of the optimal path while meeting performance goals.
+   - Implementing the Dijkstra’s algorithm to achieve results within 10% of the optimal path while meeting performance goals.
 
 3. **Data Validation Complexity**:
 
@@ -923,7 +917,7 @@ The development process will follow an incremental approach, focusing on buildin
 
 1. **Initial Implementation**:
 
-   - Begin with the A\* algorithm and a basic graph representation.
+   - Begin with the Dijkstra’s algorithm and a basic graph representation.
    - Implement the REST API with a single endpoint for path calculations.
    - Create a minimal dataset validation tool to handle basic checks (e.g., format validation and duplicate removal).
 
@@ -934,7 +928,7 @@ The development process will follow an incremental approach, focusing on buildin
 
 3. **Performance Optimization**:
 
-   - Optimize A\* algorithm and graph structures for scalability with larger datasets.
+   - Optimize Dijkstra’s algorithm and graph structures for scalability with larger datasets.
    - Add caching or pruning techniques for frequently queried paths.
 
 4. **Testing and Validation**:
