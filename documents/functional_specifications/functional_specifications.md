@@ -16,8 +16,7 @@
     - [1.4. Project Organization](#14-project-organization)
       - [1.4.1. Project Representatives](#141-project-representatives)
       - [1.4.2. Stakeholders](#142-stakeholders)
-      - [1.4.3. Project Roles](#143-project-roles)
-      - [1.4.4. Project Reviewers](#144-project-reviewers)
+      - [1.4.3. Project Reviewers](#143-project-reviewers)
     - [1.5. Project Plan](#15-project-plan)
       - [1.5.1. Planning](#151-planning)
       - [1.5.2. Milestones](#152-milestones)
@@ -67,28 +66,23 @@
 
 ### 1.1. Glossary
 
-| Term                         | Definition                                                                                                                                                                  |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| REST API                     | A web-based interface that allows systems to communicate with each other using standard HTTP methods such as GET, POST, PUT, and DELETE.                                    |
-| GET Endpoint                 | A specific URL where the API can be accessed using the HTTP GET method to retrieve information.                                                                             |
-| JSON                         | A lightweight data-interchange format that uses human-readable and machine-readable text to store and transmit data objects as key-value pairs.                             |
-| XML                          | A markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.                                                   |
-| HTTP Server                  | A software application that serves content to clients over the Hypertext Transfer Protocol (HTTP).                                                                          |
-| Approximation Heuristics     | A method or technique used to find approximate solutions to problems when exact solutions are impractical or time-consuming to compute.                                     |
-| Dataset                      | A collection of related data entries, often stored in a structured format like CSV files, used for analysis or processing.                                                  |
-| C++                          | A high-performance programming language commonly used for system and application development.                                                                               |
-| Data Validation Tool         | A utility to check the accuracy, consistency, and integrity of input data against predefined rules or constraints.                                                          |
-| Quality Assurance (QA)       | The process of systematically monitoring and evaluating various aspects of a project to ensure that quality standards are met.                                              |
-| Test Suite                   | A collection of test cases designed to validate the functionality and performance of a software application.                                                                |
-| Milestone                    | A significant event or checkpoint in a project timeline used to measure progress.                                                                                           |
-| Assumptions                  | Statements taken as true without proof for planning purposes, used to set boundaries or expectations for a project.                                                         |
-| Constraints                  | Limitations or restrictions that define the scope or boundaries within which a project must operate.                                                                        |
-| Risk Mitigation              | Strategies or actions taken to reduce the likelihood or impact of potential problems or risks in a project.                                                                 |
-| MVP (Minimum Viable Product) | The smallest functional version of a product that can be released to users to gather feedback and validate ideas.                                                           |
-| Landmark                     | A specific point of interest or location used as a reference for calculating routes in the project.                                                                         |
-| Transportation Optimization  | The process of improving the efficiency and effectiveness of transportation systems using algorithms and tools.                                                             |
-| Directed Acyclic Graph (DAG) | A graph with directed edges where no cycles exist, meaning no path leads back to its starting point.                                                                        |
-| QA Session                   | A structured process where quality assurance professionals test, evaluate, and verify a product or system to ensure it meets specified standards and functions as intended. |
+| Term                         | Definition                                                                                                                                      |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| REST API                     | A web-based interface that allows systems to communicate with each other using the HTTP protocol                                                |
+| GET Endpoint                 | A specific URL where the API can be accessed using the HTTP GET method to retrieve information.                                                 |
+| JSON                         | A lightweight data-interchange format that uses human-readable and machine-readable text to store and transmit data objects as key-value pairs. |
+| XML                          | A markup language that defines rules for encoding documents in a format that is both human-readable and machine-readable.                       |
+| HTTP Server                  | A software application that serves content to clients over the Hypertext Transfer Protocol (HTTP).                                              |
+| Approximation Heuristics     | A method or technique used to find approximate solutions to problems when exact solutions are impractical or time-consuming to compute.         |
+| Dataset                      | A collection of related data entries, often stored in a structured format like CSV files, used for analysis or processing.                      |
+| C++                          | A high-performance programming language commonly used for system and application development.                                                   |
+| Data Validation Tool         | A utility to check the accuracy, consistency, and integrity of input data against predefined rules or constraints.                              |
+| Test Suite                   | A collection of test cases designed to validate the functionality and performance of a software application.                                    |
+| Risk Mitigation              | Strategies or actions taken to reduce the likelihood or impact of potential problems or risks in a project.                                     |
+| MVP (Minimum Viable Product) | The smallest functional version of a product that can be released to users to gather feedback and validate ideas.                               |
+| Landmark                     | A specific point of interest or location used as a reference for calculating routes in the project.                                             |
+| Transportation Optimization  | The process of improving the efficiency and effectiveness of transportation systems using algorithms and tools.                                 |
+| Directed Acyclic Graph (DAG) | A graph with directed edges where no cycles exist, meaning no path leads back to its starting point.                                            |
 
 
 ### 1.2. Project Overview
@@ -134,15 +128,15 @@ The target audience includes:
 
 #### 1.4.1. Project Representatives
 
-| Full Name             | Occupation        | Links to LinkedIn Profiles                                              |
-| --------------------- | ----------------- | ----------------------------------------------------------------------- |
-| Victor LEROY          | Project manager   | [LinkedIn](https://www.linkedin.com/in/victor-leroy-64baa3229/)         |
-| Antoine PREVOST       | Program manager   | [LinkedIn](https://www.linkedin.com/in/antoine-prevost-dev/)            |
-| David CUAHONTE CUEVAS | Tech lead         | [LinkedIn](https://www.linkedin.com/in/david-cuahonte-527781221/)       |
-| Thomas PLANCHARD      | Software engineer | [LinkedIn](https://www.linkedin.com/in/thomas-planchard-461782221/)     |
-| Mathis KAKAL          | Software engineer | [LinkedIn](https://www.linkedin.com/in/mathis-k-a239ba10a/)             |
-| Max BERNARD           | Quality assurance | [LinkedIn](https://www.linkedin.com/in/max-bernard-b77680210/)          |
-| Quentin CLEMENT       | Technical writer  | [LinkedIn](https://www.linkedin.com/in/quentin-cl%C3%A9ment-939110221/) |
+| Full Name             | Role              | Role Description                                                                                                                                                     | Links to LinkedIn Profiles                                              |
+| --------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Victor LEROY          | Project manager   | Responsible for the overall planning, execution, and success of the project.                                                                                         | [LinkedIn](https://www.linkedin.com/in/victor-leroy-64baa3229/)         |
+| Antoine PREVOST       | Program manager   | Ensures the project meets expectations. <br> Is in charge of design. <br> Responsible for writing the Functional Specifications.                                     | [LinkedIn](https://www.linkedin.com/in/antoine-prevost-dev/)            |
+| David CUAHONTE CUEVAS | Tech lead         | Makes technical decisions for the project. <br> Translates the Functional Specification into Technical Specifications. <br> Does code review.                        | [LinkedIn](https://www.linkedin.com/in/david-cuahonte-527781221/)       |
+| Thomas PLANCHARD      | Software engineer | Writes the code. <br> Writes documentation. <br> Participate in the technical design.                                                                                | [LinkedIn](https://www.linkedin.com/in/thomas-planchard-461782221/)     |
+| Mathis KAKAL          | Software engineer | Writes the code. <br> Writes documentation. <br> Participate in the technical design.                                                                                | [LinkedIn](https://www.linkedin.com/in/mathis-k-a239ba10a/)             |
+| Max BERNARD           | Quality assurance | Tests all the functionalities of a product to find bugs and issues. <br> Document bugs and issues. <br> Write the test plan. <br> Check that issues have been fixed. | [LinkedIn](https://www.linkedin.com/in/max-bernard-b77680210/)          |
+| Quentin CLEMENT       | Technical writer  | Responsible for creating and maintaining the project's documentation.                                                                                                | [LinkedIn](https://www.linkedin.com/in/quentin-cl%C3%A9ment-939110221/) |
 
 #### 1.4.2. Stakeholders
 
@@ -151,18 +145,7 @@ The target audience includes:
 | Client          | Franck JEANNIN | Finished project meeting requirements                                  |
 | School director | Franck JEANNIN | Clear documentation and management based on the skills learnt in class |
 
-#### 1.4.3. Project Roles
-
-| Role              | Description                                                                                                                                                          | Name                             |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Project Manager   | Responsible for the overall planning, execution, and success of the project.                                                                                         | Victor LEROY                     |
-| Program Manager   | Ensures the project meets expectations. <br> Is in charge of design. <br> Responsible for writing the Functional Specifications.                                     | Antoine PREVOST                  |
-| Tech Lead         | Makes technical decisions for the project. <br> Translates the Functional Specification into Technical Specifications. <br> Does code review.                        | David CUAHONTE CUEVAS            |
-| Software Engineer | Writes the code. <br> Writes documentation. <br> Participate in the technical design.                                                                                | Thomas PLANCHARD<br>Mathis KAKAL |
-| Quality Assurance | Tests all the functionalities of a product to find bugs and issues. <br> Document bugs and issues. <br> Write the test plan. <br> Check that issues have been fixed. | Max BERNARD                      |
-| Technical Writer  | Responsible for creating and maintaining the project's documentation.                                                                                                | Quentin CLEMENT                  |
-
-#### 1.4.4. Project Reviewers
+#### 1.4.3. Project Reviewers
 
 External project reviewers have been appointed by the project owner to review our specifications and provide us with feedback.
 
@@ -207,14 +190,14 @@ Planning will follow an iterative approach, with each iteration focused on speci
 
 #### 1.5.5. Risks/Mitigation
 
-| ID  | Description                         | Consequence                                 | Impact | Likelihood | Mitigation                                                        |
-| --- | ----------------------------------- | ------------------------------------------- | ------ | ---------- | ----------------------------------------------------------------- |
-| R01 | Data errors or gaps                 | Incorrect route calculation                 | High   | Medium     | Validate datasets.                                                |
-| R02 | API performance issues              | Delayed response times                      | High   | High       | Optimize the algorithm.                                           |
-| R03 | Inconsistent input validation       | API errors or unexpected behavior           | Medium | Medium     | Implement strict input validation and testing.                    |
-| R04 | Hardware limitations                | Unable to meet performance requirements     | High   | Low        | Optimize resource usage and conduct tests on the target hardware. |
-| R05 | Memory overflow with large datasets | Crashes or unresponsiveness                 | High   | Low        | Use efficient data structures and memory management.              |
-| R06 | Incorrect heuristic implementation  | Results deviate significantly from expected | Medium | Low        | Test heuristics extensively and validate against known results.   |
+| Description                         | Consequence                                 | Impact | Likelihood | Mitigation                                                        |
+| ----------------------------------- | ------------------------------------------- | ------ | ---------- | ----------------------------------------------------------------- |
+| Data errors or gaps                 | Incorrect route calculation                 | High   | Medium     | Validate datasets.                                                |
+| API performance issues              | Delayed response times                      | High   | High       | Optimize the algorithm.                                           |
+| Inconsistent input validation       | API errors or unexpected behavior           | Medium | Medium     | Implement strict input validation and testing.                    |
+| Hardware limitations                | Unable to meet performance requirements     | High   | Low        | Optimize resource usage and conduct tests on the target hardware. |
+| Memory overflow with large datasets | Crashes or unresponsiveness                 | High   | Low        | Use efficient data structures and memory management.              |
+| Incorrect heuristic implementation  | Results deviate significantly from expected | Medium | Low        | Test heuristics extensively and validate against known results.   |
 
 ## 2. Personas and Use Cases
 
@@ -261,54 +244,54 @@ The REST API allows users to query the quickest path between two landmarks using
 | ------------ | ------- | ------------------------------------- |
 | `landmark_1` | integer | Must be between `1` and `23,947,347`. |
 | `landmark_2` | integer | Must be between `1` and `23,947,347`. |
+| `format`     | string  | `xml` or `json`                       |
 
 > [!NOTE]  
 > The indicated bounds of `landmark_1` and `landmark_2` are based on dataset limitations.
 
 #### 3.1.2. Response Codes
 
-| Scenario                  | HTTP Code | Description                                                                                                           | Example JSON Response                                                                                               | Example XML Response                                                                                                                                                          |
-| ------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Valid request             | `200`     | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322, "distance": 33}, {"landmark": 323, "distance": 33}]}`                     | `<response><time>66</time><steps><step><landmark>322</landmark><distance>33</distance></step><step><landmark>323</landmark><distance>33</distance></step></steps></response>` |
-| Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                                                                |
-| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required.</message></error>`                                                |
-| Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                                                            |
-| Internal Server Error     | `500`     | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                                                                    |
-| Service Unavailable       | `503`     | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                                                              |
+| Scenario                  | HTTP Code | Description                                                                                                           | Example JSON Response                                                                                               | Example XML Response                                                                                                                     |
+| ------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Valid request             | `200`     | Successfully returns the quickest path.                                                                               | `{"time": 66, "steps": [{"landmark": 322}, {"landmark": 323}]}`                                                     | `<response><time>66</time><steps><step><landmark>322</landmark></step><step><landmark>323</landmark></step></steps></response>`          |
+| Identical landmarks       | `200`     | Returns `time` as `0` and an empty `steps` array.                                                                     | `{"time": 0, "steps": []}`                                                                                          | `<response><time>0</time><steps /></response>`                                                                                           |
+| Missing or invalid inputs | `400`     | One or both landmarks are missing or invalid.                                                                         | `{"error": {"code": 400, "message": "Missing or invalid parameters: 'landmark_1' and 'landmark_2' are required."}}` | `<error><code>400</code><message>Missing or invalid parameters: 'landmark_1', 'landmark_2' and 'format' are required.</message></error>` |
+| Nonexistent landmarks     | `404`     | One or both landmarks are not found in the dataset.                                                                   | `{"error": {"code": 404, "message": "No path found between the specified landmarks."}}`                             | `<error><code>404</code><message>No path found between the specified landmarks.</message></error>`                                       |
+| Internal Server Error     | `500`     | An unhandled error occurred during request processing.                                                                | `{"error": {"code": 500, "message": "A server error occurred while processing your request."}}`                     | `<error><code>500</code><message>A server error occurred while processing your request.</message></error>`                               |
+| Service Unavailable       | `503`     | The service is temporarily unable to handle the request due to concurrent requests or the current dataset is loading. | `{"error": {"code": 503, "message": "The server is not available."}}`                                               | `<error><code>503</code><message>The server is not available.</message></error>`                                                         |
 
 #### 3.1.3. Request Examples
 
 **JSON Request Example:**
 ```http
-GET /quickest_path?landmark_1=322&landmark_2=333 HTTP/1.1
+GET /quickest_path?landmark_1=322&landmark_2=333&format=json HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/json
 ```
 
 **XML Request Example:**
 ```http
-GET /quickest_path?landmark_1=3455&landmark_2=745647 HTTP/1.1
+GET /quickest_path?landmark_1=3455&landmark_2=745647&format=xml HTTP/1.1
 Host: 127.0.0.1:8080
 Accept: application/xml
 ```
 
 #### 3.1.4. Response Examples
 
-| Entity                 | JSON Key             | XML Tag      | Data Type | Description                                                      |
-| ---------------------- | -------------------- | ------------ | --------- | ---------------------------------------------------------------- |
-| Total time             | `time`               | `<time>`     | Integer   | Total travel time between `landmark_1` and `landmark_2`.         |
-| Steps array            | `steps`              | `<steps>`    | Array     | A list of steps representing the shortest path.                  |
-| Step object            | `{ "landmark": ...}` | `<step>`     | Object    | Details of a single step, including the landmark and distance.   |
-| Landmark ID            | `landmark`           | `<landmark>` | Integer   | The ID of a landmark in the path.                                |
-| Distance between steps | `distance`           | `<distance>` | Integer   | The distance from the previous landmark to the current landmark. |
+| Entity      | JSON Key             | XML Tag      | Data Type | Description                                                    |
+| ----------- | -------------------- | ------------ | --------- | -------------------------------------------------------------- |
+| Total time  | `time`               | `<time>`     | Integer   | Total travel time between `landmark_1` and `landmark_2`.       |
+| Steps array | `steps`              | `<steps>`    | Array     | A list of steps representing the shortest path.                |
+| Step object | `{ "landmark": ...}` | `<step>`     | Object    | Details of a single step, including the landmark and distance. |
+| Landmark ID | `landmark`           | `<landmark>` | Integer   | The ID of a landmark in the path.                              |
 
 **Sample JSON Success Response:**
 ```json
 {
   "time": 66,
   "steps": [
- { "landmark": 322, "distance": 33 },
- { "landmark": 323, "distance": 33 }
+ { "landmark": 322},
+ { "landmark": 323 }
  ]
 }
 ```
@@ -320,11 +303,9 @@ Accept: application/xml
   <steps>
     <step>
       <landmark>322</landmark>
-      <distance>33</distance>
     </step>
     <step>
       <landmark>323</landmark>
-      <distance>33</distance>
     </step>
   </steps>
 </response>
