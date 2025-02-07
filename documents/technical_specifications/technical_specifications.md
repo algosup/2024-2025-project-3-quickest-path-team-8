@@ -46,7 +46,8 @@
     - [Overview](#overview-2)
     - [Conversion Process](#conversion-process)
     - [Benefits of Binary Conversion](#benefits-of-binary-conversion)
-    - [Example Structure of Binary Format](#example-structure-of-binary-format)
+    - [Example Structure of the Binary Format](#example-structure-of-the-binary-format)
+    - [Integration with the System](#integration-with-the-system)
   - [6.4 Performance Testing](#64-performance-testing)
     - [Overview](#overview-3)
     - [Testing](#testing)
@@ -561,56 +562,68 @@ Below is an example of the tool's output in JSON format:
 
 ### Overview
 
-Once the dataset has been validated and processed, the system converts it into a custom binary (`.bin`) format to improve storage efficiency and access speed. This format reduces the dataset's memory footprint and optimizes query performance.
+Once the dataset has been validated and processed, it is converted into a custom binary (`.bin`) format to enhance storage efficiency and access speed. This conversion significantly reduces file size and improves data retrieval performance.
 
 ### Conversion Process
 
 1. **Data Validation and Preprocessing**:
-
-   - The dataset undergoes verification through the **Data Validation Tool** (see **6.2**) to ensure correctness.
+   - The dataset undergoes validation using the **Data Validation Tool** (see **6.2**) to ensure data integrity.
    - Duplicate entries and disconnected graphs (DSG) are removed.
-   - The dataset is sorted to optimize storage and retrieval.
+   - The dataset is **sorted before storage** to optimize search and retrieval.
 
 2. **Binary Format Conversion**:
+   - The validated dataset is transformed into a binary format (`.bin`) for **efficient storage and retrieval**.
+   - Each record is stored as **16-bit integers**, minimizing memory usage while preserving accuracy.
 
-   - The validated dataset is transformed into a binary format (`.bin`).
-   - Each record is stored in **16-bit encoding**, reducing storage requirements while maintaining precision.
+3. **Optimized Path Sorting**:
+   - Paths are **sorted prior to writing** to the binary file, allowing faster lookups.
+   - Sorting ensures that queries can be processed with minimal overhead.
 
-3. **Sorting Paths for Optimized Access**:
-
-   - Path entries are sorted to enhance search and retrieval efficiency.
-   - Sorting enables faster lookups and improves performance in path calculations.
-
-4. **Storage Mechanism**:
-   - The `.bin` file is stored in a structured format to allow rapid access by the **Path Calculation Module** (see **6.1**).
-   - The data structure is designed to be memory-efficient while allowing direct access to required paths.
+4. **Storage and Access Mechanism**:
+   - The `.bin` file is written using **raw binary storage** rather than text-based serialization.
+   - The data structure is designed for **direct memory access**, eliminating parsing overhead.
+   - The **Path Calculation Module** (see **6.1**) loads the binary dataset at startup for quick access.
 
 ### Benefits of Binary Conversion
 
-- **Space Optimization**:
-  - The `.bin` format reduces the dataset’s size compared to CSV or JSON, improving memory efficiency.
-- **Faster Read and Write Operations**:
+- **Reduced Storage Space**:
+  - The `.bin` format is more compact than CSV or JSON.
+  - Each entry is stored as raw **16-bit integers**, reducing disk usage.
 
-  - Binary files are significantly faster to read compared to text-based formats.
+- **Faster Read and Write Operations**:
+  - Binary files allow **direct memory access**, eliminating text parsing.
+  - Compared to CSV parsing, binary read/write operations are significantly faster.
 
 - **Optimized Pathfinding Performance**:
-  - The sorted paths improve lookup speeds for the A\* algorithm.
+  - Sorting paths before storage reduces query time.
+  - The binary format enables **instant lookups** during shortest-path calculations.
 
-### Example Structure of Binary Format
+### Example Structure of the Binary Format
 
 Each record in the `.bin` file consists of:
 
 | Field        | Type     | Size (bits) | Description                           |
-| ------------ | -------- | ----------- | ------------------------------------- |
-| `landmark_A` | `uint16` | 16          | Source landmark ID                    |
-| `landmark_B` | `uint16` | 16          | Destination landmark ID               |
-| `time`       | `uint16` | 16          | Travel time between the two landmarks |
+|-------------|----------|------------|---------------------------------------|
+| `landmark_A` | `uint16` | 16         | Source landmark ID                    |
+| `landmark_B` | `uint16` | 16         | Destination landmark ID               |
+| `time`       | `uint16` | 16         | Travel time between the two landmarks |
 
-Example of a binary representation:
+Example binary representation:
 
 ```plaintext
 0000001011010010 0000001100101100 0000000000111110
 ```
+This corresponds to:
+
+- `landmark_A = 722`
+- `landmark_B = 812`
+- `time = 62`
+
+### Integration with the System
+
+- The **Path Calculation Module** reads from the `.bin` file at startup.
+- Queries for shortest paths **directly access preprocessed binary data**, ensuring minimal latency.
+- The binary format eliminates **runtime text parsing**, significantly speeding up API response times.
 
 ## 6.4 Performance Testing
 
