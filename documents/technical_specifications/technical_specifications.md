@@ -81,11 +81,11 @@
 
 This document is primarily intended for:
 
-- **Software Developers**: To understand the user and technical requirements and guide decision-making and planning. This includes identifying risks and challenges, meeting customer requirements, and understanding additional technical requirements and design choices.
+- **Software Developers**: To understand user and technical requirements, guiding decision-making and planning. This includes identifying risks and challenges, meeting customer requirements, and understanding additional technical requirements and design choices.
 
 Secondary audiences:
 
-- **Program Managers**: To validate the implementation against the functional specification and client expectations.
+- **Program Managers**: To validate the implementation against functional specifications and client expectations.
 - **QA Teams**: To aid in preparing the test plan and validating issues.
 - **Project Managers**: To help identify risks, dependencies, and resource needs.
 
@@ -113,7 +113,7 @@ Key objectives include:
 | **REST API**                     | A web service exposing functionality via HTTP endpoints, in this case, to query the shortest path. |
 | **Shortest Path Algorithm**      | An algorithm (e.g., Dijkstra’s, A\*) designed to find the minimum cost or time path between nodes. |
 | **Connected Graph**              | A graph where every node is reachable from any other node.                                         |
-| **Disconnected Subgraph**        | A subset of nodes within a graph that are not connected to the main graph or other subgraphs.      |
+| **Disconnected Subgraph**        | A subset of nodes within a graph that is not connected to the main graph or other subgraphs.       |
 
 ---
 
@@ -151,7 +151,7 @@ The REST API provides external access to the quickest path calculation functiona
 - **Purpose**:
   - Ensure the dataset meets validation criteria for accurate path calculations.
 - **Requirements**:
-  - The dataset must adhere to validation criteria outlined in **4.3 Data Integrity Verification**.
+  - The dataset must comply with the validation criteria outlined in **4.3 Data Integrity Verification**.
   - Refer to **6.2 Data Validation Tool** for the detailed workflow and implementation.
 
 ![diagram](/documents/images/APIrequest.png)
@@ -163,11 +163,11 @@ The REST API provides external access to the quickest path calculation functiona
 ### Response Time
 
 - The API must respond to all valid queries within **1 second** on a typical laptop, even when handling datasets with millions of nodes and connections.
-- Queries to landmarks with no valid path should also return responses within the same time frame.
+- Queries for landmarks without a valid path should also return responses within the same time frame.
 
 ### Scalability
 
-- If the dataset grows (e.g., expanding from the United States to global coverage), the performance will need to degrade gracefully, to maintain usability under the increased load.
+- If the dataset grows (e.g., expanding from the United States to global coverage), performance should degrade gracefully to maintain usability under increased load.
 
 ### Resource Efficiency
 
@@ -185,13 +185,13 @@ The REST API provides external access to the quickest path calculation functiona
 
 ## 4.3 Data Integrity Verification
 
-To ensure accurate and reliable path calculations, the system must validate the integrity of the input dataset. This verification process ensures the dataset meets the following criteria:
+To ensure accurate and reliable path calculations, the system must verify the integrity of the input dataset. This verification process ensures the dataset meets the following criteria:
 
 ### Validation Criteria
 
 1. **Data Format**:
 
-   - Each row in the CSV dataset must follow the required structure: `Landmark_A_ID, Landmark_B_ID, Time`.
+   - Each row in the CSV dataset must adhere to the required structure: `Landmark_A_ID, Landmark_B_ID, Time`.
    - IDs should be integers, and `Time` must be a positive numeric value.
 
 2. **Duplicate Entries**:
@@ -342,7 +342,7 @@ We use an **adjacency list** instead of an **adjacency matrix** due to the follo
 
 1. **Graph Sparsity**:
 
-   - The dataset consists of **millions of landmarks**, but each landmark connects to a limited subset.
+   - The dataset consists of **millions of landmarks**, but each landmark connects to only a limited number of others.
    - An adjacency matrix would be mostly **empty (zero values)**, wasting memory.
 
 2. **Memory Efficiency**:
@@ -375,7 +375,7 @@ This choice ensures the system remains **efficient and scalable**, aligning with
 1. **Space Complexity**:
    - The adjacency list representation and **priority queue** require **\(O(V + E)\)** space.
 
-These optimizations make the algorithm well-suited for **large-scale route calculations**.
+These optimizations make the algorithm highly suitable for **large-scale route calculations**.
 
 For the detailed workflow and implementation, refer to **6.1 Path Calculation**.
 
@@ -396,7 +396,6 @@ To improve performance and **ensure real-time query processing**, the following 
 
    - Edges in the adjacency list are **sorted by travel time** to prioritize the most optimal paths first.
    - This reduces unnecessary computations when expanding nodes.
-
 
 These optimizations allow the system to process queries **efficiently**, even when handling large datasets.
 
@@ -775,7 +774,7 @@ This section outlines the non-functional requirements that define the quality at
   - Ensures compatibility with third-party systems and compliance with industry best practices. (put a link to c standard)
 - **Standards**:
   - Use RESTful conventions for endpoint design and HTTP status codes.
-  - Follow JSON and XML schema standards for output formats.
+  - Adhere to JSON and XML schema standards for output formats.
   - Ensure data handling complies with relevant privacy and security laws (if applicable).
 
 ---
@@ -824,7 +823,7 @@ The following deliverables outline the technical outputs developers need to prod
 
 ### Reference
 
-For a comprehensive list of project deliverables, including non-technical outputs such as final presentations or reports, refer to the Functional Specifications.
+For a comprehensive list of project deliverables, including non-technical outputs such as final presentations and reports, refer to the Functional Specifications.
 
 # 9. Development Framework
 
@@ -881,7 +880,7 @@ The project presents several significant challenges that must be addressed durin
 
 The following potential bugs or limitations could arise during development:
 
-1. **Handling Very Large Datasets**:
+1. **Handling Extremely Large Datasets**:
 
    - The system may struggle with datasets exceeding the tested limit (~24 million nodes) due to memory or performance constraints.
 
